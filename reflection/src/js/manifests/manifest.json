@@ -1,0 +1,7 @@
+{
+    "default": [
+        "image/./sky_gradient.jpg",
+        "image/./test1.png",
+        "image/./test2.png"
+    ]
+}
