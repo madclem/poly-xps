@@ -20,14 +20,15 @@ export default class ViewTopWater
         this.cubes = [];
 
         for (var i = 0; i < 5; i++) {
+            let h = Math.random() * .35 + .8;
             let cube = new POLY.geometry.Cube(this.program, {
                 w: Math.random() * .35 + .1,
-                h: Math.random() * .35 + .8,
+                h: h,
                 d: Math.random() * .35 + .1
             });
 
-            cube.position.x = Math.random() * 2 - 2/2;
-            cube.position.y = Math.random() * .2 + .2;
+            cube.position.x = Math.random() * 2 - 2/2 + 2;
+            cube.position.y = h/2;
             cube.position.z = Math.random() * 2 - 2/2;
 
             this.cubes.push(cube);

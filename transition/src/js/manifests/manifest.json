@@ -1,0 +1,10 @@
+{
+    "default": [
+        "image/./gradient.jpg",
+        "image/./gradient.png",
+        "image/./gradient2.jpg",
+        "image/./gradient3.jpg",
+        "image/./gradient4.jpg",
+        "image/./sky_gradient.jpg"
+    ]
+}

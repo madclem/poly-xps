@@ -18,7 +18,7 @@ export default class MainScene
 		this.camera = new POLY.cameras.PerspectiveCamera();
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
-		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
+		// this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
 		POLY.GL.setCamera(this.camera);
 
 		this.viewBg = new ViewBg(window.ASSET_URL + 'image/sky_gradient.jpg');
@@ -44,28 +44,40 @@ export default class MainScene
             },
 		});
 		this.bQuad = new POLY.geometry.Quad(this.bQProgram);
+		this.bQuad.state.blend = true;
 		this.bQuad.rotation.x = Math.PI/2;
 
 	}
 
 	render()
 	{
-		this.orbitalControl.update();
+		// this.orbitalControl.update();
+
+		this.camera.setPosition(-2, 1, 1);
+		this.camera.lookAt([0, 0, 0]);
 
 		this.viewBg.render();
 		this._bPlanes.draw();
 
 		// reflection
 		this.fbo.bind();
+		// this.viewBg.render();
+		this.camera.setPosition(-2, -1, 1);
+		this.camera.lookAt([0, 0, 0]);
 		this.viewTopWater.program.bind();
 		this.viewTopWater.program.uniforms.clipY = 0;
 		this.viewTopWater.program.uniforms.dir = -1;
 		this.viewTopWater.render();
 		this.fbo.unbind();
 
+		this.camera.setPosition(-2, 1, 1);
+		this.camera.lookAt([0, 0, 0]);
+
 		// refraction
 		this.fbo2.bind();
+		// this.viewBg.render();
 		// this._bPlanes.draw();
+
 		this.viewTopWater.program.bind();
 		this.viewTopWater.program.uniforms.dir = 1;
 		this.viewTopWater.render();
@@ -88,10 +100,10 @@ export default class MainScene
 
 		// POLY.gl.viewport(0, 0, 512, 512/POLY.GL.aspectRatio );
 		// this.viewFBO2.render(this.fbo2.textures[0], 0);
-
+        //
 		// POLY.gl.viewport(512, 0, 512, 512/POLY.GL.aspectRatio );
 		// this.viewFBO1.render(this.fbo.textures[0], 0);
-
+        //
 		// this.fbo.clear();
 		// this.fbo2.clear();
 	}
