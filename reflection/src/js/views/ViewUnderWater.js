@@ -36,7 +36,7 @@ export default class ViewUnderWater
         this.floor.scale.y = 4;
         this.floor.scale.z = 4;
         this.floor.rotation.x = Math.PI/2;
-        // this.floor.addAttribute(this.floor.uvs, 'aUv', 2);
+        this.floor.addAttribute(this.floor.uvs, 'aUv', 2);
 
         this.texture = new POLY.Texture(window.ASSET_URL + 'image/wood.jpg');
 

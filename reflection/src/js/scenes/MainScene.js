@@ -33,6 +33,7 @@ export default class MainScene
 		this.viewFBO2.setPos(-200, 100)
 		this._bPlanes = new POLY.helpers.BatchPlanes();
 
+		this.dudvTexture = new POLY.Texture(window.ASSET_URL + 'image/dudvmap.png')
 		this.bQProgram = new POLY.Program(vert, frag, {
 			refraction: {
                 type: 'texture',
@@ -42,11 +43,20 @@ export default class MainScene
                 type: 'texture',
                 value: 1
             },
+            dudvMap: {
+                type: 'texture',
+                value: 2
+            },
+            time: {
+                type: 'float',
+                value: 0
+            },
 		});
 		this.bQuad = new POLY.geometry.Quad(this.bQProgram);
+		this.bQuad.addAttribute(this.bQuad.uvs, 'aUv', 2);
 		this.bQuad.state.blend = true;
 		this.bQuad.rotation.x = Math.PI/2;
-		this.bQuad.scale.set(2);
+		this.bQuad.scale.set(10);
 
 	}
 
@@ -56,17 +66,18 @@ export default class MainScene
 
 		this.viewBg.render();
 		this._bPlanes.draw();
+		// this.viewBg.render();
 
 		// reflection
 		this.fbo.bind();
-		// this.viewBg.render();
+		this.viewBg.render();
 		mat4.scale(this.camera.matrix, this.camera.matrix, [1, -1, 1]);
 		this.viewTopWater.program.bind();
 		this.viewTopWater.program.uniforms.clipY = 0;
 		this.viewTopWater.program.uniforms.dir = -1;
 		this.viewTopWater.render();
 		this.fbo.unbind();
-
+        //
 		mat4.scale(this.camera.matrix, this.camera.matrix, [1, -1, 1]);
 
 		// refraction
@@ -85,9 +96,12 @@ export default class MainScene
 		this.viewUnderWater.render();
 
 		this.bQProgram.bind();
+		this.bQProgram.uniforms.time += .001;
+		this.bQProgram.uniforms.time %= 1;
 
 		this.fbo2.gltexture.bind(0); // refraction
 		this.fbo.gltexture.bind(1); // reflection
+		this.dudvTexture.bind(2);
 		POLY.GL.draw(this.bQuad);
 
 

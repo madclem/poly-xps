@@ -1,6 +1,6 @@
 
 attribute vec3 aPosition;
-attribute vec2 aUv;
+// attribute vec2 aUv;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -15,6 +15,6 @@ varying vec2 vUv;
 void main(void) {
 	vWsPosition	= vec4(modelMatrix * vec4(aPosition, 1.0)).xyz;
 	vPos = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
-	vUv = aUv;
+	// vUv = aUv;
     gl_Position =  vPos;
 }
