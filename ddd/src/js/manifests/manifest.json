@@ -1,0 +1,9 @@
+{
+    "default": [
+        "image/./dudvmap.png",
+        "image/./sky_gradient.jpg",
+        "image/./test1.png",
+        "image/./test2.png",
+        "image/./wood.jpg"
+    ]
+}
