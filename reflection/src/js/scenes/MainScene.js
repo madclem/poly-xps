@@ -18,12 +18,12 @@ export default class MainScene
 		this.camera = new POLY.cameras.PerspectiveCamera();
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
-		// this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
+		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
 		POLY.GL.setCamera(this.camera);
 
 		this.viewBg = new ViewBg(window.ASSET_URL + 'image/sky_gradient.jpg');
-		this.fbo = new POLY.FrameBuffer();
-		this.fbo2 = new POLY.FrameBuffer();
+		this.fbo = new POLY.FrameBuffer(1024, 1024);
+		this.fbo2 = new POLY.FrameBuffer(1024, 1024);
 
 		this.viewTopWater = new ViewTopWater();
 		this.viewUnderWater = new ViewUnderWater();
@@ -46,15 +46,13 @@ export default class MainScene
 		this.bQuad = new POLY.geometry.Quad(this.bQProgram);
 		this.bQuad.state.blend = true;
 		this.bQuad.rotation.x = Math.PI/2;
+		this.bQuad.scale.set(2);
 
 	}
 
 	render()
 	{
-		// this.orbitalControl.update();
-
-		this.camera.setPosition(-2, 1, 1);
-		this.camera.lookAt([0, 0, 0]);
+		this.orbitalControl.update();
 
 		this.viewBg.render();
 		this._bPlanes.draw();
@@ -62,22 +60,19 @@ export default class MainScene
 		// reflection
 		this.fbo.bind();
 		// this.viewBg.render();
-		this.camera.setPosition(-2, -1, 1);
-		this.camera.lookAt([0, 0, 0]);
+		mat4.scale(this.camera.matrix, this.camera.matrix, [1, -1, 1]);
 		this.viewTopWater.program.bind();
 		this.viewTopWater.program.uniforms.clipY = 0;
 		this.viewTopWater.program.uniforms.dir = -1;
 		this.viewTopWater.render();
 		this.fbo.unbind();
 
-		this.camera.setPosition(-2, 1, 1);
-		this.camera.lookAt([0, 0, 0]);
+		mat4.scale(this.camera.matrix, this.camera.matrix, [1, -1, 1]);
 
 		// refraction
 		this.fbo2.bind();
 		// this.viewBg.render();
-		// this._bPlanes.draw();
-
+        //
 		this.viewTopWater.program.bind();
 		this.viewTopWater.program.uniforms.dir = 1;
 		this.viewTopWater.render();
@@ -90,11 +85,9 @@ export default class MainScene
 		this.viewUnderWater.render();
 
 		this.bQProgram.bind();
-		// POLY.gl.uniform1i(this.bQProgram.cacheUniformsLocation, 0);
 
 		this.fbo2.gltexture.bind(0); // refraction
 		this.fbo.gltexture.bind(1); // reflection
-		// this.fbo.textures[0].bind(1);
 		POLY.GL.draw(this.bQuad);
 
 
@@ -103,9 +96,9 @@ export default class MainScene
         //
 		// POLY.gl.viewport(512, 0, 512, 512/POLY.GL.aspectRatio );
 		// this.viewFBO1.render(this.fbo.textures[0], 0);
-        //
-		// this.fbo.clear();
-		// this.fbo2.clear();
+
+		this.fbo.clear();
+		this.fbo2.clear();
 	}
 
 	resize()

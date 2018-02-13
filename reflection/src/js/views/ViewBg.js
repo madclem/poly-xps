@@ -9,7 +9,7 @@ export default class ViewBg
         this.program = new POLY.Program(vert, frag);
 
         let state = new POLY.State(this.program.gl);
-        state.depthTest = false;
+        // state.depthTest = true;
         this.geom = new POLY.geometry.Quad(this.program, null, state);
         this.geom.addAttribute(this.geom.uvs, 'aUv', 2);
 

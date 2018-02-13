@@ -27,9 +27,9 @@ export default class ViewTopWater
                 d: Math.random() * .35 + .1
             });
 
-            cube.position.x = Math.random() * 2 - 2/2 + 2;
-            cube.position.y = h/2;
-            cube.position.z = Math.random() * 2 - 2/2;
+            cube.position.x = Math.random() * 5 - 5/2;
+            cube.position.y = h/2 + Math.random() * .3;
+            cube.position.z = Math.random() * 5 - 5/2;
 
             this.cubes.push(cube);
         }
