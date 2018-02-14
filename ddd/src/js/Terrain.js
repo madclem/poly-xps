@@ -6,7 +6,7 @@ class Terrain {
   }
 
   get(x, y) {
-    if (x < 0 || x > this.max || y < 0 || y > this.max) 
+    if (x < 0 || x > this.max || y < 0 || y > this.max)
       {
         return -1;
       }

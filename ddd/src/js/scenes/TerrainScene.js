@@ -16,7 +16,7 @@ export default class TerrainScene
 		this.camera = new POLY.cameras.PerspectiveCamera();
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
-		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
+		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix, 1);
 		POLY.GL.setCamera(this.camera);
 
 		this.viewBg = new ViewBg(window.ASSET_URL + 'image/sky_gradient.jpg');
