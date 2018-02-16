@@ -3,6 +3,7 @@ import MainScene from './scenes/MainScene';
 import TerrainScene from './scenes/TerrainScene';
 // import MainScene from './scenes/MainScene';
 import { Loader } from 'utils';
+import dat from 'dat-gui';
 
 const Manifests = require('./manifests/manifest.json');
 
@@ -12,6 +13,8 @@ export default class App
 {
 	constructor()
 	{
+		window.gui = new dat.GUI({ width:300 });
+
 		let canvas = document.getElementById("canvas");
 
     	POLY.init(canvas);
@@ -19,6 +22,9 @@ export default class App
 	    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	    this.loader = new Loader();
 	    this.loader.addManifest(Manifests.default, window.ASSET_URL);
+		this.loader.addAssets([
+			window.ASSET_URL + 'model/monolith.obj'
+		]);
 	    this.loader.onComplete.add(this._loadComplete, this);
 	    this.loader.load();
 	}
@@ -26,8 +32,8 @@ export default class App
 	_loadComplete(resources)
 	{
 		POLY.loadedResources = resources;
-		// this.scene = new MainScene();
-		this.scene = new TerrainScene();
+		this.scene = new MainScene();
+		// this.scene = new TerrainScene();
 		this.scene.resize();
 
 	    POLY.utils.loop.add(this._update.bind(this));

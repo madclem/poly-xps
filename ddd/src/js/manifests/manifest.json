@@ -1,9 +1,13 @@
 {
     "default": [
         "image/./dudvmap.png",
+        "image/./pyramid-top.jpg",
         "image/./sky_gradient.jpg",
+        "image/./sky_gradient2.jpg",
+        "image/./sky_gradient3.jpg",
         "image/./test1.png",
         "image/./test2.png",
+        "image/./texture-monolyth.jpg",
         "image/./wood.jpg"
     ]
 }

@@ -9,8 +9,12 @@ uniform float time;
 // varying vec4 clipSpace;
 varying vec4 clipSpace;
 varying vec2 vUv;
+varying vec3 vPos;
+varying float visibility;
+uniform vec3 cameraPosition;
 
 const float waveStrength = 0.005;
+#define SKY_COLOR vec3(27./255., 27./255., 27./255.)
 
 void main(void)
 {
@@ -23,14 +27,33 @@ void main(void)
     vec2 distortion2 = (texture2D(dudvMap, vec2(-vUv.x + time, vUv.y + time)).rg * 2.0 - 1.0) * waveStrength;
 
     vec2 totalDistortion = distortion1 + distortion2;
+    // vec2 totalDistortion = distortion1 + distortion2;
 
     refractTexCoord += totalDistortion;
+    refractTexCoord = clamp(refractTexCoord, 0.001, 0.999);
+
     reflectTexCoord += totalDistortion;
+    // reflectTexCoord = clamp(refractTexCoord, 0.001, 0.999);
+    reflectTexCoord.x = clamp(reflectTexCoord.x, 0.001, 0.999);
+    // reflectTexCoord.y = clamp(reflectTexCoord.y, 0.001, 0.999);
 
     vec3 refractColor = texture2D(refraction, refractTexCoord).rgb;
     vec3 reflectColor = texture2D(reflection, reflectTexCoord).rgb;
 
-    vec3 color = mix(refractColor, reflectColor, .5);
-    color = mix(color, vec3(0.0,0.0,1.0), 0.01);
+    vec3 viewVector = normalize(cameraPosition);
+    float dotProduct = dot(viewVector, vec3(0.,1.,0.));
+
+    vec3 color = mix(reflectColor, refractColor, dotProduct);
+    // vec3 color = mix(refractColor, reflectColor, pow(dotProduct, 1.));
+    color = mix(color, vec3(189.0/255.,50./255.,50./255.), 0.15);
+    color = mix(SKY_COLOR, color, pow(visibility, .2));
+
+    // float dist = length(vPos) * (10.0 + sin(time * 10.) * 2.);
+    // color = mix(vec3(1.0, 0., 0.), color, dist);
+
+
+    // color +=  * dist;
+
+    // gl_FragColor = vec4(dist, dist, dist, 1.);
     gl_FragColor = vec4(color, 1.);
 }

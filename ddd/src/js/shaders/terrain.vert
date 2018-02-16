@@ -8,10 +8,27 @@ uniform mat4 projectionMatrix;
 varying vec3 vPos;
 varying vec3 vNormal;
 varying vec2 vUv;
+varying vec3 vWsPosition;
+varying float visibility;
 
 
 void main(void) {
+
+    float density = .22;
+    float gradient = 10.;
+
+    vec4 worldPosition = modelMatrix * vec4(aPosition, 1.0);
+    vWsPosition	= vec4(modelMatrix * vec4(aPosition, 1.0)).xyz;
+
     vPos = aPosition;
     vNormal = aNormal;
-    gl_Position =  projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
+
+    vec4 positionRelativeToCamera = viewMatrix * worldPosition;
+
+    gl_Position =  projectionMatrix * positionRelativeToCamera;
+
+    float distance = length(positionRelativeToCamera.xyz);
+    visibility = exp(-pow((distance * density), gradient));
+    // visibility = distance;
+    visibility = clamp(visibility, 0., 1.);
 }

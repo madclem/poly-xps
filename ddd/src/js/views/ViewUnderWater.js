@@ -29,16 +29,16 @@ export default class ViewUnderWater
                 value: 0
             }
         });
-        this.floor = new POLY.geometry.Quad(this.programQuad);
-        this.floor.state.depthTest = true;
-        this.floor.position.y = -1;
-        this.floor.scale.x = 4;
-        this.floor.scale.y = 4;
-        this.floor.scale.z = 4;
-        this.floor.rotation.x = Math.PI/2;
-        this.floor.addAttribute(this.floor.uvs, 'aUv', 2);
+        // this.floor = new POLY.geometry.Quad(this.programQuad);
+        // this.floor.state.depthTest = true;
+        // this.floor.position.y = -1;
+        // this.floor.scale.x = 4;
+        // this.floor.scale.y = 4;
+        // this.floor.scale.z = 4;
+        // this.floor.rotation.x = Math.PI/2;
+        // this.floor.addAttribute(this.floor.uvs, 'aUv', 2);
 
-        this.texture = new POLY.Texture(window.ASSET_URL + 'image/wood.jpg');
+        // this.texture = new POLY.Texture(window.ASSET_URL + 'image/wood.jpg');
 
     }
 
@@ -51,9 +51,9 @@ export default class ViewUnderWater
             POLY.GL.draw(this.spheres[i]);
         }
 
-        this.programQuad.bind();
-        this.texture.bind();
-        POLY.GL.draw(this.floor);
+        // this.programQuad.bind();
+        // this.texture.bind();
+        // POLY.GL.draw(this.floor);
 
     }
 }

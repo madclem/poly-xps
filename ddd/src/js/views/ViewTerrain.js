@@ -14,7 +14,16 @@ export default class ViewTerrain
     	this.terrain.generate(20);
 
     	// program
-    	this.program = new POLY.Program(vert, frag);
+    	this.program = new POLY.Program(vert, frag, {
+			clipY: {
+                type: 'float',
+                value: 0
+            },
+            dir: {
+                type: 'float',
+                value: 0.0
+            }
+		});
 
 		this.w = 10;
     	// quad
@@ -25,7 +34,9 @@ export default class ViewTerrain
     		heightSegment: this.terrain.size - 1,
     	});
 
+    	this.quad.state.depthTest = true;
     	this.quad.rotation.x = -Math.PI/2;
+    	this.quad.position.y = -.6;
     	// this.quad = new POLY.geometry.Plane(this.program, {
     	// 	w: this.w,
     	// 	h: this.w,

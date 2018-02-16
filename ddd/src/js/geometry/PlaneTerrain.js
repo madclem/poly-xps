@@ -9,7 +9,7 @@ export default class PlaneTerrain extends POLY.geometry.Mesh
 {
     constructor(program, data, state, drawType = 4)
     {
-        super(program)
+        super(program, state, drawType)
 
         data = data || {};
 
@@ -48,7 +48,6 @@ export default class PlaneTerrain extends POLY.geometry.Mesh
 
         let vertices = [];
         let normals = [];
-        let uvs = [];
 
         for (let iy = 0; iy < gridY1; iy ++ )
         {
@@ -69,8 +68,8 @@ export default class PlaneTerrain extends POLY.geometry.Mesh
                     normals.push( 0, 1, 0 );
                 }
 
-                uvs.push( ix / gridX );
-                uvs.push( 1 - ( iy / gridY ) );
+                this.uvs.push( ix / gridX );
+                this.uvs.push( 1 - ( iy / gridY ) );
             }
         }
 

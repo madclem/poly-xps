@@ -1,8 +1,14 @@
 precision highp float;
 
+uniform float clipY;
+uniform float dir; // -1 or 1
+
+varying vec3 vWsPosition;
 varying vec2 vUv;
 varying vec3 vPos;
 varying vec3 vNormal;
+varying float visibility;
+
 // uniform sampler2D texture;
 
 float diffuse(vec3 N, vec3 L) {
@@ -22,15 +28,23 @@ vec3 diffuse(vec3 N, vec3 L, vec3 C) {
 #define LIGHT0 vec3(.5, 1.0, .8)
 #define LIGHT1 vec3(1., 0.5, 1.5)
 
+#define SKY_COLOR vec3(27./255., 27./255., 27./255.)
+
 void main(void)
 {
-    //vec4 color = texture2D(texture, vUv);
-    vec3 color1 = vec3(240./255.0, 240./255., 245./255.);
-      vec3 color2 = vec3(24./255.0, 22./255., 20./255.);
+	if(vWsPosition.y  * dir > clipY * dir)
+    {
+        discard;
+    }
 
-        vec3 d0 = diffuse(vNormal, LIGHT0, color1) * 1.5;
-    	vec3 d1 = diffuse(vNormal, LIGHT1, color2) * 1.5;
+    vec3 color1 = vec3(24./255.0, 24./255., 24./255.);
+    vec3 color2 = vec3(44./255.0, 42./255., 40./255.);
+    vec3 d0 = diffuse(vNormal, LIGHT0, color1) * 1.5;
+    vec3 d1 = diffuse(vNormal, LIGHT1, color2) * 1.5;
+
+    // vec3 color = vec3(visibility);
     vec3 color = vec3(d0 + d1);
+	color = mix(SKY_COLOR, color, visibility);
 
     gl_FragColor = vec4(color,1);
 }

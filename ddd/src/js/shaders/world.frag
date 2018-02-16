@@ -15,6 +15,6 @@ void main(void)
     }
 
     // vec3 color = vec3(dir);
-    vec3 color = vec3(1.0);
+    vec3 color = vec3(.3);
     gl_FragColor = vec4(color, 1.);
 }
