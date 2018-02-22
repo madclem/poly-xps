@@ -13,11 +13,13 @@ export default class App
 {
 	constructor()
 	{
-		window.gui = new dat.GUI({ width:300 });
+		// window.gui = new dat.GUI({ width:300 });
+		window.gui = {
+			add:()=>{}
+		};
 
 		let canvas = document.getElementById("canvas");
 
-    	POLY.init(canvas);
 	    this.gl = POLY.gl;
 	    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	    this.loader = new Loader();

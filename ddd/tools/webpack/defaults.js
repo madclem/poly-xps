@@ -35,7 +35,7 @@ const dfltPort = 8080;
       {
         test: /\.(glsl|frag|vert)$/,
         loader: 'raw',
-        // exclude: /node_modules/
+        exclude: /node_modules/
       },
       {
         test: /node_modules/,
