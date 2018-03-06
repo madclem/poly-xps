@@ -83,6 +83,7 @@ export default class ViewRender
 
 		this.program.uniforms.viewport =  [POLY.gl.canvas.width, POLY.gl.canvas.height];
 
+		// console.log(p);
 		this.program.uniforms.percent =  p;
 		this.program.uniforms.time =  this.time;
 

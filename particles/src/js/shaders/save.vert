@@ -16,10 +16,7 @@ void main(void) {
 	vColor       = aPosition;
 	vec3 pos     = vec3(aUv, 0.0);
 	gl_Position  = vec4(pos, 1.0);
-	// gl_Position  = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
-
 	gl_PointSize = 1.0;
-
 
 	vExtra       = aExtra;
 }

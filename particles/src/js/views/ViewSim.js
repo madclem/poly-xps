@@ -35,7 +35,6 @@ export default class ViewSim
         });
 
 		this.mesh = new POLY.geometry.BigTriangle(this.program, null, 0);
-		// this.mesh.scale.set(10);
 	}
 
 

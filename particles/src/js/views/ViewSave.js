@@ -12,15 +12,17 @@ export default class ViewSave
 
 	constructor()
     {
+		// we will create a texture storing particles positions
+		// in the shader, gl_Position is actually the uvs array
+		// and the color passed to the fragment shader is the aPosition array
         let positions = [];
-		let coords = [];
+		let uvs = [];
 		let indices = [];
 		let extras = [];
 		let count = 0;
 
 		let numParticles = 256;
 		let totalParticles = numParticles * numParticles;
-		console.debug('Total Particles : ', totalParticles);
 		let ux, uy;
 		let range = 3;
 
@@ -34,7 +36,7 @@ export default class ViewSave
 				uy = j / numParticles * 2.0 - 1.0 + .5 / numParticles;
 
 				extras.push(Math.random(), Math.random(), Math.random());
-				coords.push(ux, uy);
+				uvs.push(ux, uy);
 				indices.push(count);
 				count ++;
 
@@ -46,7 +48,7 @@ export default class ViewSave
 
 		this.mesh.addPosition(positions);
 		this.mesh.addAttribute(extras, 'aExtra', 3);
-		this.mesh.addAttribute(coords, 'aUv', 2);
+		this.mesh.addAttribute(uvs, 'aUv', 2);
 		this.mesh.addIndices(indices);
 
         this.program.bind();
