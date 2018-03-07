@@ -75,6 +75,7 @@
     "gulp-rename": "^1.2.2",
     "node-dir": "^0.1.17",
     "path": "^0.12.7",
+    "poly.js": "git+https://github.com/madclem/poly.js.git#v1.0.0",
     "raw-loader": "^0.5.1",
     "signals": "^1.0.0",
     "stats-js": "^1.0.0-alpha1"
