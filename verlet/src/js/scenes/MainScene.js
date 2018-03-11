@@ -2,6 +2,7 @@ import * as POLY from 'poly/Poly';
 import ViewBg from '../views/ViewBg';
 import Physics from '../Physics';
 import PointMass from '../views/ViewPointMass';
+import ViewQuad from '../views/ViewQuad';
 import {mat3, mat4} from 'gl-matrix';
 
 export default class MainScene
@@ -27,16 +28,14 @@ export default class MainScene
 		this.stiffnesses = .6;
 
 		this.pointsGrid = [];
+		this.views = [];
 		this.physics = new Physics();
 		this.createGridPoints();
+		this.createQuads();
 	}
 
 	createGridPoints()
 	{
-		// midWidth: amount to translate the curtain along x-axis for it to be centered
-		// (gridWidth * restingDistances) = curtain's pixel width
-		// let midWidth = (int) (width/2 - (gridWidth * restingDistances)/2);
-		// Since this our fabric is basically a grid of points, we have two loops
 		for (let y = 0; y < this.gridHeight; y++) { // due to the way PointMasss are attached, we need the y loop on the outside
 			for (let x = 0; x < this.gridWidth; x++) {
 				let pointmass = new PointMass((-(this.gridWidth - 1) / 2) * this.restingDistances + x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
@@ -77,15 +76,46 @@ export default class MainScene
 		this.pt.pinTo(null, null, -.8);
 	}
 
+	createQuads()
+	{
+		let nbColumns = this.gridWidth - 1;
+		let nbLines = this.gridHeight - 1;
+
+		let nbQuads = nbColumns * nbLines;
+
+		for (var y = 0; y < nbLines; y++) {
+			for (var x = 0; x < nbColumns; x++) {
+				let pts = [];
+				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y)]);
+				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y)]);
+				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y + 1)]);
+				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y + 1)]);
+
+				let viewQuad = new ViewQuad(pts, this.pointsGrid);
+
+				this.views.push(viewQuad);
+			}
+		}
+	}
+
+	getPointsAtCoordinates(x, y)
+	{
+		let index = x + (this.gridWidth) * y;
+		return index;
+	}
+
 	render()
 	{
 		this.orbitalControl.update();
-		// this.viewBg.render();
 		this._bPlanes.draw();
 		this.physics.update(this.pointsGrid);
 
 		for (var i = 0; i < this.pointsGrid.length; i++) {
 			this.pointsGrid[i].render();
+		}
+
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].render();
 		}
 
 

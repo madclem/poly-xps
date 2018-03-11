@@ -118,6 +118,11 @@ export default class ViewPointMass
       this.pinZ = pZ;
     }
 
+    getPoint()
+    {
+        return this;
+    }
+
     render()
     {
         this.program.bind();
