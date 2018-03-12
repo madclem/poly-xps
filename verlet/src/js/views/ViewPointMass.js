@@ -23,6 +23,8 @@ export default class ViewPointMass
         // An ArrayList for links, so we can have as many links as we want to this PointMass
         this.links = [];
 
+        this.quads = [];
+
         this.pinned = false;
         this.pinX = 0;
         this.pinY = 0;
