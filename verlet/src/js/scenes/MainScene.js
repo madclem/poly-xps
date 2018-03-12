@@ -32,6 +32,8 @@ export default class MainScene
 		this.physics = new Physics();
 		this.createGridPoints();
 		this.createQuads();
+
+		this.limitX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2.;
 	}
 
 	createGridPoints()
@@ -91,7 +93,7 @@ export default class MainScene
 				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y + 1)]);
 				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y + 1)]);
 
-				let viewQuad = new ViewQuad(pts, this.pointsGrid, x === 0);
+				let viewQuad = new ViewQuad(pts, this.pointsGrid, x);
 
 				this.views.push(viewQuad);
 			}
@@ -117,6 +119,7 @@ export default class MainScene
 	render()
 	{
 
+		// this.limitX += .01
 		let nbColumns = this.gridWidth - 1;
 		let nbLines = this.gridHeight - 1;
 
@@ -124,12 +127,12 @@ export default class MainScene
 		this._bPlanes.draw();
 		this.physics.update(this.pointsGrid);
 
-		this.limitX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2;
 
+
+		let test = false;
 		for (let y = 0; y < this.gridHeight; y++) { // due to the way PointMasss are attached, we need the y loop on the outside
 			// test != test;
 
-			let test = false;
 
 			for (let x = 0; x < this.gridWidth; x++) {
 
@@ -140,67 +143,64 @@ export default class MainScene
 				if(pointmass.x <= this.limitX && pointmass.lastX <= this.limitX)
 				{
 
+					console.log('pointmass.id', pointmass.id);
 					let xPt = pointmass.x + this.gridWidth;
 					pointmass.x = pointmass.lastX = xPt;
+					pointmass.program.bind();
+					pointmass.program.uniforms.color = [1,0,0];
 					pointmass.pinTo(xPt)
 
 					this.pointsGrid.splice(index, 1)
 					this.pointsGrid.splice(index + this.gridWidth, 0, pointmass);
 
-					// get first quad on that line
-					// let quad = this.views[indexView];
-					// console.log(indexView, quad);
-
-					// if(quad)
-					// {
-					// 	quad.MOVED = true;
-					// 	console.log('here');
-					// 	this.views.splice(indexView, 1)
-					// 	this.views.splice(indexView + this.gridWidth - 1, 0, quad);
-					// 	console.log(this.views);
-					// }
-
-					x--;
-					// this.move(index, index + this.gridWidth);
-
-					pointmass.MOVED = true;
-
-					// break;
-
 					test = true;
-					// pointmass.x = pointmass.lastX += this.gridWidth;
-					// console.log('here', index);
-
-
-					// this.pointsGrid.splice(i)
 				}
 				else {
-					pointmass.render();
+					// pointmass.render();
 
 				}
 			}
 
-			if(test)
-			{
-				console.log('here2222');
-				for (var yView = 0; yView < nbLines; yView++) {
-					for (var xView = 0; xView < 1; xView++) {
+		}
 
-						let index = this.getViewAtCoordinates(xView, yView);
-						let quad = this.views[index];
-						quad.MOVED = true;
-						console.log('moved', index);
-						this.views.splice(index, 1)
-						this.views.splice(index + this.gridWidth - 1, 0, quad);
+		if(test)
+		// if(test)
+		{
+			this.notIn = true;
+			console.log('here2222');
+			for (var yView = 0; yView < nbLines; yView++) {
+				for (var xView = 0; xView < 1; xView++) {
 
-						// quad.attachPointRef(pts);
-					}
+					let index = this.getViewAtCoordinates(xView, yView);
+					let quad = this.views[index];
+					quad.MOVED = true;
+
+					// quad.program.bind();
+					// quad.program.uniforms.color = [1, 0, 0];
+					// console.log('moved', index);
+					// console.log('to', index + this.gridWidth - 1);
+					this.views.splice(index, 1)
+					this.views.splice(index + this.gridWidth - 1, 0, quad);
+
+					// quad.attachPointRef(pts);
 				}
+			}
 
+		}
+
+		for (var yView = 0; yView < nbLines; yView++) {
+			for (var xView = 0; xView < nbColumns; xView++) {
+
+				let index = this.getViewAtCoordinates(xView, yView);
+				let quad = this.views[index];
+				quad.render();
+
+				// quad.attachPointRef(pts);
 			}
 		}
 
 
+		// assign the quad points dinamycally
 		for (var y = 0; y < nbLines; y++) {
 			for (var x = 0; x < nbColumns; x++) {
 				let pts = [];
@@ -221,11 +221,11 @@ export default class MainScene
 
 		for (var i = 0; i < this.pointsGrid.length; i++) {
 
-				// this.pointsGrid[i].render();
+				this.pointsGrid[i].render();
 		}
 
 		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].render();
+			// this.views[i].render();
 		}
 
 

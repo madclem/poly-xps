@@ -1,5 +1,6 @@
 import * as POLY from 'poly/Poly';
 import Link from './Link';
+import frag from '../shaders/quadColor.frag';
 
 export default class ViewPointMass
 {
@@ -8,6 +9,8 @@ export default class ViewPointMass
         this.x = xPos;
         this.y = yPos;
         this.z = 0;
+
+        this.id = Math.floor(Math.random() * 2000)
 
         this.lastX = this.x;
         this.lastY = this.y;
@@ -29,7 +32,12 @@ export default class ViewPointMass
         this.pinX = 0;
         this.pinY = 0;
 
-        this.program = new POLY.Program();
+        this.program = new POLY.Program(null, frag, {
+            color: {
+                value: [1, 1, 1],
+                type: 'vec3'
+            }
+        });
         this.view = new POLY.geometry.Cube(this.program);
         this.view.position.x = 1;
         this.view.scale.set(.05);

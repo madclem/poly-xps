@@ -4,12 +4,17 @@ import frag from '../shaders/quadColor.frag';
 
 export default class ViewQuad
 {
-    constructor(pointsRef, pointsGrid, firstColumn)
+    constructor(pointsRef, pointsGrid, col)
     {
         this.pointsRef = pointsRef;
         this.pointsGrid = pointsGrid;
 
-        let color = firstColumn ? [1,1,1] : [Math.random(), Math.random(), Math.random()]
+        let colors = [
+            [1,1,1],
+            [1,0,0],
+        ]
+
+        let color = colors[col] ? colors[col] : [Math.random(), Math.random(), Math.random()]
         this.program = new POLY.Program(null, frag, {
             color: {
                 type: 'vec3',
