@@ -2,8 +2,25 @@ import * as POLY from 'poly/Poly';
 import ViewBg from '../views/ViewBg';
 import Physics from '../Physics';
 import PointMass from '../views/ViewPointMass';
+import PointQuad from '../views/ViewPointQuad';
 import ViewQuad from '../views/ViewQuad';
+import SpeedController from '../control/SpeedController';
 import {mat3, mat4} from 'gl-matrix';
+
+
+const getCursorPos = function (e) {
+    if(e.touches) {
+        return {
+            x:e.touches[0].pageX,
+            y:e.touches[0].pageY
+        };
+    } else {
+        return {
+            x:e.clientX,
+            y:e.clientY
+        };
+    }
+};
 
 export default class MainScene
 {
@@ -17,6 +34,8 @@ export default class MainScene
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
 		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
+		// this.orbitalControl.lock(true);
+		// this.orbitalControl.lockZoom(true);
 		POLY.GL.setCamera(this.camera);
 
 		this.viewBg = new ViewBg(window.ASSET_URL + 'image/sky_gradient.jpg');
@@ -28,12 +47,57 @@ export default class MainScene
 		this.stiffnesses = .6;
 
 		this.pointsGrid = [];
+		this.pointsQuad = [];
 		this.views = [];
 		this.physics = new Physics();
 		this.createGridPoints();
 		this.createQuads();
 
-		this.limitX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2.;
+		this.cameraX = 0;
+
+		gui.add(this, 'cameraX', -2, 2);
+
+		this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2;
+		this.limitMaxX = this.gridWidth * this.restingDistances/2 + this.restingDistances;
+		// this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances;
+
+		// this.addEvents();
+	}
+
+	addEvents()
+	{
+		window.addEventListener('mousedown', (e) => this._onDown(e));
+        window.addEventListener('mouseup', () => this._onUp());
+        window.addEventListener('mousemove', (e) => this._onMove(e));
+
+        window.addEventListener('touchstart', (e) => this._onDown(e));
+        window.addEventListener('touchend', () => this._onUp());
+        window.addEventListener('touchmove', (e) => this._onMove(e));
+	}
+
+	_onDown(e)
+	{
+		if(this._isDown) return;
+
+		this._isDown = true;
+
+		this.firstPos = getCursorPos(e);
+	}
+
+	_onMove(e)
+	{
+		if(!this._isDown) return;
+
+		console.log('here');
+		let pt = getCursorPos(e);
+		let offsetX = (this.firstPos.x - pt.x) / 100;
+
+		this.speed.x = offsetX;
+	}
+
+	_onUp(e)
+	{
+		this._isDown = false;
 	}
 
 	createGridPoints()
@@ -41,6 +105,7 @@ export default class MainScene
 		for (let y = 0; y < this.gridHeight; y++) { // due to the way PointMasss are attached, we need the y loop on the outside
 			for (let x = 0; x < this.gridWidth; x++) {
 				let pointmass = new PointMass((-(this.gridWidth - 1) / 2) * this.restingDistances + x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
+				let pointquad = new PointQuad((-(this.gridWidth - 1) / 2) * this.restingDistances +  x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
 
 				// attach to
 				// x - 1  and
@@ -52,19 +117,21 @@ export default class MainScene
 				//
 				// PointMass attachTo parameters: PointMass PointMass, float restingDistance, float stiffness
 				// try disabling the next 2 lines (the if statement and attachTo part) to create a hairy effect
-				// if (x != 0)
-					// pointmass.attachTo(this.pointsGrid[this.pointsGrid.length-1], this.restingDistances, this.stiffnesses);
+				if (x != 0)
+					pointmass.attachTo(this.pointsGrid[this.pointsGrid.length-1], this.restingDistances, this.stiffnesses);
 				// the index for the PointMasss are one dimensions,
 				// so we convert x,y coordinates to 1 dimension using the formula y*width+x
-				// if (y != 0)
-					// pointmass.attachTo(this.pointsGrid[(y - 1) * (this.gridWidth) + x], this.restingDistances, this.stiffnesses);
+				if (y != 0)
+					pointmass.attachTo(this.pointsGrid[(y - 1) * (this.gridWidth) + x], this.restingDistances, this.stiffnesses);
 
 				// we pin the very top PointMasss to where they are
-				if ((y == 0 && x == 0) || (y == 0 && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == 0))
+				// if ((y == 0 && x == 0) || (y == 0 && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == 0))
+				if (x == 0 || y == 0 || x == (this.gridWidth - 1) || y == (this.gridHeight - 1))
 					pointmass.pinTo(pointmass.x, pointmass.y);
 
 				// add to PointMass array
 				this.pointsGrid.push(pointmass);
+				this.pointsQuad.push(pointquad);
 			}
 		}
 
@@ -74,10 +141,91 @@ export default class MainScene
 		this.pt.lastZ = 1;
 		this.tick = 0;
 
-		// this.pt.z = this.pt.lastZ = -.4;
-		this.pt.pinTo(null, null, -.8);
+		this.pt.z = this.pt.lastZ = -.4;
+		this.pt.pinTo(null, null, -2);
+
+		this.ptQuad = this.pointsQuad[12];
+
+		this.findNeighbours(this.ptQuad);
 	}
 
+	findNeighbours(p1)
+	{
+		p1.program.bind();
+		// p1.program.uniforms.color = [1, 0, 0]
+
+		let sum = 0;
+		let nbPoints = 0;
+
+		let dists = []
+
+		let points = [];
+		let maxDist = 0;
+		for (var i = 0; i < this.pointsGrid.length; i++)
+		{
+			// calculate distance between the points, if between restingDistances, keep them for next step
+			let p2 = this.pointsGrid[i];
+			let dist = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
+
+			if(dist < this.restingDistances)
+			{
+				if(dist > maxDist) maxDist = dist;
+				p2.program.bind();
+				p2.program.uniforms.color = [1, 0, 1]
+
+				dists.push({
+					dist,
+					z: p2.z
+				});
+				// sum += p2.z *  (1 - dist/this.restingDistances);
+
+				points.push({
+					p: p2,
+					dist
+				});
+				// console.log(nbPoints, p2.z, Math.floor((1 - dist/this.restingDistances) * 10)/10);
+				// nbPoints++;
+
+				// console.log('nbPoints', nbPoints);
+			}
+		}
+
+		function compare(a,b) {
+		  if (a.dist < b.dist)
+		    return -1;
+		  if (a.dist > b.dist)
+		    return 1;
+		  return 0;
+		}
+
+		points.sort(compare);
+
+
+		if(points.length >= 3)
+		{
+			let A = points[0].p;
+			let B = points[1].p;
+			let C = points[2].p;
+
+			let z = A.z + ((B.x - A.x) * (C.z - A.z) - (C.x - A.x) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.y - A.y)    -    ((B.y - A.y) * (C.z - A.z) - (C.y - A.y) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.x - A.x)
+			p1.setZ(z);
+			// p1.z = z;
+		}
+		// for (var i = 0; i < dists.length; i++)
+		// {
+		// 	let d = dists[i];
+		//
+		// 	let p = (1 - d.dist/maxDist);
+		// 	sum += d.z *  (1 - d.dist/maxDist);
+		//
+		// 	console.log(d.z, p);
+		// }
+
+
+		// console.log('p2.z', p2.z);
+		// console.log('sum', sum);
+		// console.log(p1.z);
+	}
 	createQuads()
 	{
 		let nbColumns = this.gridWidth - 1;
@@ -88,10 +236,10 @@ export default class MainScene
 		for (var y = 0; y < nbLines; y++) {
 			for (var x = 0; x < nbColumns; x++) {
 				let pts = [];
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y + 1)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y + 1)]);
+				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x, y)]);
+				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x + 1, y)]);
+				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x + 1, y + 1)]);
+				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x, y + 1)]);
 
 				let viewQuad = new ViewQuad(pts, this.pointsGrid, x);
 
@@ -119,95 +267,121 @@ export default class MainScene
 	render()
 	{
 
-		// this.limitX += .01
+		// this.limitMinX += .01
 		let nbColumns = this.gridWidth - 1;
 		let nbLines = this.gridHeight - 1;
 
 		this.orbitalControl.update();
 		this._bPlanes.draw();
-		this.physics.update(this.pointsGrid);
 
+		// this.limitMinX += .01
 
-
-		let test = false;
-		for (let y = 0; y < this.gridHeight; y++) { // due to the way PointMasss are attached, we need the y loop on the outside
-			// test != test;
-
-
-			for (let x = 0; x < this.gridWidth; x++) {
-
-				let index = this.getPointsAtCoordinates(x, y);
-				let indexView = this.getViewAtCoordinates(x, y);
-				let pointmass = this.pointsGrid[index];
-
-				if(pointmass.x <= this.limitX && pointmass.lastX <= this.limitX)
-				{
-
-					console.log('pointmass.id', pointmass.id);
-					let xPt = pointmass.x + this.gridWidth;
-					pointmass.x = pointmass.lastX = xPt;
-					pointmass.program.bind();
-					pointmass.program.uniforms.color = [1,0,0];
-					pointmass.pinTo(xPt)
-
-					this.pointsGrid.splice(index, 1)
-					this.pointsGrid.splice(index + this.gridWidth, 0, pointmass);
-
-					test = true;
-				}
-				else {
-					// pointmass.render();
-
-				}
-			}
-
-		}
-
-		if(test)
-		// if(test)
+		for (var yView = 0; yView < nbLines; yView++)
 		{
-			this.notIn = true;
-			console.log('here2222');
-			for (var yView = 0; yView < nbLines; yView++) {
-				for (var xView = 0; xView < 1; xView++) {
-
-					let index = this.getViewAtCoordinates(xView, yView);
-					let quad = this.views[index];
-					quad.MOVED = true;
-
-					// quad.program.bind();
-					// quad.program.uniforms.color = [1, 0, 0];
-					// console.log('moved', index);
-					// console.log('to', index + this.gridWidth - 1);
-					this.views.splice(index, 1)
-					this.views.splice(index + this.gridWidth - 1, 0, quad);
-
-					// quad.attachPointRef(pts);
-				}
-			}
-
-		}
-
-		for (var yView = 0; yView < nbLines; yView++) {
-			for (var xView = 0; xView < nbColumns; xView++) {
-
+			for (var xView = 0; xView < nbColumns; xView++)
+			{
 				let index = this.getViewAtCoordinates(xView, yView);
 				let quad = this.views[index];
 				quad.render();
-
-				// quad.attachPointRef(pts);
 			}
 		}
 
 
+		let reappearLeft = false;
+		let reappearRight = false;
+		let reappearTop = false;
+		let reappearBottom = false;
+		for (let y = 0; y < this.gridHeight; y++)   // due to the way PointMasss are attached, we need the y loop on the outside
+		{
+			for (let x = 0; x < this.gridWidth; x++)
+			{
+				let index = this.getPointsAtCoordinates(x, y);
+				let pointquad = this.pointsQuad[index];
+
+				// pointquad.x += .01;
+				// pointquad.x = pointquad.origin.x + this.cameraX;
+				if(pointquad.x < this.limitMinX)
+				{
+					pointquad.x += this.gridWidth;
+
+					this.pointsQuad.splice(index, 1)
+					this.pointsQuad.splice(index + this.gridWidth, 0, pointquad);
+
+					reappearRight = true;
+				}
+				else if(pointquad.x > this.limitMinX + this.gridWidth)
+				{
+					pointquad.x = this.limitMinX;
+
+					pointquad.program.bind();
+					pointquad.program.uniforms.color = [1,1,0];
+					this.pointsQuad.splice(index, 1)
+					this.pointsQuad.splice(index - this.gridWidth + 1, 0, pointquad);
+
+					reappearLeft = true;
+				}
+
+				pointquad.render();
+			}
+
+		}
+
+		if(reappearRight)
+		{
+			this.notIn = true;
+			for (var yView = 0; yView < nbLines; yView++)
+			{
+				for (var xView = 0; xView < 1; xView++)
+				{
+
+					let index = this.getViewAtCoordinates(xView, yView);
+					let quad = this.views[index];
+
+					this.views.splice(index, 1)
+					this.views.splice(index + this.gridWidth - 1, 0, quad);
+				}
+			}
+		}
+		else if(reappearLeft)
+		{
+			for (var yView = 0; yView < nbLines; yView++)
+			{
+				for (var xView = nbColumns - 1; xView < nbColumns; xView++)
+				{
+
+					let index = this.getViewAtCoordinates(xView, yView);
+					let quad = this.views[index];
+
+					quad.program.bind();
+					// quad.program.uniforms.color = [0,0,0];
+					this.views.splice(index, 1)
+					this.views.splice(index - nbColumns + 1, 0, quad);
+				}
+			}
+		}
+
+
+		// this.findNeighbours(this.ptQuad);
+		for (var i = 0; i < this.pointsQuad.length; i++) {
+			this.findNeighbours(this.pointsQuad[i]);
+		}
+		// this.findNeighbours(this.ptQuad);
+		// for (var i = 0; i < this.points.length; i++) {
+		// 	this.points[i]
+		// }
+
+
+
 		// assign the quad points dinamycally
-		for (var y = 0; y < nbLines; y++) {
-			for (var x = 0; x < nbColumns; x++) {
+		for (var y = 0; y < nbLines; y++)
+		{
+			for (var x = 0; x < nbColumns; x++)
+			{
 				let pts = [];
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y + 1)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y + 1)]);
+				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x, y)]);
+				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x + 1, y)]);
+				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x + 1, y + 1)]);
+				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x, y + 1)]);
 
 				let index = this.getPointsAtCoordinates(x, y);
 				let indexView = this.getViewAtCoordinates(x, y);
@@ -218,18 +392,18 @@ export default class MainScene
 			}
 		}
 
+		// for (var i = 0; i < this.pointsGrid.length; i++) {
+			// this.pointsGrid[i].render();
+		// }
 
-		for (var i = 0; i < this.pointsGrid.length; i++) {
-
-				this.pointsGrid[i].render();
+		if(SpeedController.isDown)
+		{
+			for (var i = 0; i < this.pointsQuad.length; i++) {
+				this.pointsQuad[i].x -= this.cameraX;
+			}
 		}
 
-		for (var i = 0; i < this.views.length; i++) {
-			// this.views[i].render();
-		}
-
-
-
+		this.physics.update(this.pointsGrid);
 	}
 
 	resize()

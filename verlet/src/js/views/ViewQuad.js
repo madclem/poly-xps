@@ -34,8 +34,8 @@ export default class ViewQuad
     {
         this.pointsRef = [];
 
-        for (var i = 0; i < pts.length; i++) {
-            pts[i].quads.push(this);
+        for (var i = 0; i < pts.length; i++)
+        {
             this.pointsRef.push(pts[i]);
         }
     }

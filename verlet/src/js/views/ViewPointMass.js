@@ -47,21 +47,19 @@ export default class ViewPointMass
     {
         // this.applyForce(0, 0)
 
-        this.velX = this.x - this.lastX;
-        this.velY = this.y - this.lastY;
-        this.velZ = this.z - this.lastZ;
+        let velX = this.x - this.lastX;
+        let velY = this.y - this.lastY;
+        let velZ = this.z - this.lastZ;
 
         // dampen velocity
-        this.velX *= 0.99;
-        this.velY *= 0.99;
-        this.velZ *= 0.99;
-
-        let timeStepSq = timeStep * timeStep;
+        velX *= 0.99;
+        velY *= 0.99;
+        velZ *= 0.99;
 
         // calculate the next position using Verlet Integration
-        let nextX = this.x + this.velX + 0.5 * this.accX * timeStepSq;
-        let nextY = this.y + this.velY + 0.5 * this.accY * timeStepSq;
-        let nextZ = this.z + this.velZ + 0.5 * this.accZ * timeStepSq;
+        let nextX = this.x + velX;
+        let nextY = this.y + velY;
+        let nextZ = this.z + velZ;
 
         // reset variables
         this.lastX = this.x;
@@ -73,7 +71,13 @@ export default class ViewPointMass
         this.z = nextZ;
     }
 
+    resetLinks()
+    {
+        this.links.length = 0;
+    }
     solveConstraints() {
+
+        // return;
       /* Link Constraints */
       // Links make sure PointMasss connected to this one is at a set distance away
       for (let i = 0; i < this.links.length; i++) {
@@ -121,6 +125,11 @@ export default class ViewPointMass
       // this.links.splice(lnk);
     }
 
+    unpin()
+    {
+        this.pinned = false;
+    }
+    
     pinTo (pX, pY, pZ = 0) {
       this.pinned = true;
       this.pinX = pX || this.x;
