@@ -129,7 +129,7 @@ export default class ViewPointMass
     {
         this.pinned = false;
     }
-    
+
     pinTo (pX, pY, pZ = 0) {
       this.pinned = true;
       this.pinX = pX || this.x;
@@ -142,7 +142,7 @@ export default class ViewPointMass
         return this;
     }
 
-    render()
+    render(debug)
     {
         this.program.bind();
         this.view.position.x = this.x;

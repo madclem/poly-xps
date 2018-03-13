@@ -26,6 +26,8 @@ export default class MainScene
 {
 	constructor()
 	{
+
+		this.debug = true;
 		this.gl = null;
 		this.tick = 0;
 		this.gl = POLY.gl;
@@ -38,34 +40,27 @@ export default class MainScene
 		// this.orbitalControl.lockZoom(true);
 		POLY.GL.setCamera(this.camera);
 
-		this.viewBg = new ViewBg(window.ASSET_URL + 'image/sky_gradient.jpg');
+
+		this.projectionMatrix = mat4.create();
+
 		this._bPlanes = new POLY.helpers.BatchPlanes();
 
-		this.gridHeight = 7;
-		this.gridWidth = 10;
+
+		this.gridHeight = 4;
+		this.gridWidth = 8;
 		this.restingDistances = 1;
-		this.stiffnesses = .6;
+		this.stiffnesses = .04;
 
 		this.pointsGrid = [];
 		this.pointsQuad = [];
 		this.views = [];
+
 		this.physics = new Physics();
 		this.createGridPoints();
 		this.createQuads();
 
-
-		this.position = {
-			x: 4,
-			y: 0,
-		}
-		this.cameraX = 0;
-
-		gui.add(this, 'cameraX', -2, 2);
-
 		this.limitMinY = -(this.gridHeight * this.restingDistances)/2 + this.restingDistances/2;
 		this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2;
-		this.limitMaxX = this.gridWidth * this.restingDistances/2 + this.restingDistances;
-		// this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances;
 
 		// this.addEvents();
 	}
@@ -107,63 +102,32 @@ export default class MainScene
 
 	createGridPoints()
 	{
-		for (let y = 0; y < this.gridHeight; y++) { // due to the way PointMasss are attached, we need the y loop on the outside
-			for (let x = 0; x < this.gridWidth; x++) {
+		for (let y = 0; y < this.gridHeight; y++) // due to the way PointMasss are attached, we need the y loop on the outside
+		{
+			for (let x = 0; x < this.gridWidth; x++)
+			{
 				let pointmass = new PointMass((-(this.gridWidth - 1) / 2) * this.restingDistances + x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
 				let pointquad = new PointQuad((-(this.gridWidth - 1) / 2) * this.restingDistances +  x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
 
-				// attach to
-				// x - 1  and
-				// y - 1
-				//  *<---*<---*<-..
-				//  ^    ^    ^
-				//  |    |    |
-				//  *<---*<---*<-..
-				//
-				// PointMass attachTo parameters: PointMass PointMass, float restingDistance, float stiffness
-				// try disabling the next 2 lines (the if statement and attachTo part) to create a hairy effect
 				if (x != 0)
 					pointmass.attachTo(this.pointsGrid[this.pointsGrid.length-1], this.restingDistances, this.stiffnesses);
-				// the index for the PointMasss are one dimensions,
-				// so we convert x,y coordinates to 1 dimension using the formula y*width+x
 				if (y != 0)
 					pointmass.attachTo(this.pointsGrid[(y - 1) * (this.gridWidth) + x], this.restingDistances, this.stiffnesses);
 
-				// we pin the very top PointMasss to where they are
-				// if ((y == 0 && x == 0) || (y == 0 && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == 0))
 				if (x == 0 || y == 0 || x == (this.gridWidth - 1) || y == (this.gridHeight - 1))
-				{
-					if(y == 0)
-					{
-						// console.log('pintTo', pointmass.y);
-					}
 					pointmass.pinTo(pointmass.x, pointmass.y);
-				}
 
-				// add to PointMass array
 				this.pointsGrid.push(pointmass);
 				this.pointsQuad.push(pointquad);
 			}
 		}
-
-		this.pt = this.pointsGrid[25];
-
-		this.pt.z = 1;
-		this.pt.lastZ = 1;
-		this.tick = 0;
-
-		this.pt.z = this.pt.lastZ = -.4;
-		this.pt.pinTo(null, null, -2);
-
-		// this.ptQuad = this.pointsQuad[30];
-
-		// this.findNeighbours(this.ptQuad);
 	}
 
 	findNeighbours(p1)
 	{
 		p1.program.bind();
-		// p1.program.uniforms.color = [1, 0, 0]
+
+		if(this.debug) p1.program.uniforms.color = [1, 0, 0]
 
 		let sum = 0;
 		let nbPoints = 0;
@@ -172,6 +136,7 @@ export default class MainScene
 
 		let points = [];
 		let maxDist = 0;
+
 		for (var i = 0; i < this.pointsGrid.length; i++)
 		{
 			// calculate distance between the points, if between restingDistances, keep them for next step
@@ -184,20 +149,10 @@ export default class MainScene
 				p2.program.bind();
 				p2.program.uniforms.color = [1, 0, 1]
 
-				dists.push({
-					dist,
-					z: p2.z
-				});
-				// sum += p2.z *  (1 - dist/this.restingDistances);
-
 				points.push({
 					p: p2,
 					dist
 				});
-				// console.log(nbPoints, p2.z, Math.floor((1 - dist/this.restingDistances) * 10)/10);
-				// nbPoints++;
-
-				// console.log('nbPoints', nbPoints);
 			}
 		}
 
@@ -220,23 +175,9 @@ export default class MainScene
 
 			let z = A.z + ((B.x - A.x) * (C.z - A.z) - (C.x - A.x) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.y - A.y)    -    ((B.y - A.y) * (C.z - A.z) - (C.y - A.y) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.x - A.x)
 			p1.setZ(z);
-			// p1.z = z;
 		}
-		// for (var i = 0; i < dists.length; i++)
-		// {
-		// 	let d = dists[i];
-		//
-		// 	let p = (1 - d.dist/maxDist);
-		// 	sum += d.z *  (1 - d.dist/maxDist);
-		//
-		// 	console.log(d.z, p);
-		// }
-
-
-		// console.log('p2.z', p2.z);
-		// console.log('sum', sum);
-		// console.log(p1.z);
 	}
+
 	createQuads()
 	{
 		let nbColumns = this.gridWidth - 1;
@@ -244,18 +185,10 @@ export default class MainScene
 
 		let nbQuads = nbColumns * nbLines;
 
-		for (var y = 0; y < nbLines; y++) {
-			for (var x = 0; x < nbColumns; x++) {
-				let pts = [];
-				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x, y)]);
-				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x + 1, y)]);
-				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x + 1, y + 1)]);
-				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x, y + 1)]);
-
-				let viewQuad = new ViewQuad(pts, this.pointsGrid, y);
-
-				this.views.push(viewQuad);
-			}
+		for (var i = 0; i < nbLines * nbColumns; i++)
+		{
+			let viewQuad = new ViewQuad();
+			this.views.push(viewQuad);
 		}
 	}
 
@@ -278,15 +211,15 @@ export default class MainScene
 	render()
 	{
 
-		// this.limitMinX += .01
+		// POLY.GL._camera.projectionMatrix = this.projectionMatrix;
+
 		let nbColumns = this.gridWidth - 1;
 		let nbLines = this.gridHeight - 1;
 
 		this.orbitalControl.update();
 		this._bPlanes.draw();
 
-		// this.limitMinX += .01
-
+		// RENDER THE QUADS
 		for (var yView = 0; yView < nbLines; yView++)
 		{
 			for (var xView = 0; xView < nbColumns; xView++)
@@ -297,189 +230,108 @@ export default class MainScene
 			}
 		}
 
-
+		// LOOP THE QUAD'S POINTS GRID
 		let reappearLeft = false;
 		let reappearRight = false;
 		let reappearTop = false;
 		let reappearBottom = false;
 
-		// console.log(this.pointsQuad);
 		for (let y = 0; y < this.gridHeight; y++)   // due to the way PointMasss are attached, we need the y loop on the outside
 		{
-			// for (let x = 0; x < 2; x++)
 			for (let x = 0; x < this.gridWidth; x++)
 			{
 				let index = this.getPointsAtCoordinates(x, y);
 				let pointquad = this.pointsQuad[index];
 
-				pointquad.y += .01;
 				pointquad.x += .01;
-				// pointquad.x = pointquad.origin.x + this.cameraX;
-
-				// if(false)
-				if(pointquad.y <= this.limitMinY)
+				if(pointquad.y < this.limitMinY)
 				{
 					pointquad.y += this.gridHeight;
-
-					let from = index;
-					let to =  index + (this.gridHeight) * (this.gridWidth) - x;
-
-						console.log('from, to', from, to);
-					pointquad.program.bind();
-					pointquad.program.uniforms.color = [1,1,0];
-					// this.pointsQuad.push(this.pointsQuad.shift());
-
 					reappearTop = true;
 				}
-				else if(pointquad.y >= this.limitMinY + this.gridHeight)
+				else if(pointquad.y > this.limitMinY + this.gridHeight)
 				{
 					pointquad.y = this.limitMinY;
-
-					// let from = index;
-					// let to =  index + (this.gridHeight) * (this.gridWidth) - x;
-					//
-					// 	console.log('from, to', from, to);
-					pointquad.program.bind();
-					pointquad.program.uniforms.color = [1,1,0];
-
-					// this.pointsQuad.splice(index, 1)
-
 					reappearBottom = true;
-
-					// this.pointsQuad.splice(0, 1, this.pointsQuad.pop());
-					//
-					// reappearTop = true;
 				}
-				if(pointquad.x < this.limitMinX)
+
+				if(pointquad.x <= this.limitMinX)
 				{
 					pointquad.x += this.gridWidth;
-
 					this.pointsQuad.splice(index, 1)
-					this.pointsQuad.splice(index + this.gridWidth, 0, pointquad);
+					this.pointsQuad.splice(index + this.gridWidth -1, 0, pointquad);
 
 					reappearRight = true;
 				}
 				else if(pointquad.x > this.limitMinX + this.gridWidth)
 				{
 					pointquad.x = this.limitMinX;
-
-					pointquad.program.bind();
-					pointquad.program.uniforms.color = [1,1,0];
 					this.pointsQuad.splice(index, 1)
 					this.pointsQuad.splice(index - this.gridWidth + 1, 0, pointquad);
 
 					reappearLeft = true;
 				}
 
-				pointquad.render();
+				if(this.debug) pointquad.render();
 			}
-
-			if(reappearTop)
-			{
-				this.wentIn = true;
-			}
-
 		}
 
+		// REORDER THE ACTUAL QUADS
 		if(reappearBottom)
 		{
-
-			for (var i = 0; i < this.gridWidth; i++) {
+			for (var i = 0; i < this.gridWidth; i++)
+			{
 				this.pointsQuad.splice(0, 0, this.pointsQuad.pop());
 			}
 
-			for (var yView = 0; yView < 1; yView++)
+			for (var xView = 0; xView < nbColumns; xView++)
 			{
-				for (var xView = 0; xView < nbColumns; xView++)
-				{
-
-					console.log('here');
-					let index = this.getViewAtCoordinates(xView, yView);
-					let quad = this.views[index];
-
-					// this.views.unshift();
-					// this.views.push(this.views.shift());
-					this.views.splice(0, 0, this.views.pop());
-					// this.views.push(quad);
-
-					// this.views.splice(index, 1)
-					// this.views.push(index - 3 * (this.gridWidth), 0, quad);
-					// this.views.splice(index + this.gridWidth - 1, 0, quad);
-				}
+				this.views.splice(0, 0, this.views.pop());
 			}
+
 		}
-		if(reappearTop)
+		else if(reappearTop)
 		{
-
-			for (var i = 0; i < this.gridWidth; i++) {
-				let pointquad = this.pointsQuad.shift();
-				this.pointsQuad.push(pointquad);
+			for (var i = 0; i < this.gridWidth; i++)
+			{
+				this.pointsQuad.push(this.pointsQuad.shift());
 			}
 
-			this.notIn = true;
-			for (var yView = 0; yView < 1; yView++)
+			for (var xView = 0; xView < nbColumns; xView++)
 			{
-				for (var xView = 0; xView < nbColumns; xView++)
-				{
-					let index = this.getViewAtCoordinates(xView, yView);
-					let quad = this.views[index];
-
-					// this.views.unshift();
-					this.views.push(this.views.shift());
-					// this.views.push(quad);
-
-					// this.views.splice(index, 1)
-					// this.views.push(index - 3 * (this.gridWidth), 0, quad);
-					// this.views.splice(index + this.gridWidth - 1, 0, quad);
-				}
+				this.views.push(this.views.shift());
 			}
 		}
 
 		if(reappearRight)
 		{
-			this.notIn = true;
+
 			for (var yView = 0; yView < nbLines; yView++)
 			{
-				for (var xView = 0; xView < 1; xView++)
-				{
+				let index = this.getViewAtCoordinates(0, yView);
+				let quad = this.views[index];
 
-					let index = this.getViewAtCoordinates(xView, yView);
-					let quad = this.views[index];
-
-					this.views.splice(index, 1)
-					this.views.splice(index + this.gridWidth - 1, 0, quad);
-				}
+				this.views.splice(index, 1)
+				this.views.splice(index + this.gridWidth, 0, quad);
 			}
 		}
 		else if(reappearLeft)
 		{
 			for (var yView = 0; yView < nbLines; yView++)
 			{
-				for (var xView = nbColumns - 1; xView < nbColumns; xView++)
-				{
+				let index = this.getViewAtCoordinates(nbColumns - 1, yView);
+				let quad = this.views[index];
 
-					let index = this.getViewAtCoordinates(xView, yView);
-					let quad = this.views[index];
-
-					quad.program.bind();
-					// quad.program.uniforms.color = [0,0,0];
-					this.views.splice(index, 1)
-					this.views.splice(index - nbColumns + 1, 0, quad);
-				}
+				quad.program.bind();
+				this.views.splice(index, 1)
+				this.views.splice(index - nbColumns + 1, 0, quad);
 			}
 		}
 
-
-		// this.findNeighbours(this.ptQuad);
-		for (var i = 0; i < this.pointsQuad.length; i++) {
+		for (var i = 0; i < this.pointsQuad.length; i++)
+		{
 			this.findNeighbours(this.pointsQuad[i]);
 		}
-		// this.findNeighbours(this.ptQuad);
-		// for (var i = 0; i < this.points.length; i++) {
-		// 	this.points[i]
-		// }
-
-
 
 		// assign the quad points dinamycally
 		for (var y = 0; y < nbLines; y++)
@@ -501,20 +353,16 @@ export default class MainScene
 			}
 		}
 
-		for (var i = 0; i < this.pointsGrid.length; i++)
-		{
-			this.pointsGrid[i].render();
-		}
-
-		// if(SpeedController.isDown)
-		// {
-			// for (var i = 0; i < this.pointsQuad.length; i++) {
-			// 	this.pointsQuad[i].y -= this.cameraX;
-			// 	this.pointsQuad[i].x -= this.cameraX;
-			// }
-		// }
-
 		this.physics.update(this.pointsGrid);
+
+
+		if(this.debug)
+		{
+			for (var i = 0; i < this.pointsGrid.length; i++)
+			{
+				this.pointsGrid[i].render(this.debug);
+			}
+		}
 	}
 
 	resize()
