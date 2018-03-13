@@ -9,12 +9,15 @@ export default class ViewQuad
         this.pointsRef = pointsRef;
         this.pointsGrid = pointsGrid;
 
+        this.id = Math.floor(Math.random() * 2000)
+
         let colors = [
             [1,1,1],
             [1,0,0],
         ]
 
-        let color = colors[col] ? colors[col] : [Math.random(), Math.random(), Math.random()]
+        // let color = colors[col] ? colors[col] : [Math.random(), Math.random(), Math.random()]
+        let color = [Math.random(), Math.random(), Math.random()]
         this.program = new POLY.Program(null, frag, {
             color: {
                 type: 'vec3',

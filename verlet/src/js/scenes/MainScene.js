@@ -41,8 +41,8 @@ export default class MainScene
 		this.viewBg = new ViewBg(window.ASSET_URL + 'image/sky_gradient.jpg');
 		this._bPlanes = new POLY.helpers.BatchPlanes();
 
-		this.gridHeight = 4;
-		this.gridWidth = 8;
+		this.gridHeight = 7;
+		this.gridWidth = 10;
 		this.restingDistances = 1;
 		this.stiffnesses = .6;
 
@@ -53,10 +53,16 @@ export default class MainScene
 		this.createGridPoints();
 		this.createQuads();
 
+
+		this.position = {
+			x: 4,
+			y: 0,
+		}
 		this.cameraX = 0;
 
 		gui.add(this, 'cameraX', -2, 2);
 
+		this.limitMinY = -(this.gridHeight * this.restingDistances)/2 + this.restingDistances/2;
 		this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2;
 		this.limitMaxX = this.gridWidth * this.restingDistances/2 + this.restingDistances;
 		// this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances;
@@ -88,7 +94,6 @@ export default class MainScene
 	{
 		if(!this._isDown) return;
 
-		console.log('here');
 		let pt = getCursorPos(e);
 		let offsetX = (this.firstPos.x - pt.x) / 100;
 
@@ -127,7 +132,13 @@ export default class MainScene
 				// we pin the very top PointMasss to where they are
 				// if ((y == 0 && x == 0) || (y == 0 && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == 0))
 				if (x == 0 || y == 0 || x == (this.gridWidth - 1) || y == (this.gridHeight - 1))
+				{
+					if(y == 0)
+					{
+						// console.log('pintTo', pointmass.y);
+					}
 					pointmass.pinTo(pointmass.x, pointmass.y);
+				}
 
 				// add to PointMass array
 				this.pointsGrid.push(pointmass);
@@ -135,7 +146,7 @@ export default class MainScene
 			}
 		}
 
-		this.pt = this.pointsGrid[12];
+		this.pt = this.pointsGrid[25];
 
 		this.pt.z = 1;
 		this.pt.lastZ = 1;
@@ -144,9 +155,9 @@ export default class MainScene
 		this.pt.z = this.pt.lastZ = -.4;
 		this.pt.pinTo(null, null, -2);
 
-		this.ptQuad = this.pointsQuad[12];
+		// this.ptQuad = this.pointsQuad[30];
 
-		this.findNeighbours(this.ptQuad);
+		// this.findNeighbours(this.ptQuad);
 	}
 
 	findNeighbours(p1)
@@ -241,7 +252,7 @@ export default class MainScene
 				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x + 1, y + 1)]);
 				pts.push(this.pointsQuad[this.getPointsAtCoordinates(x, y + 1)]);
 
-				let viewQuad = new ViewQuad(pts, this.pointsGrid, x);
+				let viewQuad = new ViewQuad(pts, this.pointsGrid, y);
 
 				this.views.push(viewQuad);
 			}
@@ -291,15 +302,54 @@ export default class MainScene
 		let reappearRight = false;
 		let reappearTop = false;
 		let reappearBottom = false;
+
+		// console.log(this.pointsQuad);
 		for (let y = 0; y < this.gridHeight; y++)   // due to the way PointMasss are attached, we need the y loop on the outside
 		{
+			// for (let x = 0; x < 2; x++)
 			for (let x = 0; x < this.gridWidth; x++)
 			{
 				let index = this.getPointsAtCoordinates(x, y);
 				let pointquad = this.pointsQuad[index];
 
-				// pointquad.x += .01;
+				pointquad.y += .01;
+				pointquad.x += .01;
 				// pointquad.x = pointquad.origin.x + this.cameraX;
+
+				// if(false)
+				if(pointquad.y <= this.limitMinY)
+				{
+					pointquad.y += this.gridHeight;
+
+					let from = index;
+					let to =  index + (this.gridHeight) * (this.gridWidth) - x;
+
+						console.log('from, to', from, to);
+					pointquad.program.bind();
+					pointquad.program.uniforms.color = [1,1,0];
+					// this.pointsQuad.push(this.pointsQuad.shift());
+
+					reappearTop = true;
+				}
+				else if(pointquad.y >= this.limitMinY + this.gridHeight)
+				{
+					pointquad.y = this.limitMinY;
+
+					// let from = index;
+					// let to =  index + (this.gridHeight) * (this.gridWidth) - x;
+					//
+					// 	console.log('from, to', from, to);
+					pointquad.program.bind();
+					pointquad.program.uniforms.color = [1,1,0];
+
+					// this.pointsQuad.splice(index, 1)
+
+					reappearBottom = true;
+
+					// this.pointsQuad.splice(0, 1, this.pointsQuad.pop());
+					//
+					// reappearTop = true;
+				}
 				if(pointquad.x < this.limitMinX)
 				{
 					pointquad.x += this.gridWidth;
@@ -324,6 +374,65 @@ export default class MainScene
 				pointquad.render();
 			}
 
+			if(reappearTop)
+			{
+				this.wentIn = true;
+			}
+
+		}
+
+		if(reappearBottom)
+		{
+
+			for (var i = 0; i < this.gridWidth; i++) {
+				this.pointsQuad.splice(0, 0, this.pointsQuad.pop());
+			}
+
+			for (var yView = 0; yView < 1; yView++)
+			{
+				for (var xView = 0; xView < nbColumns; xView++)
+				{
+
+					console.log('here');
+					let index = this.getViewAtCoordinates(xView, yView);
+					let quad = this.views[index];
+
+					// this.views.unshift();
+					// this.views.push(this.views.shift());
+					this.views.splice(0, 0, this.views.pop());
+					// this.views.push(quad);
+
+					// this.views.splice(index, 1)
+					// this.views.push(index - 3 * (this.gridWidth), 0, quad);
+					// this.views.splice(index + this.gridWidth - 1, 0, quad);
+				}
+			}
+		}
+		if(reappearTop)
+		{
+
+			for (var i = 0; i < this.gridWidth; i++) {
+				let pointquad = this.pointsQuad.shift();
+				this.pointsQuad.push(pointquad);
+			}
+
+			this.notIn = true;
+			for (var yView = 0; yView < 1; yView++)
+			{
+				for (var xView = 0; xView < nbColumns; xView++)
+				{
+					let index = this.getViewAtCoordinates(xView, yView);
+					let quad = this.views[index];
+
+					// this.views.unshift();
+					this.views.push(this.views.shift());
+					// this.views.push(quad);
+
+					// this.views.splice(index, 1)
+					// this.views.push(index - 3 * (this.gridWidth), 0, quad);
+					// this.views.splice(index + this.gridWidth - 1, 0, quad);
+				}
+			}
 		}
 
 		if(reappearRight)
@@ -392,16 +501,18 @@ export default class MainScene
 			}
 		}
 
-		// for (var i = 0; i < this.pointsGrid.length; i++) {
-			// this.pointsGrid[i].render();
-		// }
-
-		if(SpeedController.isDown)
+		for (var i = 0; i < this.pointsGrid.length; i++)
 		{
-			for (var i = 0; i < this.pointsQuad.length; i++) {
-				this.pointsQuad[i].x -= this.cameraX;
-			}
+			this.pointsGrid[i].render();
 		}
+
+		// if(SpeedController.isDown)
+		// {
+			// for (var i = 0; i < this.pointsQuad.length; i++) {
+			// 	this.pointsQuad[i].y -= this.cameraX;
+			// 	this.pointsQuad[i].x -= this.cameraX;
+			// }
+		// }
 
 		this.physics.update(this.pointsGrid);
 	}
