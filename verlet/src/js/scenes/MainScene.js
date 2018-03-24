@@ -70,8 +70,8 @@ export default class MainScene
 			0,1,0
 		]);
 
-		this.sphereIntersection = new POLY.geometry.Cube(this.program);
-		this.sphereIntersection.scale.set(.2);
+		this.sphereIntersection = new POLY.geometry.Sphere(this.program);
+		this.sphereIntersection.scale.set(.1);
 
 		this.rayCamera = new POLY.core.Ray();
 
@@ -81,6 +81,8 @@ export default class MainScene
 		this.planeP3 = [0, -1,0]
 
 		this.addEvents();
+
+		this.pinnedPoints = [];
 	}
 
 	onTraceRay()
@@ -98,7 +100,44 @@ export default class MainScene
 			target[0], target[1], target[2],
 		]);
 
-		this.findIntersection(origin, target);
+		let intersection = this.findIntersection(origin, target);
+
+		this.impactVerlet(intersection);
+	}
+
+	impactVerlet(pt)
+	{
+		// optimise here, dont loop through all the points
+
+		let minDist = this.restingDistances;
+
+		for (let y = 0; y < this.gridHeight; y++)
+		{
+			for (let x = 0; x < this.gridWidth; x++)
+			{
+				let index = this.getPointsAtCoordinates(x, y);
+
+				let pG = this.pointsGrid[index];
+
+				let dist = Math.pow(pt.x - pG.x, 2) + Math.pow(pt.y - pG.y, 2);
+
+				if(dist <= minDist)
+				{
+					let depth = this.map(dist, 0, minDist, -.01, 0);
+					console.log('here', depth);
+					// pG.program.uniforms.color = [.2, .2, .2]
+
+					pG.test = true;
+					pG.accZ = depth;
+					// pG.pinTo(null, null, depth);
+				}
+				else {
+					// pG.unpin();
+					pG.accZ = 0;
+				}
+
+			}
+		}
 	}
 
 	findIntersection(pt1, pt2)
@@ -124,6 +163,8 @@ export default class MainScene
 		let newz = t * (pt2[2] - pt1[2]) + pt1[2];
 
 		this.sphereIntersection.position.set(newx, newy, newz);
+
+		return { x: newx, y:newy, z:newz };
 	}
 
 	addEvents()
@@ -135,6 +176,12 @@ export default class MainScene
         window.addEventListener('touchstart', (e) => this._onDown(e));
         window.addEventListener('touchend', () => this._onUp());
         window.addEventListener('touchmove', (e) => this._onMove(e));
+        window.addEventListener('keydown', (e) => this._onKeydown(e));
+	}
+
+	_onKeydown()
+	{
+		this.onTraceRay();
 	}
 
 	_onDown(e)
@@ -181,7 +228,7 @@ export default class MainScene
 					pointmass.attachTo(this.pointsGrid[(y - 1) * (this.gridWidth) + x], this.restingDistances, this.stiffnesses);
 
 				if (x == 0 || y == 0 || x == (this.gridWidth - 1) || y == (this.gridHeight - 1))
-					pointmass.pinTo(pointmass.x, pointmass.y);
+					pointmass.pinTo(pointmass.x, pointmass.y, 0, true);
 
 				this.pointsGrid.push(pointmass);
 				this.pointsQuad.push(pointquad);
@@ -209,11 +256,11 @@ export default class MainScene
 			let p2 = this.pointsGrid[i];
 			let dist = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
 
-			if(dist < this.restingDistances)
+			if(dist < this.restingDistances * this.restingDistances)
 			{
 				if(dist > maxDist) maxDist = dist;
 				p2.program.bind();
-				p2.program.uniforms.color = [1, 0, 1]
+				// p2.program.uniforms.color = [1, 0, 1]
 
 				points.push({
 					p: p2,
@@ -309,7 +356,7 @@ export default class MainScene
 				let index = this.getPointsAtCoordinates(x, y);
 				let pointquad = this.pointsQuad[index];
 
-				pointquad.x += .01;
+				// pointquad.x += .01;
 				if(pointquad.y < this.limitMinY)
 				{
 					pointquad.y += this.gridHeight;
@@ -338,7 +385,7 @@ export default class MainScene
 					reappearLeft = true;
 				}
 
-				if(this.debug) pointquad.render();
+				// pointquad.render();
 			}
 		}
 
@@ -427,6 +474,11 @@ export default class MainScene
 			for (var i = 0; i < this.pointsGrid.length; i++)
 			{
 				this.pointsGrid[i].render(this.debug);
+
+				if(!this._isDown)
+				{
+					// this.pointsGrid[i].accZ = 0;
+				}
 			}
 		}
 
@@ -434,6 +486,23 @@ export default class MainScene
 		POLY.GL.draw(this.viewRay);
 		POLY.GL.draw(this.sphereIntersection);
 	}
+
+	map(val, inputMin, inputMax, outputMin, outputMax)
+    {
+                /*
+                var inputRange = inputMax - inputMin
+
+                var inputFraction = (val - inputMin)/inputRange
+
+                var outputRange = outputMax - outputMin
+
+                var output = (outputRange * inputFraction) + outputMin
+
+                return output
+                */
+
+        return ((outputMax - outputMin) * ((val - inputMin)/(inputMax - inputMin))) + outputMin;
+    }
 
 	resize()
 	{

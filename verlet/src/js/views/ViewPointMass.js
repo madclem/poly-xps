@@ -32,6 +32,9 @@ export default class ViewPointMass
         this.pinX = 0;
         this.pinY = 0;
 
+        this.velZ = 0;
+
+
         this.program = new POLY.Program(null, frag, {
             color: {
                 value: [1, 1, 1],
@@ -49,17 +52,19 @@ export default class ViewPointMass
 
         let velX = this.x - this.lastX;
         let velY = this.y - this.lastY;
-        let velZ = this.z - this.lastZ;
+        let velZ = this.z - this.lastZ + this.accZ;
+
+        this.velZ += (velZ - this.velZ) * .5;
 
         // dampen velocity
         velX *= 0.99;
         velY *= 0.99;
-        velZ *= 0.99;
+        this.velZ *= 0.99;
 
         // calculate the next position using Verlet Integration
         let nextX = this.x + velX;
         let nextY = this.y + velY;
-        let nextZ = this.z + velZ;
+        let nextZ = this.z + this.velZ;
 
         // reset variables
         this.lastX = this.x;
@@ -127,19 +132,29 @@ export default class ViewPointMass
 
     unpin()
     {
+        if(this.forever) return;
         this.pinned = false;
     }
 
-    pinTo (pX, pY, pZ = 0) {
+    pinTo (pX, pY, pZ = 0, forever) {
+
+      if(this.forever) return;
       this.pinned = true;
       this.pinX = pX || this.x;
       this.pinY = pY || this.y;
       this.pinZ = pZ;
+
+      if(forever) this.forever = true;
     }
 
     getPoint()
     {
         return this;
+    }
+
+    map(val, inputMin, inputMax, outputMin, outputMax)
+    {
+        return ((outputMax - outputMin) * ((val - inputMin)/(inputMax - inputMin))) + outputMin;
     }
 
     render(debug)
@@ -148,6 +163,14 @@ export default class ViewPointMass
         this.view.position.x = this.x;
         this.view.position.y = this.y;
         this.view.position.z = this.z;
+
+        let percentage = Math.abs(this.z) * 1;
+
+        // console.log(percentage);
+        let r = 1 - percentage
+        let g = 1 - percentage
+        let b = 1
+        this.program.uniforms.color = [r,g,b];
         POLY.GL.draw(this.view);
 
     }
