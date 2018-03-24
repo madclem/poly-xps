@@ -21,6 +21,7 @@ export default class MainScene
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
 		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
+		this.orbitalControl.lock(true);
 		POLY.GL.setCamera(this.camera);
 
 		this.viewBg = new ViewBg(window.ASSET_URL + 'image/sky_gradient.jpg');
@@ -81,8 +82,8 @@ export default class MainScene
 			// c1,
 			// c2,
 			// c3,
-			this.sphere,
-			this.sphere2,
+			// this.sphere,
+			// this.sphere2,
 			this.sphereIntersection,
 			shape
 		];
@@ -123,6 +124,8 @@ export default class MainScene
 
 		this.mouse.x = x;
 		this.mouse.y = y;
+
+		this.onTraceRay();
 	}
 
 	findIntersection(pt1, pt2)
@@ -148,6 +151,7 @@ export default class MainScene
 		let v2 = [p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]]
 
 		// https://www.youtube.com/watch?v=0qYJfKG-3l8
+
 		// cross product
 		// |i     j     k
 		// |v1[0] v1[1] v1[2]
@@ -203,7 +207,7 @@ export default class MainScene
 		let t = (abc[0] * x0 + abc[1] * y0 + abc[2] * z0 - abc[0] * pt1[0]- abc[1] * pt1[1] - abc[2] * pt1[2]) / (abc[0] * (pt2[0] - pt1[0]) + abc[1] * (pt2[1] - pt1[1]) + abc[2] * (pt2[2] - pt1[2]));
 
 		// if(!t) t = 0;
-		console.log('t', t);
+		console.log('t', t);  
 		console.log((abc[0] * x0 + abc[1] * y0 + abc[2] * z0 - abc[0] * pt1[0]- abc[1] * pt1[1] - abc[2] * pt1[2]), (abc[0] * (pt2[0] - pt1[0]) + abc[1] * (pt2[1] - pt1[1]) + abc[2] * (pt2[2] - pt1[2])));
 
 		// so when we replace the line above (1*))
@@ -236,6 +240,7 @@ export default class MainScene
 	render()
 	{
 		this.orbitalControl.update();
+
 		// this.viewBg.render();
 		this._bPlanes.draw();
 		this.tick++;

@@ -5,8 +5,9 @@ import PointMass from '../views/ViewPointMass';
 import PointQuad from '../views/ViewPointQuad';
 import ViewQuad from '../views/ViewQuad';
 import SpeedController from '../control/SpeedController';
-import {mat3, mat4} from 'gl-matrix';
+import {mat3, mat4, vec3} from 'gl-matrix';
 
+let target = vec3.create();
 
 const getCursorPos = function (e) {
     if(e.touches) {
@@ -36,7 +37,7 @@ export default class MainScene
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
 		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
-		// this.orbitalControl.lock(true);
+		this.orbitalControl.lock(true);
 		// this.orbitalControl.lockZoom(true);
 		POLY.GL.setCamera(this.camera);
 
@@ -62,7 +63,67 @@ export default class MainScene
 		this.limitMinY = -(this.gridHeight * this.restingDistances)/2 + this.restingDistances/2;
 		this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2;
 
-		// this.addEvents();
+		this.program = new POLY.Program();
+		this.viewRay = new POLY.geometry.Mesh(this.program, null, POLY.gl.LINES);
+		this.viewRay.addPosition([
+			0,0,0,
+			0,1,0
+		]);
+
+		this.sphereIntersection = new POLY.geometry.Cube(this.program);
+		this.sphereIntersection.scale.set(.2);
+
+		this.rayCamera = new POLY.core.Ray();
+
+		this.mouse = { x: 0, y: 0}
+		this.planeP1 = [0,0,0]
+		this.planeP2 = [1,1,0]
+		this.planeP3 = [0, -1,0]
+
+		this.addEvents();
+	}
+
+	onTraceRay()
+	{
+		this.rayCamera = this.camera.getRay([this.mouse.x, this.mouse.y, 1], this.rayCamera);
+		let origin = this.orbitalControl._position;
+		let direction = this.rayCamera.direction;
+
+		vec3.copy(target, direction);
+		vec3.scale(target, target, this.orbitalControl._radius);
+		vec3.add(target, target, origin);
+
+		this.viewRay.updatePosition('aPosition', [
+			origin[0], origin[1], origin[2],
+			target[0], target[1], target[2],
+		]);
+
+		this.findIntersection(origin, target);
+	}
+
+	findIntersection(pt1, pt2)
+	{
+		// plane equation
+		let p1 = this.planeP1;
+		let p2 = this.planeP2;
+		let p3 = this.planeP3;
+
+		let x0 = p1[0]
+		let y0 = p1[1]
+		let z0 = p1[2]
+
+		/* find perpendicular vector */
+		let v1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]]
+		let v2 = [p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]]
+		let abc = [(v1[1] * v2[2] + v1[2] * v2[1]), - (v1[0] * v2[2] + v1[2] * v2[0]) ,  -(v1[0] * v2[1] + v1[1] * v2[0])]
+		let t = (abc[0] * x0 + abc[1] * y0 + abc[2] * z0 - abc[0] * pt1[0]- abc[1] * pt1[1] - abc[2] * pt1[2]) / (abc[0] * (pt2[0] - pt1[0]) + abc[1] * (pt2[1] - pt1[1]) + abc[2] * (pt2[2] - pt1[2]));
+
+		// so when we replace the line above (1*))
+		let newx = t * (pt2[0] - pt1[0]) + pt1[0];
+		let newy = t * (pt2[1] - pt1[1]) + pt1[1];
+		let newz = t * (pt2[2] - pt1[2]) + pt1[2];
+
+		this.sphereIntersection.position.set(newx, newy, newz);
 	}
 
 	addEvents()
@@ -90,9 +151,14 @@ export default class MainScene
 		if(!this._isDown) return;
 
 		let pt = getCursorPos(e);
-		let offsetX = (this.firstPos.x - pt.x) / 100;
 
-		this.speed.x = offsetX;
+		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
+		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
+
+		this.mouse.x = x;
+		this.mouse.y = y;
+
+		this.onTraceRay();
 	}
 
 	_onUp(e)
@@ -226,7 +292,7 @@ export default class MainScene
 			{
 				let index = this.getViewAtCoordinates(xView, yView);
 				let quad = this.views[index];
-				quad.render();
+				// quad.render();
 			}
 		}
 
@@ -363,6 +429,10 @@ export default class MainScene
 				this.pointsGrid[i].render(this.debug);
 			}
 		}
+
+		this.program.bind();
+		POLY.GL.draw(this.viewRay);
+		POLY.GL.draw(this.sphereIntersection);
 	}
 
 	resize()
