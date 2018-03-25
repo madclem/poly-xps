@@ -55,10 +55,12 @@ export default class MainScene
 		this.pointsGrid = [];
 		this.pointsQuad = [];
 		this.views = [];
+		this.viewsVerlet = [];
 
 		this.physics = new Physics();
 		this.createGridPoints();
 		this.createQuads();
+		this.createQuadsVerlet();
 
 		this.limitMinY = -(this.gridHeight * this.restingDistances)/2 + this.restingDistances/2;
 		this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2;
@@ -71,7 +73,10 @@ export default class MainScene
 		]);
 
 		this.sphereIntersection = new POLY.geometry.Sphere(this.program);
-		this.sphereIntersection.scale.set(.1);
+		this.sphereIntersection.scale.set(.05);
+
+		this.cubeTest = new POLY.geometry.Cube(this.program);
+		this.cubeTest.scale.set(.1);
 
 		this.rayCamera = new POLY.core.Ray();
 
@@ -101,7 +106,10 @@ export default class MainScene
 		]);
 
 		let intersection = this.findIntersection(origin, target);
+		this.intersection = intersection;
 
+		this.findNeighbours(intersection);
+		//
 		this.impactVerlet(intersection);
 	}
 
@@ -123,7 +131,7 @@ export default class MainScene
 
 				if(dist <= minDist)
 				{
-					let depth = this.map(dist, 0, minDist, -.01, 0);
+					let depth = this.map(dist, 0, minDist, -.04, 0);
 					console.log('here', depth);
 					// pG.program.uniforms.color = [.2, .2, .2]
 
@@ -181,7 +189,12 @@ export default class MainScene
 
 	_onKeydown()
 	{
-		this.onTraceRay();
+		// this.onTraceRay();
+		// this.cubeTest.position.x = this.intersection.x;
+		// this.cubeTest.position.y = this.intersection.y;
+
+		this.findNeighbours(this.intersection);
+		// this.impactVerlet(this.intersection);
 	}
 
 	_onDown(e)
@@ -195,6 +208,7 @@ export default class MainScene
 
 	_onMove(e)
 	{
+
 		if(!this._isDown) return;
 
 		let pt = getCursorPos(e);
@@ -227,6 +241,7 @@ export default class MainScene
 				if (y != 0)
 					pointmass.attachTo(this.pointsGrid[(y - 1) * (this.gridWidth) + x], this.restingDistances, this.stiffnesses);
 
+				// if ((x == 0 && y == 0) || (x == (this.gridWidth - 1) && y == 0) || (y == (this.gridHeight - 1) && x ==0) || (y == (this.gridHeight - 1) && x ==(this.gridWidth - 1)))
 				if (x == 0 || y == 0 || x == (this.gridWidth - 1) || y == (this.gridHeight - 1))
 					pointmass.pinTo(pointmass.x, pointmass.y, 0, true);
 
@@ -234,36 +249,66 @@ export default class MainScene
 				this.pointsQuad.push(pointquad);
 			}
 		}
+
+		// this.pointsGrid[12].pinTo(null, null, -1)
 	}
 
 	findNeighbours(p1)
 	{
-		p1.program.bind();
 
-		if(this.debug) p1.program.uniforms.color = [1, 0, 0]
+		let minX = -(this.gridWidth - 1) / 2 * this.restingDistances;
+		let minY = -(this.gridHeight - 1)/2 * this.restingDistances
 
-		let sum = 0;
-		let nbPoints = 0;
+		// find column
+		let lastX = -1;
+		for (let x = 0; x < this.gridWidth; x++)
+		{
+			let index = this.getPointsAtCoordinates(x, 0);
+			let pG = this.pointsGrid[index];
 
-		let dists = []
+			if(pG.x > p1.x)
+			{
+
+				break;
+			}
+
+			lastX = x;
+		}
+
+		let lastY = -1;
+		for (let y = 0; y < this.gridHeight; y++)
+		{
+			let index = this.getPointsAtCoordinates(0, y);
+			let pG = this.pointsGrid[index];
+
+			if(pG.y > p1.y)
+			{
+
+				break;
+			}
+
+			lastY = y;
+		}
+
+		if(lastY < 0 || lastY >= (this.gridHeight - 1) || lastX < 0 || lastX >= (this.gridWidth - 1))
+		{
+			return;
+		}
 
 		let points = [];
-		let maxDist = 0;
-
-		for (var i = 0; i < this.pointsGrid.length; i++)
+		for (let y = lastY; y <= lastY + 1; y++) // due to the way PointMasss are attached, we need the y loop on the outside
 		{
-			// calculate distance between the points, if between restingDistances, keep them for next step
-			let p2 = this.pointsGrid[i];
-			let dist = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
-
-			if(dist < this.restingDistances * this.restingDistances)
+			for (let x = lastX; x <= lastX + 1; x++)
 			{
-				if(dist > maxDist) maxDist = dist;
-				p2.program.bind();
-				// p2.program.uniforms.color = [1, 0, 1]
+				let index = this.getPointsAtCoordinates(x, y);
+				let pG = this.pointsGrid[index];
+
+				pG.temp = true;
+
+				let dist = Math.pow(p1.x - pG.x, 2) + Math.pow(p1.y - pG.y, 2);
 
 				points.push({
-					p: p2,
+					p: pG,
 					dist
 				});
 			}
@@ -282,13 +327,138 @@ export default class MainScene
 
 		if(points.length >= 3)
 		{
-			let A = points[0].p;
-			let B = points[1].p;
-			let C = points[2].p;
+			let p1P = points[0].p;
+			let p2P = points[1].p;
+			let p3P = points[2].p;
 
-			let z = A.z + ((B.x - A.x) * (C.z - A.z) - (C.x - A.x) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.y - A.y)    -    ((B.y - A.y) * (C.z - A.z) - (C.y - A.y) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.x - A.x)
-			p1.setZ(z);
+			// p1P.program.uniforms.color = [1,0,0];
+			// p2P.program.uniforms.color = [1,0,0];
+			// p3P.program.uniforms.color = [1,0,0];
+
+
+
+		// a(x - x0) + b(y-y0) + c(z- z0) = 0
+			let x0 = p1P.x;
+			let y0 = p1P.y;
+			let z0 = p1P.z
+
+			let x = p1.x;
+			let y = p1.y;
+
+		// <a, b, c> is a vector perpendicular to the plane
+
+		/* find perpendicular vector */
+		// create 2 vectors
+			let v1 = [p2P.x - p1P.x, p2P.y - p1P.y, p2P.z - p1P.z]
+			let v2 = [p3P.x - p2P.x, p3P.y - p2P.y, p3P.z - p2P.z]
+
+		// https://www.youtube.com/watch?v=0qYJfKG-3l8
+
+		// cross product
+		// |i     j     k
+		// |v1[0] v1[1] v1[2]
+		// |v2[0] v2[1] v2[2]
+
+		// | v1[1] v1[2]|    -  |v1[0]v1[2]|    + |v1[0] v1[1]|
+		// | v2[1] v2[2]| i     |v2[0]v2[2]| j    |v2[0] v2[1]|k
+
+		// (v1[1] * v2[2] + v1[2] * v2[1]) * i - (v1[0] * v2[2] + v1[2] * v2[0]) * j + (v1[0] * v2[1] + v1[1] * v2[0]) * k
+		// let abc = [(v1[1] * v2[2] + v1[2] * v2[1]), - (v1[0] * v2[2] + v1[2] * v2[0]) ,  -(v1[0] * v2[1] + v1[1] * v2[0])]
+
+		let abc = vec3.create();
+		vec3.cross(abc, v1, v2)
+		// abc[2] *= -1;
+		// console.log(abc);
+
+		// this.sphere.position.set(abc[0], abc[1], abc[2]);
+
+
+		// plane equation
+		// abc[0] * (x - x0) + abc[1] * (y-y0) + abc[2](z- z0) = 0
+		// abc[0] * x - abc[0] * x0 + abc[1] * y - abc[1] * y0 + abc[2] * z - abc[2] * z0 = 0
+		// abc[0] * x  +  abc[1] * y + abc[2] * z = abc[0] * x0 + abc[1] * y0 + abc[2] * z0;
+		 let z = (abc[0] * x0 + abc[1] * y0 + abc[2] * z0 - abc[0] * x  -  abc[1] * y) / abc[2];
+
+		 // this.cubeTest.position.x = abc[0];
+		 // this.cubeTest.position.y = abc[1];
+		 // this.cubeTest.position.z = abc[2];
+
+		 // this.cubeTest.position.x = this.intersection.x;
+ 		 // this.cubeTest.position.y = this.intersection.y;
+		 // this.cubeTest.position.z = z;
+
+		 if(p1.setZ)
+		 {
+			 p1.setZ(z);
+		 }
 		}
+
+
+
+
+		// if(points.length >= 3)
+		// {
+		// 	let A = points[0];
+		// 	let B = points[1];
+		// 	let C = points[2];
+		//
+		// 	let z = A.z + ((B.x - A.x) * (C.z - A.z) - (C.x - A.x) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.y - A.y)    -    ((B.y - A.y) * (C.z - A.z) - (C.y - A.y) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.x - A.x)
+		// 	// console.log('new z', z);
+		// 	this.cubeTest.position.z = z;
+		// 	if(p1.setZ)
+		// 	{
+		// 		p1.setZ(z);
+		// 	}
+		// }
+
+		// console.log("column between y = ", lastY, lastY + 1);
+		// let sum = 0;
+		// let nbPoints = 0;
+		//
+		// let dists = []
+		//
+		// let points = [];
+		// let maxDist = 0;
+		//
+		// for (var i = 0; i < this.pointsGrid.length; i++)
+		// {
+		// 	// calculate distance between the points, if between restingDistances, keep them for next step
+		// 	let p2 = this.pointsGrid[i];
+		// 	let dist = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
+		//
+		// 	if(dist < this.restingDistances * this.restingDistances)
+		// 	{
+		// 		if(dist > maxDist) maxDist = dist;
+		// 		p2.program.bind();
+		// 		// p2.program.uniforms.color = [1, 0, 1]
+		//
+		// 		points.push({
+		// 			p: p2,
+		// 			dist
+		// 		});
+		// 	}
+		// }
+		//
+		// function compare(a,b) {
+		//   if (a.dist < b.dist)
+		//     return -1;
+		//   if (a.dist > b.dist)
+		//     return 1;
+		//   return 0;
+		// }
+		//
+		// points.sort(compare);
+		//
+		//
+		// if(points.length >= 3)
+		// {
+		// 	let A = points[0].p;
+		// 	let B = points[1].p;
+		// 	let C = points[2].p;
+		//
+		// 	let z = A.z + ((B.x - A.x) * (C.z - A.z) - (C.x - A.x) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.y - A.y)    -    ((B.y - A.y) * (C.z - A.z) - (C.y - A.y) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.x - A.x)
+		// 	p1.setZ(z);
+		// }
 	}
 
 	createQuads()
@@ -302,6 +472,29 @@ export default class MainScene
 		{
 			let viewQuad = new ViewQuad();
 			this.views.push(viewQuad);
+		}
+	}
+
+	createQuadsVerlet()
+	{
+		let nbColumns = this.gridWidth - 1;
+		let nbLines = this.gridHeight - 1;
+
+		let nbQuads = nbColumns * nbLines;
+
+		for (var y = 0; y < nbLines; y++) {
+			for (var x = 0; x < nbColumns; x++) {
+				let pts = [];
+				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y)]);
+				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y)]);
+				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y + 1)]);
+				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y + 1)]);
+
+				let viewQuad = new ViewQuad();
+				viewQuad.attachPointRef(pts);
+
+				this.viewsVerlet.push(viewQuad);
+			}
 		}
 	}
 
@@ -339,7 +532,9 @@ export default class MainScene
 			{
 				let index = this.getViewAtCoordinates(xView, yView);
 				let quad = this.views[index];
-				// quad.render();
+				// let quadVerlet = this.viewsVerlet[index];
+				quad.render();
+				// quadVerlet.render();
 			}
 		}
 
@@ -356,7 +551,7 @@ export default class MainScene
 				let index = this.getPointsAtCoordinates(x, y);
 				let pointquad = this.pointsQuad[index];
 
-				// pointquad.x += .01;
+				pointquad.x += .01;
 				if(pointquad.y < this.limitMinY)
 				{
 					pointquad.y += this.gridHeight;
@@ -385,7 +580,7 @@ export default class MainScene
 					reappearLeft = true;
 				}
 
-				// pointquad.render();
+				pointquad.render();
 			}
 		}
 
@@ -475,16 +670,20 @@ export default class MainScene
 			{
 				this.pointsGrid[i].render(this.debug);
 
+				this.pointsGrid[i].temp = false;
 				if(!this._isDown)
 				{
-					// this.pointsGrid[i].accZ = 0;
+					this.pointsGrid[i].accZ = 0;
 				}
 			}
 		}
 
 		this.program.bind();
-		POLY.GL.draw(this.viewRay);
+		// POLY.GL.draw(this.viewRay);
+
+		// console.log(this.cubeTest.position);
 		POLY.GL.draw(this.sphereIntersection);
+		// POLY.GL.draw(this.cubeTest);
 	}
 
 	map(val, inputMin, inputMax, outputMin, outputMax)

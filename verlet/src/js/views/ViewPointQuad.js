@@ -45,7 +45,7 @@ export default class ViewPointQuad
         this.view.position.x = this.x;
         this.view.position.y = this.y;
         this.view.position.z = this.z;
-        POLY.GL.draw(this.view);
+        // POLY.GL.draw(this.view);
 
     }
 }

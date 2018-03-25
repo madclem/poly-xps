@@ -54,7 +54,7 @@ export default class ViewPointMass
         let velY = this.y - this.lastY;
         let velZ = this.z - this.lastZ + this.accZ;
 
-        this.velZ += (velZ - this.velZ) * .5;
+        this.velZ += (velZ - this.velZ) * .6;
 
         // dampen velocity
         velX *= 0.99;
@@ -167,11 +167,19 @@ export default class ViewPointMass
         let percentage = Math.abs(this.z) * 1;
 
         // console.log(percentage);
-        let r = 1 - percentage
-        let g = 1 - percentage
-        let b = 1
-        this.program.uniforms.color = [r,g,b];
-        POLY.GL.draw(this.view);
+        // let r = 1 - percentage
+        // let g = 1 - percentage
+        // let b = 1
+
+        if(this.temp)
+        {
+            this.program.uniforms.color = [1,0,0];
+        }
+        else {
+
+            this.program.uniforms.color = [1,1,1];
+        }
+        // POLY.GL.draw(this.view);
 
     }
 }
