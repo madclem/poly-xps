@@ -40,12 +40,12 @@ export default class ViewPointQuad
     render()
     {
 
-        this.z += (this.easeZ - this.z) * .1;
+        this.z += (this.easeZ - this.z) * .3;
         this.program.bind();
         this.view.position.x = this.x;
         this.view.position.y = this.y;
         this.view.position.z = this.z;
-        // POLY.GL.draw(this.view);
+        POLY.GL.draw(this.view);
 
     }
 }

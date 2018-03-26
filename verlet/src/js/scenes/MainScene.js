@@ -4,11 +4,11 @@ import Physics from '../Physics';
 import PointMass from '../views/ViewPointMass';
 import PointQuad from '../views/ViewPointQuad';
 import ViewQuad from '../views/ViewQuad';
-// import SpeedController from '../control/SpeedController';
 import {mat3, mat4, vec3} from 'gl-matrix';
 
 let target = vec3.create();
 
+// generic function to get cursor position
 const getCursorPos = function (e) {
     if(e.touches) {
         return {
@@ -36,11 +36,10 @@ export default class MainScene
 		this.camera = new POLY.cameras.PerspectiveCamera();
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
-		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix);
+		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix, 1);
 		this.orbitalControl.lock(true);
 		// this.orbitalControl.lockZoom(true);
 		POLY.GL.setCamera(this.camera);
-
 
 		this.projectionMatrix = mat4.create();
 
@@ -50,13 +49,12 @@ export default class MainScene
 		this.gridHeight = 6;
 		this.gridWidth = 8;
 		this.restingDistances = 1;
-		this.stiffnesses = .04;
+		this.stiffnesses = .01;
 
 		this.pointsGrid = [];
 		this.pointsQuad = [];
 		this.views = [];
 		this.viewsVerlet = [];
-		this.easePoint = {x:0, y:0}
 		this.pos = {x:0, y:0}
 		this.previousPos = {x:0, y:0}
 		this.speedX = 0;
@@ -65,18 +63,11 @@ export default class MainScene
 		this.physics = new Physics();
 		this.createGridPoints();
 		this.createQuads();
-		this.createQuadsVerlet();
 
 		this.limitMinY = -(this.gridHeight * this.restingDistances)/2 + this.restingDistances/2;
 		this.limitMinX = -(this.gridWidth * this.restingDistances)/2 + this.restingDistances/2;
 
 		this.program = new POLY.Program();
-		this.viewRay = new POLY.geometry.Mesh(this.program, null, POLY.gl.LINES);
-		this.viewRay.addPosition([
-			0,0,0,
-			0,1,0
-		]);
-
 		this.sphereIntersection = new POLY.geometry.Sphere(this.program);
 		this.sphereIntersection.scale.set(.05);
 
@@ -105,10 +96,6 @@ export default class MainScene
 		vec3.scale(target, target, this.orbitalControl._radius);
 		vec3.add(target, target, origin);
 
-		this.viewRay.updatePosition('aPosition', [
-			origin[0], origin[1], origin[2],
-			target[0], target[1], target[2],
-		]);
 
 		let intersection = this.findIntersection(origin, target);
 		this.intersection = intersection;
@@ -136,8 +123,14 @@ export default class MainScene
 
 				if(dist <= minDist)
 				{
-					let depth = this.map(dist, 0, minDist, -.04, 0);
+					let depth = this.map(dist, 0, minDist, -.002, 0);
 					// pG.program.uniforms.color = [.2, .2, .2]
+
+                    if(depth < -.002)
+                    {
+                        depth = -.002
+                    }
+                    console.log('depth', depth);
 
 					pG.test = true;
 					pG.accZ = depth;
@@ -229,8 +222,8 @@ export default class MainScene
 		x = new_x;
 		y = new_y;
 
-		vx = negX * Math.sqrt(x_dist*x_dist)/ (interval/50);
-		vy = negY * Math.sqrt(y_dist*y_dist)/ (interval/50);
+		vx = negX * Math.sqrt(x_dist*x_dist)/ (interval/40);
+		vy = negY * Math.sqrt(y_dist*y_dist)/ (interval/40);
 
 		this.speedX = vx;
 		this.speedY = vy;
@@ -238,7 +231,7 @@ export default class MainScene
 		if(isNaN(vx)) vx = 0;
 		if(isNaN(vy)) vy = 0;
 
-		velocity = Math.sqrt(x_dist*x_dist+y_dist*y_dist)/ (interval/50);
+		velocity = Math.sqrt(x_dist*x_dist+y_dist*y_dist)/ (interval/40);
 		//
 		if(isNaN(velocity)) velocity = 0;
 
@@ -255,19 +248,27 @@ export default class MainScene
 		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
 		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
 
-		this.pos.x = x;
-		this.pos.y = y;
+		this.pos.x = this.sphereIntersection.position.x;
+		this.pos.y = this.sphereIntersection.position.y;
 
 		this.firstPos = {
 			x, y
 		};
 
 		this.speed =  this.lastSpeed = 0;
-		// this.firstPos = getCursorPos(e);
 	}
 
 	_onMove(e)
 	{
+
+        this.pos.x = this.sphereIntersection.position.x;
+        this.pos.y = this.sphereIntersection.position.y;
+
+        let speed = Math.abs(this.calculateSpeed());
+
+        this.previousTime = Date.now();
+        this.previousPos.x = this.pos.x;
+        this.previousPos.y = this.pos.y;
 
 		if(!this._isDown) return;
 
@@ -276,22 +277,12 @@ export default class MainScene
 		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
 		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
 
-		this.easePoint.x = x - this.firstPos.x;
 
 		this.mouse.x = x;
 		this.mouse.y = y;
 
 		this.onTraceRay();
 
-		this.pos.x = x;
-		this.pos.y = y;
-
-		let speed = Math.abs(this.calculateSpeed());
-
-		// console.log('speed', this.speedX);
-		this.previousTime = Date.now();
-		this.previousPos.x = this.pos.x;
-		this.previousPos.y = this.pos.y;
 	}
 
 	_onUp(e)
@@ -308,11 +299,6 @@ export default class MainScene
 				let pointmass = new PointMass((-(this.gridWidth - 1) / 2) * this.restingDistances + x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
 				let pointquad = new PointQuad((-(this.gridWidth - 1) / 2) * this.restingDistances +  x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
 
-                if(y === 0)
-                {
-                    console.log('pointquad.y', pointquad.y);
-                }
-
 				if (x != 0)
 					pointmass.attachTo(this.pointsGrid[this.pointsGrid.length-1], this.restingDistances, this.stiffnesses);
 				if (y != 0)
@@ -326,8 +312,6 @@ export default class MainScene
 				this.pointsQuad.push(pointquad);
 			}
 		}
-
-		// this.pointsGrid[12].pinTo(null, null, -1)
 	}
 
 	findNeighbours(p1)
@@ -408,13 +392,6 @@ export default class MainScene
 			let p2P = points[1].p;
 			let p3P = points[2].p;
 
-			// p1P.program.uniforms.color = [1,0,0];
-			// p2P.program.uniforms.color = [1,0,0];
-			// p3P.program.uniforms.color = [1,0,0];
-
-
-
-		// a(x - x0) + b(y-y0) + c(z- z0) = 0
 			let x0 = p1P.x;
 			let y0 = p1P.y;
 			let z0 = p1P.z
@@ -422,120 +399,19 @@ export default class MainScene
 			let x = p1.x;
 			let y = p1.y;
 
-		// <a, b, c> is a vector perpendicular to the plane
-
-		/* find perpendicular vector */
-		// create 2 vectors
 			let v1 = [p2P.x - p1P.x, p2P.y - p1P.y, p2P.z - p1P.z]
 			let v2 = [p3P.x - p2P.x, p3P.y - p2P.y, p3P.z - p2P.z]
 
-		// https://www.youtube.com/watch?v=0qYJfKG-3l8
-
-		// cross product
-		// |i     j     k
-		// |v1[0] v1[1] v1[2]
-		// |v2[0] v2[1] v2[2]
-
-		// | v1[1] v1[2]|    -  |v1[0]v1[2]|    + |v1[0] v1[1]|
-		// | v2[1] v2[2]| i     |v2[0]v2[2]| j    |v2[0] v2[1]|k
-
-		// (v1[1] * v2[2] + v1[2] * v2[1]) * i - (v1[0] * v2[2] + v1[2] * v2[0]) * j + (v1[0] * v2[1] + v1[1] * v2[0]) * k
-		// let abc = [(v1[1] * v2[2] + v1[2] * v2[1]), - (v1[0] * v2[2] + v1[2] * v2[0]) ,  -(v1[0] * v2[1] + v1[1] * v2[0])]
-
 		let abc = vec3.create();
 		vec3.cross(abc, v1, v2)
-		// abc[2] *= -1;
-		// console.log(abc);
-
-		// this.sphere.position.set(abc[0], abc[1], abc[2]);
+		let z = (abc[0] * x0 + abc[1] * y0 + abc[2] * z0 - abc[0] * x  -  abc[1] * y) / abc[2];
 
 
-		// plane equation
-		// abc[0] * (x - x0) + abc[1] * (y-y0) + abc[2](z- z0) = 0
-		// abc[0] * x - abc[0] * x0 + abc[1] * y - abc[1] * y0 + abc[2] * z - abc[2] * z0 = 0
-		// abc[0] * x  +  abc[1] * y + abc[2] * z = abc[0] * x0 + abc[1] * y0 + abc[2] * z0;
-		 let z = (abc[0] * x0 + abc[1] * y0 + abc[2] * z0 - abc[0] * x  -  abc[1] * y) / abc[2];
-
-		 // this.cubeTest.position.x = abc[0];
-		 // this.cubeTest.position.y = abc[1];
-		 // this.cubeTest.position.z = abc[2];
-
-		 // this.cubeTest.position.x = this.intersection.x;
- 		 // this.cubeTest.position.y = this.intersection.y;
-		 // this.cubeTest.position.z = z;
-
-		 if(p1.setZ)
-		 {
-			 p1.setZ(z);
-		 }
+    	 if(p1.setZ)
+    	 {
+    		 p1.setZ(z);
+    	 }
 		}
-
-
-
-
-		// if(points.length >= 3)
-		// {
-		// 	let A = points[0];
-		// 	let B = points[1];
-		// 	let C = points[2];
-		//
-		// 	let z = A.z + ((B.x - A.x) * (C.z - A.z) - (C.x - A.x) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.y - A.y)    -    ((B.y - A.y) * (C.z - A.z) - (C.y - A.y) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.x - A.x)
-		// 	// console.log('new z', z);
-		// 	this.cubeTest.position.z = z;
-		// 	if(p1.setZ)
-		// 	{
-		// 		p1.setZ(z);
-		// 	}
-		// }
-
-		// console.log("column between y = ", lastY, lastY + 1);
-		// let sum = 0;
-		// let nbPoints = 0;
-		//
-		// let dists = []
-		//
-		// let points = [];
-		// let maxDist = 0;
-		//
-		// for (var i = 0; i < this.pointsGrid.length; i++)
-		// {
-		// 	// calculate distance between the points, if between restingDistances, keep them for next step
-		// 	let p2 = this.pointsGrid[i];
-		// 	let dist = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
-		//
-		// 	if(dist < this.restingDistances * this.restingDistances)
-		// 	{
-		// 		if(dist > maxDist) maxDist = dist;
-		// 		p2.program.bind();
-		// 		// p2.program.uniforms.color = [1, 0, 1]
-		//
-		// 		points.push({
-		// 			p: p2,
-		// 			dist
-		// 		});
-		// 	}
-		// }
-		//
-		// function compare(a,b) {
-		//   if (a.dist < b.dist)
-		//     return -1;
-		//   if (a.dist > b.dist)
-		//     return 1;
-		//   return 0;
-		// }
-		//
-		// points.sort(compare);
-		//
-		//
-		// if(points.length >= 3)
-		// {
-		// 	let A = points[0].p;
-		// 	let B = points[1].p;
-		// 	let C = points[2].p;
-		//
-		// 	let z = A.z + ((B.x - A.x) * (C.z - A.z) - (C.x - A.x) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.y - A.y)    -    ((B.y - A.y) * (C.z - A.z) - (C.y - A.y) * (B.z - A.z)) / ((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y)) * (p1.x - A.x)
-		// 	p1.setZ(z);
-		// }
 	}
 
 	createQuads()
@@ -549,29 +425,6 @@ export default class MainScene
 		{
 			let viewQuad = new ViewQuad();
 			this.views.push(viewQuad);
-		}
-	}
-
-	createQuadsVerlet()
-	{
-		let nbColumns = this.gridWidth - 1;
-		let nbLines = this.gridHeight - 1;
-
-		let nbQuads = nbColumns * nbLines;
-
-		for (var y = 0; y < nbLines; y++) {
-			for (var x = 0; x < nbColumns; x++) {
-				let pts = [];
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x + 1, y + 1)]);
-				pts.push(this.pointsGrid[this.getPointsAtCoordinates(x, y + 1)]);
-
-				let viewQuad = new ViewQuad();
-				viewQuad.attachPointRef(pts);
-
-				this.viewsVerlet.push(viewQuad);
-			}
 		}
 	}
 
@@ -594,12 +447,9 @@ export default class MainScene
 	render()
 	{
 
-		if(!this._isDown)
-		{
-			this.speedX *= .98;
-			this.speedY *= .98;
-		}
-		// POLY.GL._camera.projectionMatrix = this.projectionMatrix;
+		this.speedX *= .92;
+		this.speedY *= .92;
+
 		let nbColumns = this.gridWidth - 1;
 		let nbLines = this.gridHeight - 1;
 
@@ -613,9 +463,7 @@ export default class MainScene
 			{
 				let index = this.getViewAtCoordinates(xView, yView);
 				let quad = this.views[index];
-				// let quadVerlet = this.viewsVerlet[index];
 				quad.render();
-				// quadVerlet.render();
 			}
 		}
 
@@ -626,44 +474,26 @@ export default class MainScene
 		let reappearBottom = false;
 
 
-		// let x = this.easePoint.x
 		for (let y = 0; y < this.gridHeight; y++)   // due to the way PointMasss are attached, we need the y loop on the outside
 		{
-            if(y === 0 && !this.temp)
-            {
-                // console.log('first row');
-            }
 			for (let x = 0; x < this.gridWidth; x++)
 			{
 				let index = this.getPointsAtCoordinates(x, y);
 				let pointquad = this.pointsQuad[index];
 
-                if(y === 0 && !this.temp){
-                    let yyy = pointquad.y;
-                    console.log('x : ', x, ' y : ', pointquad.y);
-                }
-
 				if(this.speedX && !isNaN(this.speedX))
 				{
 					// console.log(this.speedX / 1000);
-					// pointquad.x += this.speedX;
+					pointquad.x += this.speedX;
 
 				}
 				if(this.speedY && !isNaN(this.speedY))
 				{
 					// console.log(this.speedY / 1000);
-					// pointquad.y -= this.speedY;
+					pointquad.y += this.speedY;
 
 				}
-                if(!this.temp)
-                {
 
-                    // pointquad.y += .01;
-
-                    // pointquad.y = Math.round(pointquad.y * 100) / 100;
-                }
-				pointquad.y += .02;
-				pointquad.x += .02;
 				if(pointquad.y < this.limitMinY)
 				{
 					// pointquad.y += this.gridHeight;
@@ -672,7 +502,6 @@ export default class MainScene
 				}
 				else if(pointquad.y > this.limitMinY + this.gridHeight)
 				{
-                    console.log('reappear bottom');
 					// pointquad.y = this.limitMinY;
 					reappearBottom = true;
 				}
@@ -708,6 +537,7 @@ export default class MainScene
 				this.pointsQuad.unshift(pt);
 			}
 
+			this.beenIn = true;
 			for (var xView = 0; xView < nbColumns; xView++)
 			{
 				this.views.splice(0, 0, this.views.pop());
@@ -740,7 +570,7 @@ export default class MainScene
                 let indexPt = this.getPointsAtCoordinates(0, y);
                 let pt = this.pointsQuad[indexPt];
 
-                pt.x += this.gridWidth;
+                pt.x = this.limitMinX + this.gridWidth;
                 this.pointsQuad.splice(indexPt, 1);
                 this.pointsQuad.splice(indexPt + this.gridWidth -1, 0, pt);
             }
@@ -826,27 +656,12 @@ export default class MainScene
 		}
 
 		this.program.bind();
-		// POLY.GL.draw(this.viewRay);
 
-		// console.log(this.cubeTest.position);
 		POLY.GL.draw(this.sphereIntersection);
-		// POLY.GL.draw(this.cubeTest);
 	}
 
 	map(val, inputMin, inputMax, outputMin, outputMax)
     {
-                /*
-                var inputRange = inputMax - inputMin
-
-                var inputFraction = (val - inputMin)/inputRange
-
-                var outputRange = outputMax - outputMin
-
-                var output = (outputRange * inputFraction) + outputMin
-
-                return output
-                */
-
         return ((outputMax - outputMin) * ((val - inputMin)/(inputMax - inputMin))) + outputMin;
     }
 

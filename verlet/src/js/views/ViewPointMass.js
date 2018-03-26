@@ -164,7 +164,7 @@ export default class ViewPointMass
         this.view.position.y = this.y;
         this.view.position.z = this.z;
 
-        let percentage = Math.abs(this.z) * 1;
+        // let percentage = Math.abs(this.z) * 1;
 
         // console.log(percentage);
         // let r = 1 - percentage
@@ -179,7 +179,7 @@ export default class ViewPointMass
 
             this.program.uniforms.color = [1,1,1];
         }
-        // POLY.GL.draw(this.view);
+        POLY.GL.draw(this.view);
 
     }
 }
