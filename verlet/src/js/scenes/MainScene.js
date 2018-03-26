@@ -4,7 +4,7 @@ import Physics from '../Physics';
 import PointMass from '../views/ViewPointMass';
 import PointQuad from '../views/ViewPointQuad';
 import ViewQuad from '../views/ViewQuad';
-import SpeedController from '../control/SpeedController';
+// import SpeedController from '../control/SpeedController';
 import {mat3, mat4, vec3} from 'gl-matrix';
 
 let target = vec3.create();
@@ -47,7 +47,7 @@ export default class MainScene
 		this._bPlanes = new POLY.helpers.BatchPlanes();
 
 
-		this.gridHeight = 4;
+		this.gridHeight = 6;
 		this.gridWidth = 8;
 		this.restingDistances = 1;
 		this.stiffnesses = .04;
@@ -56,6 +56,11 @@ export default class MainScene
 		this.pointsQuad = [];
 		this.views = [];
 		this.viewsVerlet = [];
+		this.easePoint = {x:0, y:0}
+		this.pos = {x:0, y:0}
+		this.previousPos = {x:0, y:0}
+		this.speedX = 0;
+		this.speedY = 0;
 
 		this.physics = new Physics();
 		this.createGridPoints();
@@ -132,7 +137,6 @@ export default class MainScene
 				if(dist <= minDist)
 				{
 					let depth = this.map(dist, 0, minDist, -.04, 0);
-					console.log('here', depth);
 					// pG.program.uniforms.color = [.2, .2, .2]
 
 					pG.test = true;
@@ -197,13 +201,69 @@ export default class MainScene
 		// this.impactVerlet(this.intersection);
 	}
 
+	calculateSpeed()
+  {
+		var x =  this.pos.x;
+		var y = this.pos.y;
+		var new_x;
+		var new_y;
+		var new_t;
+
+		var x_dist;
+		var y_dist, interval,vx, vy, t, negX, negY, velocity;
+
+		if (this.previousTime === false) {return 0;}
+		t = this.previousTime;
+		new_x = this.previousPos.x;
+		new_y = this.previousPos.y;
+		new_t = Date.now();
+
+		x_dist = new_x - x;
+
+
+		y_dist = new_y - y;
+		interval = new_t - t;
+		negX = x_dist < 0 ? 1: -1;
+		negY = y_dist < 0 ? 1: -1;
+          // update values:
+		x = new_x;
+		y = new_y;
+
+		vx = negX * Math.sqrt(x_dist*x_dist)/ (interval/50);
+		vy = negY * Math.sqrt(y_dist*y_dist)/ (interval/50);
+
+		this.speedX = vx;
+		this.speedY = vy;
+
+		if(isNaN(vx)) vx = 0;
+		if(isNaN(vy)) vy = 0;
+
+		velocity = Math.sqrt(x_dist*x_dist+y_dist*y_dist)/ (interval/50);
+		//
+		if(isNaN(velocity)) velocity = 0;
+
+		return velocity;
+	}
+
 	_onDown(e)
 	{
 		if(this._isDown) return;
 
 		this._isDown = true;
 
-		this.firstPos = getCursorPos(e);
+		let pt = getCursorPos(e);
+		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
+		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
+
+		this.pos.x = x;
+		this.pos.y = y;
+
+		this.firstPos = {
+			x, y
+		};
+
+		this.speed =  this.lastSpeed = 0;
+		// this.firstPos = getCursorPos(e);
 	}
 
 	_onMove(e)
@@ -216,10 +276,22 @@ export default class MainScene
 		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
 		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
 
+		this.easePoint.x = x - this.firstPos.x;
+
 		this.mouse.x = x;
 		this.mouse.y = y;
 
 		this.onTraceRay();
+
+		this.pos.x = x;
+		this.pos.y = y;
+
+		let speed = Math.abs(this.calculateSpeed());
+
+		// console.log('speed', this.speedX);
+		this.previousTime = Date.now();
+		this.previousPos.x = this.pos.x;
+		this.previousPos.y = this.pos.y;
 	}
 
 	_onUp(e)
@@ -235,6 +307,11 @@ export default class MainScene
 			{
 				let pointmass = new PointMass((-(this.gridWidth - 1) / 2) * this.restingDistances + x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
 				let pointquad = new PointQuad((-(this.gridWidth - 1) / 2) * this.restingDistances +  x * this.restingDistances, (-(this.gridHeight - 1)/2) * this.restingDistances + y * this.restingDistances);
+
+                if(y === 0)
+                {
+                    console.log('pointquad.y', pointquad.y);
+                }
 
 				if (x != 0)
 					pointmass.attachTo(this.pointsGrid[this.pointsGrid.length-1], this.restingDistances, this.stiffnesses);
@@ -517,8 +594,12 @@ export default class MainScene
 	render()
 	{
 
+		if(!this._isDown)
+		{
+			this.speedX *= .98;
+			this.speedY *= .98;
+		}
 		// POLY.GL._camera.projectionMatrix = this.projectionMatrix;
-
 		let nbColumns = this.gridWidth - 1;
 		let nbLines = this.gridHeight - 1;
 
@@ -544,38 +625,71 @@ export default class MainScene
 		let reappearTop = false;
 		let reappearBottom = false;
 
+
+		// let x = this.easePoint.x
 		for (let y = 0; y < this.gridHeight; y++)   // due to the way PointMasss are attached, we need the y loop on the outside
 		{
+            if(y === 0 && !this.temp)
+            {
+                // console.log('first row');
+            }
 			for (let x = 0; x < this.gridWidth; x++)
 			{
 				let index = this.getPointsAtCoordinates(x, y);
 				let pointquad = this.pointsQuad[index];
 
-				pointquad.x += .01;
+                if(y === 0 && !this.temp){
+                    let yyy = pointquad.y;
+                    console.log('x : ', x, ' y : ', pointquad.y);
+                }
+
+				if(this.speedX && !isNaN(this.speedX))
+				{
+					// console.log(this.speedX / 1000);
+					// pointquad.x += this.speedX;
+
+				}
+				if(this.speedY && !isNaN(this.speedY))
+				{
+					// console.log(this.speedY / 1000);
+					// pointquad.y -= this.speedY;
+
+				}
+                if(!this.temp)
+                {
+
+                    // pointquad.y += .01;
+
+                    // pointquad.y = Math.round(pointquad.y * 100) / 100;
+                }
+				pointquad.y += .02;
+				pointquad.x += .02;
 				if(pointquad.y < this.limitMinY)
 				{
-					pointquad.y += this.gridHeight;
+					// pointquad.y += this.gridHeight;
+                    console.log('here reappear top');
 					reappearTop = true;
 				}
 				else if(pointquad.y > this.limitMinY + this.gridHeight)
 				{
-					pointquad.y = this.limitMinY;
+                    console.log('reappear bottom');
+					// pointquad.y = this.limitMinY;
 					reappearBottom = true;
 				}
 
 				if(pointquad.x <= this.limitMinX)
 				{
-					pointquad.x += this.gridWidth;
-					this.pointsQuad.splice(index, 1)
-					this.pointsQuad.splice(index + this.gridWidth -1, 0, pointquad);
+					// pointquad.x += this.gridWidth;
+					// this.pointsQuad.splice(index, 1)
+					// this.pointsQuad.splice(index + this.gridWidth -1, 0, pointquad);
 
 					reappearRight = true;
 				}
 				else if(pointquad.x > this.limitMinX + this.gridWidth)
 				{
-					pointquad.x = this.limitMinX;
-					this.pointsQuad.splice(index, 1)
-					this.pointsQuad.splice(index - this.gridWidth + 1, 0, pointquad);
+					// pointquad.x = this.limitMinX;
+					// this.pointsQuad.splice(index, 1)
+					// this.pointsQuad.splice(index - this.gridWidth + 1, 0, pointquad);
 
 					reappearLeft = true;
 				}
@@ -589,20 +703,29 @@ export default class MainScene
 		{
 			for (var i = 0; i < this.gridWidth; i++)
 			{
-				this.pointsQuad.splice(0, 0, this.pointsQuad.pop());
+                let pt = this.pointsQuad.pop();
+                pt.y = this.limitMinY;
+				this.pointsQuad.unshift(pt);
 			}
 
 			for (var xView = 0; xView < nbColumns; xView++)
 			{
 				this.views.splice(0, 0, this.views.pop());
+				// this.view.program.uniforms.color = [1,0,0];
+				// this.beenIn
 			}
+
+            this.temp = true;
 
 		}
 		else if(reappearTop)
 		{
 			for (var i = 0; i < this.gridWidth; i++)
 			{
-				this.pointsQuad.push(this.pointsQuad.shift());
+                let pt = this.pointsQuad.shift();
+                pt.y += this.gridHeight;
+
+				this.pointsQuad.push(pt);
 			}
 
 			for (var xView = 0; xView < nbColumns; xView++)
@@ -613,18 +736,40 @@ export default class MainScene
 
 		if(reappearRight)
 		{
+            for (var y = 0; y < this.gridHeight; y++) {
+                let indexPt = this.getPointsAtCoordinates(0, y);
+                let pt = this.pointsQuad[indexPt];
 
+                pt.x += this.gridWidth;
+                this.pointsQuad.splice(indexPt, 1);
+                this.pointsQuad.splice(indexPt + this.gridWidth -1, 0, pt);
+            }
 			for (var yView = 0; yView < nbLines; yView++)
 			{
 				let index = this.getViewAtCoordinates(0, yView);
 				let quad = this.views[index];
 
 				this.views.splice(index, 1)
-				this.views.splice(index + this.gridWidth, 0, quad);
+				this.views.splice(index + this.gridWidth - 2, 0, quad);
 			}
+
+            // this.temp = true;
 		}
 		else if(reappearLeft)
 		{
+            for (var y = 0; y < this.gridHeight; y++) {
+                let indexPt = this.getPointsAtCoordinates(this.gridWidth-1, y);
+                let pt = this.pointsQuad[indexPt];
+
+                pt.x = this.limitMinX;
+                this.pointsQuad.splice(indexPt, 1)
+                this.pointsQuad.splice(indexPt - this.gridWidth + 1, 0, pt);
+
+                // pt.x += this.gridWidth;
+                // this.pointsQuad.splice(indexPt, 1);
+                // this.pointsQuad.splice(indexPt + this.gridWidth -1, 0, pt);
+            }
+
 			for (var yView = 0; yView < nbLines; yView++)
 			{
 				let index = this.getViewAtCoordinates(nbColumns - 1, yView);
@@ -634,6 +779,8 @@ export default class MainScene
 				this.views.splice(index, 1)
 				this.views.splice(index - nbColumns + 1, 0, quad);
 			}
+
+            // this.temp = true;
 		}
 
 		for (var i = 0; i < this.pointsQuad.length; i++)
