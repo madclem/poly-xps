@@ -19,7 +19,7 @@ export default class ViewPointQuad
 
         this.program = new POLY.Program(null, frag, {
             color: {
-                value: [0, 0, 1],
+                value: [1, 1, 1],
                 type: 'vec3'
             }
         });
