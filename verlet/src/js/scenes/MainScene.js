@@ -99,10 +99,6 @@ export default class MainScene
 
 		let intersection = this.findIntersection(origin, target);
 		this.intersection = intersection;
-
-		this.findNeighbours(intersection);
-		//
-		this.impactVerlet(intersection);
 	}
 
 	impactVerlet(pt)
@@ -222,8 +218,8 @@ export default class MainScene
 		x = new_x;
 		y = new_y;
 
-		vx = negX * Math.sqrt(x_dist*x_dist)/ (interval/40);
-		vy = negY * Math.sqrt(y_dist*y_dist)/ (interval/40);
+		vx = negX * Math.sqrt(x_dist*x_dist)/ (interval);
+		vy = negY * Math.sqrt(y_dist*y_dist)/ (interval);
 
 		this.speedX = vx;
 		this.speedY = vy;
@@ -231,7 +227,7 @@ export default class MainScene
 		if(isNaN(vx)) vx = 0;
 		if(isNaN(vy)) vy = 0;
 
-		velocity = Math.sqrt(x_dist*x_dist+y_dist*y_dist)/ (interval/40);
+		velocity = Math.sqrt(x_dist*x_dist+y_dist*y_dist)/ (interval);
 		//
 		if(isNaN(velocity)) velocity = 0;
 
@@ -248,9 +244,6 @@ export default class MainScene
 		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
 		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
 
-		this.pos.x = this.sphereIntersection.position.x;
-		this.pos.y = this.sphereIntersection.position.y;
-
 		this.firstPos = {
 			x, y
 		};
@@ -260,18 +253,6 @@ export default class MainScene
 
 	_onMove(e)
 	{
-
-        this.pos.x = this.sphereIntersection.position.x;
-        this.pos.y = this.sphereIntersection.position.y;
-
-        let speed = Math.abs(this.calculateSpeed());
-
-        this.previousTime = Date.now();
-        this.previousPos.x = this.pos.x;
-        this.previousPos.y = this.pos.y;
-
-		if(!this._isDown) return;
-
 		let pt = getCursorPos(e);
 
 		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
@@ -282,6 +263,7 @@ export default class MainScene
 		this.mouse.y = y;
 
 		this.onTraceRay();
+
 
 	}
 
@@ -446,9 +428,33 @@ export default class MainScene
 	}
 	render()
 	{
+        this.pos.x = this.sphereIntersection.position.x;
+        this.pos.y = this.sphereIntersection.position.y;
 
-		this.speedX *= .92;
-		this.speedY *= .92;
+        // this.calculateSpeed()
+
+        if(this._isDown)
+        {
+            this.speedX = this.pos.x - this.previousPos.x;
+            this.speedY = this.pos.y - this.previousPos.y;
+
+            if(this.intersection)
+            {
+                this.findNeighbours(this.intersection);
+                this.impactVerlet(this.intersection);
+            }
+        }
+        else {
+            this.speedX *= .9;
+            this.speedY *= .9;
+        }
+
+        // this.previousTime = Date.now();
+
+        this.previousPos.x = this.pos.x;
+        this.previousPos.y = this.pos.y;
+		// this.speedX *= .92;
+		// this.speedY *= .92;
 
 		let nbColumns = this.gridWidth - 1;
 		let nbLines = this.gridHeight - 1;
@@ -483,43 +489,28 @@ export default class MainScene
 
 				if(this.speedX && !isNaN(this.speedX))
 				{
-					// console.log(this.speedX / 1000);
 					pointquad.x += this.speedX;
-
 				}
 				if(this.speedY && !isNaN(this.speedY))
 				{
-					// console.log(this.speedY / 1000);
 					pointquad.y += this.speedY;
-
 				}
 
 				if(pointquad.y < this.limitMinY)
 				{
-					// pointquad.y += this.gridHeight;
-                    console.log('here reappear top');
 					reappearTop = true;
 				}
 				else if(pointquad.y > this.limitMinY + this.gridHeight)
 				{
-					// pointquad.y = this.limitMinY;
 					reappearBottom = true;
 				}
 
 				if(pointquad.x <= this.limitMinX)
 				{
-					// pointquad.x += this.gridWidth;
-					// this.pointsQuad.splice(index, 1)
-					// this.pointsQuad.splice(index + this.gridWidth -1, 0, pointquad);
-
 					reappearRight = true;
 				}
 				else if(pointquad.x > this.limitMinX + this.gridWidth)
 				{
-					// pointquad.x = this.limitMinX;
-					// this.pointsQuad.splice(index, 1)
-					// this.pointsQuad.splice(index - this.gridWidth + 1, 0, pointquad);
-
 					reappearLeft = true;
 				}
 
@@ -530,10 +521,13 @@ export default class MainScene
 		// REORDER THE ACTUAL QUADS
 		if(reappearBottom)
 		{
+            let farPoint = this.pointsQuad[this.getPointsAtCoordinates(0, 0)];
+            let farY = farPoint.y;
+
 			for (var i = 0; i < this.gridWidth; i++)
 			{
                 let pt = this.pointsQuad.pop();
-                pt.y = this.limitMinY;
+                pt.y = farY - this.restingDistances;
 				this.pointsQuad.unshift(pt);
 			}
 
@@ -550,10 +544,13 @@ export default class MainScene
 		}
 		else if(reappearTop)
 		{
+            let farPoint = this.pointsQuad[this.getPointsAtCoordinates(0, this.gridHeight - 1)];
+            let farY = farPoint.y;
+
 			for (var i = 0; i < this.gridWidth; i++)
 			{
                 let pt = this.pointsQuad.shift();
-                pt.y += this.gridHeight;
+                pt.y = farY + this.restingDistances;
 
 				this.pointsQuad.push(pt);
 			}
@@ -566,11 +563,14 @@ export default class MainScene
 
 		if(reappearRight)
 		{
+            let farPoint = this.pointsQuad[this.getPointsAtCoordinates(this.gridWidth - 1, 0)];
+            let farX = farPoint.x;
             for (var y = 0; y < this.gridHeight; y++) {
                 let indexPt = this.getPointsAtCoordinates(0, y);
                 let pt = this.pointsQuad[indexPt];
 
-                pt.x = this.limitMinX + this.gridWidth;
+                pt.x = farX + this.restingDistances;
+                // pt.x = this.limitMinX + this.gridWidth;
                 this.pointsQuad.splice(indexPt, 1);
                 this.pointsQuad.splice(indexPt + this.gridWidth -1, 0, pt);
             }
@@ -587,17 +587,16 @@ export default class MainScene
 		}
 		else if(reappearLeft)
 		{
-            for (var y = 0; y < this.gridHeight; y++) {
+            let farPoint = this.pointsQuad[this.getPointsAtCoordinates(0, 0)];
+            let farX = farPoint.x;
+            for (var y = 0; y < this.gridHeight; y++)
+            {
                 let indexPt = this.getPointsAtCoordinates(this.gridWidth-1, y);
                 let pt = this.pointsQuad[indexPt];
-
-                pt.x = this.limitMinX;
+                pt.x = farX - this.restingDistances;
                 this.pointsQuad.splice(indexPt, 1)
                 this.pointsQuad.splice(indexPt - this.gridWidth + 1, 0, pt);
 
-                // pt.x += this.gridWidth;
-                // this.pointsQuad.splice(indexPt, 1);
-                // this.pointsQuad.splice(indexPt + this.gridWidth -1, 0, pt);
             }
 
 			for (var yView = 0; yView < nbLines; yView++)
