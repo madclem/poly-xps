@@ -1,4 +1,5 @@
 import * as POLY from 'poly/Poly';
+import vert from '../shaders/quadColor.vert';
 import frag from '../shaders/quadColor.frag';
 
 export default class ViewQuad
@@ -8,21 +9,24 @@ export default class ViewQuad
         this.pointsRef = [];
         this.id = Math.floor(Math.random() * 2000)
 
-        let colors = [
-            [1,1,1],
-            [1,0,0],
-        ]
+        // let colors = [
+        //     [1,1,1],
+        //     [1,0,0],
+        // ]
 
         // let color = colors[col] ? colors[col] : [Math.random(), Math.random(), Math.random()]
         let color = [Math.random(), Math.random(), Math.random()]
         // let color = [Math.random(), Math.random(), Math.random()]
-        this.program = new POLY.Program(null, frag, {
+        this.program = new POLY.Program(vert, frag, {
             color: {
                 type: 'vec3',
+                // value: [1,1,1]
                 value: color
             }
         });
         this.quad = new POLY.geometry.Quad(this.program);
+        this.quad.state.blend = true;
+        this.quad.addAttribute(this.quad.uvs, 'aUv', 2);
     }
 
     attachPointRef(pts)

@@ -1,6 +1,6 @@
 import * as POLY from 'poly/Poly';
 import Link from './Link';
-import frag from '../shaders/quadColor.frag';
+import frag from '../shaders/pointColor.frag';
 
 export default class ViewPointMass
 {
@@ -42,6 +42,7 @@ export default class ViewPointMass
             }
         });
         this.view = new POLY.geometry.Cube(this.program);
+        this.view.state.depthTest = false;
         this.view.position.x = 1;
         this.view.scale.set(.05);
     }
@@ -171,14 +172,6 @@ export default class ViewPointMass
         // let g = 1 - percentage
         // let b = 1
 
-        if(this.temp)
-        {
-            this.program.uniforms.color = [1,0,0];
-        }
-        else {
-
-            this.program.uniforms.color = [1,1,1];
-        }
         POLY.GL.draw(this.view);
 
     }

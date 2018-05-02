@@ -1,5 +1,6 @@
 import * as POLY from 'poly/Poly';
 import MainScene from './scenes/MainScene';
+import PointCollisionScene from './scenes/PointCollisionScene';
 import { Loader } from 'utils';
 import dat from 'dat-gui';
 
@@ -27,6 +28,7 @@ export default class App
 	_loadComplete(resources)
 	{
 		POLY.loadedResources = resources;
+		// this.scene = new PointCollisionScene();
 		this.scene = new MainScene();
 		this.scene.resize();
 

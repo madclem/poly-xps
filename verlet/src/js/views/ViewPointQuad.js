@@ -1,6 +1,6 @@
 import * as POLY from 'poly/Poly';
 import Link from './Link';
-import frag from '../shaders/quadColor.frag';
+import frag from '../shaders/pointColor.frag';
 
 export default class ViewPointQuad
 {
@@ -37,7 +37,7 @@ export default class ViewPointQuad
     {
         this.easeZ = value;
     }
-    render()
+    render(debug)
     {
 
         this.z += (this.easeZ - this.z) * .3;
@@ -45,6 +45,10 @@ export default class ViewPointQuad
         this.view.position.x = this.x;
         this.view.position.y = this.y;
         this.view.position.z = this.z;
+
+        // if(debug)
+        // {
+        // }
         POLY.GL.draw(this.view);
 
     }
