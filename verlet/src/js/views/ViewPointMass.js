@@ -47,6 +47,12 @@ export default class ViewPointMass
         this.view.scale.set(.05);
     }
 
+    setColor(r,g,b)
+    {
+        this.program.bind();
+        this.program.uniforms.color = [r,g,b];
+    }
+
     updatePhysics(timeStep = 1)
     {
         // this.applyForce(0, 0)
@@ -55,7 +61,7 @@ export default class ViewPointMass
         let velY = this.y - this.lastY;
         let velZ = this.z - this.lastZ + this.accZ;
 
-        this.velZ += (velZ - this.velZ) * .6;
+        this.velZ += (velZ - this.velZ) * .9;
 
         // dampen velocity
         velX *= 0.99;
@@ -75,6 +81,8 @@ export default class ViewPointMass
         this.x = nextX;
         this.y = nextY;
         this.z = nextZ;
+
+        if(this.z > 0) this.z = 0;
     }
 
     resetLinks()
@@ -164,13 +172,6 @@ export default class ViewPointMass
         this.view.position.x = this.x;
         this.view.position.y = this.y;
         this.view.position.z = this.z;
-
-        // let percentage = Math.abs(this.z) * 1;
-
-        // console.log(percentage);
-        // let r = 1 - percentage
-        // let g = 1 - percentage
-        // let b = 1
 
         POLY.GL.draw(this.view);
 

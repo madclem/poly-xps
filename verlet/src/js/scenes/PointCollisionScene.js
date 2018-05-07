@@ -5,6 +5,7 @@ import PointMass from '../views/ViewPointMass';
 import PointQuad from '../views/ViewPointQuad';
 import ViewQuad from '../views/ViewQuad';
 import {mat3, mat4, vec3} from 'gl-matrix';
+import frag from '../shaders/pointColor.frag';
 
 let target = vec3.create();
 
@@ -34,6 +35,8 @@ export default class PointCollisionScene
 		this.gl = POLY.gl;
         this.objects = [];
 
+        this.gridWidth = 3;
+        this.gridHeight = 3;
 		this.camera = new POLY.cameras.PerspectiveCamera();
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
@@ -49,12 +52,17 @@ export default class PointCollisionScene
 
 		this.pointsGrid = [];
 
-		this.program = new POLY.Program();
+		this.program = new POLY.Program(null, frag, {
+            color: {
+                type: 'vec3',
+                value: [1,1,1]
+            }
+        });
 		this.sphereIntersection = new POLY.geometry.Sphere(this.program);
 		this.sphereIntersection.scale.set(.05);
 
         this.cubeTest = new POLY.geometry.Cube(this.program);
-		this.cubeTest.scale.set(.1);
+		this.cubeTest.scale.set(.05);
 		this.cubeTest.rotation.x = Math.PI /4;
 		this.cubeTest.rotation.y = Math.PI /4;
 
@@ -68,7 +76,30 @@ export default class PointCollisionScene
         this.createGridPoints();
 		this.addEvents();
 
+        this.cubeTests = [];
+
+        for (var i = 0; i < 10; i++) {
+            let cubeTest = new POLY.geometry.Cube(this.program);
+    		cubeTest.tickX = Math.random() * 100;
+    		cubeTest.tickY = Math.random() * 100;
+    		cubeTest.speedX = Math.random() * .2 + 1;
+    		cubeTest.speedY = Math.random() * .2 + 1;
+    		cubeTest.scale.set(.05);
+    		cubeTest.rotation.x = Math.PI /4;
+    		cubeTest.rotation.y = Math.PI /4;
+
+            this.cubeTests.push(cubeTest);
+        }
+
 	}
+
+    setColor(cube, r,g,b)
+    {
+        cube.program.bind();
+        // cube.program.uniforms.color[0] = r;
+        // cube.program.uniforms.color[1] = g;
+        cube.program.uniforms.color = [r, g, b]
+    }
 
 	onTraceRay()
 	{
@@ -163,9 +194,18 @@ export default class PointCollisionScene
         {
             for (var x = 0; x < 3; x++)
             {
-                let p = new POLY.geometry.Cube(this.program);
+                let program = new POLY.Program(null, frag, {
+                    color: {
+                        type: 'vec3',
+                        value: [1,1,1]
+                    }
+                });
+
+                let p = new POLY.geometry.Cube(program);
+                p.program=program;
                 // p.position.set(-1 + x, -1 + y, 0);
-                p.position.set(-1 + x, -1 + y, Math.random() * -2);
+                p.position.set(-1 + x + Math.random() * .5 - .5/2, -1 + y, Math.random() * -2);
+                // p.position.set(-1 + x, -1 + y, 0);
                 p.scale.set(.05);
 
                 this.pointsGrid.push(p)
@@ -201,8 +241,6 @@ export default class PointCollisionScene
     {
         // first diagonal
         // console.log(points);
-        let p1P = points[0].p.position;
-        let p4P = points[3].p.position;
 
         let tri1 = [points[0].p.position, points[1].p.position, points[3].p.position]
         let centroid1 = this.getCentroid(tri1);
@@ -253,115 +291,259 @@ export default class PointCollisionScene
 	{
             // let points = [];
             for (var i = 0; i < this.pointsGrid.length; i++) {
-                this.pointsGrid[i].scale.set(.05);
+                // this.pointsGrid[i].scale.set(.05);
+                // this.pointsGrid[i].setColor(1,1,1);
+                // this.setColor(this.pointsGrid[i], 1, 1, 1);
+            }
+
+            function ptInTriangle(p, p0, p1, p2) {
+                var A = 1/2 * (-p1.y * p2.x + p0.y * (-p1.x + p2.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y);
+                var sign = A < 0 ? -1 : 1;
+                var s = (p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y) * sign;
+                var t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
+
+                return s > 0 && t > 0 && (s + t) < 2 * A * sign;
             }
 
 
-    		// find column
+            let points = [];
+            for (var x = 0; x < this.gridWidth - 1; x++) {
+                for (var y = 0; y < this.gridHeight - 1; y++) {
+                    let indexBL = this.getPointsAtCoordinates(x, y);
+                    let indexBR = this.getPointsAtCoordinates(x + 1, y);
+                    let indexTR = this.getPointsAtCoordinates(x + 1, y + 1);
+                    let indexTL = this.getPointsAtCoordinates(x, y + 1);
+                    let pBL = this.pointsGrid[indexBL];
+                    let pBR = this.pointsGrid[indexBR];
+                    let pTR = this.pointsGrid[indexTR];
+                    let pTL = this.pointsGrid[indexTL];
 
-    		let lastX = -1;
-    		for (let x = 0; x < 3; x++)
-    		{
-    			let index = this.getPointsAtCoordinates(x, 0);
-    			let pG = this.pointsGrid[index];
-
-    			if(pG.position.x > p1.x)
-    			{
-    				break;
-    			}
-                lastX = x;
-
-    		}
-
-            let lastY = -1;
-    		for (let y = 0; y < 3; y++)
-    		{
-    			let index = this.getPointsAtCoordinates(0, y);
-    			let pG = this.pointsGrid[index];
-
-    			if(pG.position.y > p1.y)
-    			{
-
-    				break;
-    			}
-
-    			lastY = y;
-    		}
-
-            // console.log(lastX, lastY);
-
-    		if(lastY < 0 || lastY >= (3 - 1) || lastX < 0 || lastX >= (3 - 1))
-    		{
-    			return;
-    		}
-
-    		let points = [];
-    		for (let y = lastY; y <= lastY + 1; y++)
-    		{
-    			for (let x = lastX; x <= lastX + 1; x++)
-    			{
-    				let index = this.getPointsAtCoordinates(x, y);
-    				let pG = this.pointsGrid[index];
-                    // pG.program.bind();
-                    // pG.program.uniforms.color = [1,0,0];
-
-    				// pG.temp = true;
-
-    				let dist = Math.pow(p1.x - pG.position.x, 2) + Math.pow(p1.y - pG.position.y, 2);
-
-    				points.push({
-    					p: pG,
-    					dist
-    				});
-    			}
-    		}
+                    let inTriangle1 = ptInTriangle(p1, pTL.position, pTR.position, pBR.position);
+                    let inTriangle2 = ptInTriangle(p1, pBL.position, pTL.position, pBR.position);
+                    //
+                    // if(x === 0 && y === 0)
+                    // {
+                    //     this.setColor(pTL, 1,0,0);
+                    //     this.setColor(pTR, 0,1,0);
+                    //     this.setColor(pBR, 0,0,1);
+                    //     this.setColor(pBL, 1,1,1);
+                    //     console.log(inTriangle1, inTriangle2);
+                    // }
+                    if(inTriangle1 || inTriangle2)
+                    {
+                            points.push({ p: pTL });
+                            points.push({ p: pTR });
+                            points.push({ p: pBL });
+                            points.push({ p: pBR });
 
 
-            function compare(a,b) {
-    		  if (a.dist < b.dist)
-    		    return -1;
-    		  if (a.dist > b.dist)
-    		    return 1;
-    		  return 0;
-    		}
+                            break;
+                    }
+
+                    // console.log(pTL, pTR, pBR, pBL);
+                }
+
+            }
+
+            // return;
+
+            if(points.length === 0) return;
 
 
-
+            this.setColor(points[0].p, 1,1,1);
+            this.setColor(points[1].p, 1,1,1);
+            this.setColor(points[2].p, 1,1,1);
+            this.setColor(points[3].p, 1,1,1);
 
 
             let ptIntersection;
             if(points.length > 3)
             {
-                // console.log(points.length);
                 ptIntersection = this.findCentroid(points);
             }
-            points.sort(compare);
+
+            let pointsTop = [];
+            let pointsBottom = [];
+            let pointsOrdered = [];
+            for (var i = 0; i < points.length; i++) {
+                if(points[i].p.position.y > ptIntersection.y)
+                {
+                    pointsTop.push(points[i]);
+                }
+                else {
+                    pointsBottom.push(points[i]);
+                }
+            }
+
+            if(pointsTop[0].p.position.x < pointsTop[1].p.position.x)
+            {
+                pointsOrdered[0] = pointsTop[0];
+                pointsOrdered[1] = pointsTop[1];
+            }
+            else {
+                pointsOrdered[1] = pointsTop[0];
+                pointsOrdered[0] = pointsTop[1];
+            }
+
+            if(pointsBottom[0].p.position.x < pointsBottom[1].p.position.x)
+            {
+                pointsOrdered[3] = pointsBottom[0];
+                pointsOrdered[2] = pointsBottom[1];
+            }
+            else {
+                pointsOrdered[2] = pointsBottom[0];
+                pointsOrdered[3] = pointsBottom[1];
+            }
+
+
+
+
+            // function ptInTriangle(p, p0, p1, p2) {
+            //     var A = 1/2 * (-p1.y * p2.x + p0.y * (-p1.x + p2.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y);
+            //     var sign = A < 0 ? -1 : 1;
+            //     var s = (p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y) * sign;
+            //     var t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
+            //
+            //     return s > 0 && t > 0 && (s + t) < 2 * A * sign;
+            // }
+
+
+            let p1x = p1.position ? p1.position.x : p1.x;
+            let p1y = p1.position ? p1.position.y : p1.y;
+            if(p1x > ptIntersection.x)
+            {
+                // return;
+                // console.log('here');
+                // points could be
+                // pt0, pt1
+                // pt1, pt2
+                // pt2, pt3
+                if(p1y > ptIntersection.y)
+                {
+                    // return;
+                    let inTriangle1 = ptInTriangle(p1, ptIntersection, pointsOrdered[0].p.position, pointsOrdered[1].p.position);
+
+                    if(inTriangle1)
+                    {
+                        points[0] = pointsOrdered[0];
+                        points[1] = pointsOrdered[1];
+
+                        // this.setColor(points[0].p, 1,0,0);
+                        // this.setColor(points[1].p, 0,1,0);
+                    }
+                    else {
+
+                        let inTriangle2 = ptInTriangle(p1, ptIntersection, pointsOrdered[1].p.position, pointsOrdered[2].p.position);
+                        points[0] = pointsOrdered[1];
+                        points[1] = pointsOrdered[2];
+                    }
+
+                    this.setColor(points[0].p, 1,0,0);
+                    this.setColor(points[1].p, 0,1,0);
+                    // pt0, pt1
+                    // pt1, pt2
+                }
+
+                else if(p1y < ptIntersection.y){
+                    let inTriangle1 = ptInTriangle(p1, ptIntersection, pointsOrdered[1].p.position, pointsOrdered[2].p.position);
+
+                    if(inTriangle1)
+                    {
+                        points[0] = pointsOrdered[1];
+                        points[1] = pointsOrdered[2];
+                    }
+                    else {
+                        let inTriangle2 = ptInTriangle(p1, ptIntersection, pointsOrdered[2].p.position, pointsOrdered[3].p.position);
+
+                        points[0] = pointsOrdered[2];
+                        points[1] = pointsOrdered[3];
+                    }
+
+
+                    // pt1, pt2
+                    // pt2, pt3
+                }
+            }
+            else if(p1x < ptIntersection.x){
+                //pt0, pt1
+                // pt0, pt3
+                // pt3, pt2
+                if(p1y > ptIntersection.y)
+                {
+                    let inTriangle1 = ptInTriangle(p1, ptIntersection, pointsOrdered[0].p.position, pointsOrdered[3].p.position);
+
+                    if(inTriangle1)
+                    {
+                        points[0] = pointsOrdered[0];
+                        points[1] = pointsOrdered[3];
+                    }
+                    else {
+                        let inTriangle2 = ptInTriangle(p1, ptIntersection, pointsOrdered[0].p.position, pointsOrdered[1].p.position);
+
+                        points[0] = pointsOrdered[0];
+                        points[1] = pointsOrdered[1];
+                    }
+                    // pt0, pt3
+                    // pt0, pt1
+                }
+                else if(p1y < ptIntersection.y){
+                    let inTriangle1 = ptInTriangle(p1, ptIntersection, pointsOrdered[0].p.position, pointsOrdered[3].p.position);
+
+                    if(inTriangle1)
+                    {
+                        points[0] = pointsOrdered[0];
+                        points[1] = pointsOrdered[3];
+                    }
+                    else {
+                        let inTriangle2 = ptInTriangle(p1, ptIntersection, pointsOrdered[3].p.position, pointsOrdered[2].p.position);
+
+                        points[0] = pointsOrdered[3];
+                        points[1] = pointsOrdered[2];
+                    }
+                    // pt0, pt3
+                    // pt3, pt2
+                }
+            }
+
+            this.setColor(points[0].p, 1,0,0);
+            this.setColor(points[1].p, 0,1,0);
+
+            // points.sort(compare);
 
     // console.log(points);
             if(points.length >= 3)
     		{
 
-                // this.findCentroid(points);
+
+                // this.setColor(pointsOrdered[2].p, 0,0,1);
+                // this.setColor(pointsOrdered[3].p, 1,1,1);
 
     			let p1P = points[0].p;
                 // console.log(points);
     			let p2P = points[1].p;
     			let p3P = ptIntersection;
 
+
+
                 // points[0].p.scale.set(.1)
                 // points[1].p.scale.set(.1)
                 // points[2].p.scale.set(.1)
                 // points[3].p.scale.set(.1)
-                p1P.scale.set(.1)
-                p2P.scale.set(.1)
+
+                // this.setColor(p1P, 1, 0, 0);
+                // this.setColor(p2P, 1, 0, 0);
+
+                // p1P.scale.set(.1)
+                // p2P.scale.set(.1)
                 // p3P.scale.set(.1)
 
                 let x0 = p2P.position.x;
     			let y0 = p2P.position.y;
     			let z0 = p2P.position.z
 
-    			let x = p1.x;
-    			let y = p1.y;
+    			let x = p1.position? p1.position.x : p1.x;
+    			let y = p1.position? p1.position.y : p1.y;
+    			// let y = p1.y;
 
     			let v1 = [p2P.position.x - p1P.position.x, p2P.position.y - p1P.position.y, p2P.position.z - p1P.position.z]
     			let v2 = [p3P.x - p2P.position.x, p3P.y - p2P.position.y, p3P.z - p2P.position.z]
@@ -371,14 +553,24 @@ export default class PointCollisionScene
                 vec3.normalize(abc, abc)
                 let z = (abc[0] * x0 + abc[1] * y0 + abc[2] * z0 - abc[0] * x  -  abc[1] * y) / abc[2];
 
-                this.cubeTest.position.z = z;
+                // this.cubeTest.position.z = z;
+                // this.cubeTest.position.z = z;
 
+                if(p1.position)
+                {
+                    // console.log(z);
+                    p1.position.z = z;
+                }
+                else {
+                    p1.z = z;
+                }
 
                 if(p1.setZ)
                 {
                     p1.setZ(z);
                 }
             }
+
 
 
 
@@ -447,16 +639,30 @@ export default class PointCollisionScene
         this.cubeTest.position.x = this.sphereIntersection.position.x;
         this.cubeTest.position.y = this.sphereIntersection.position.y;
 
-        for (var i = 0; i < this.pointsGrid.length; i++) {
-            POLY.GL.draw(this.pointsGrid[i]);
-        }
-
 		// POLY.GL.draw(this.sphereIntersection);
         POLY.GL.draw(this.cubeTest);
 
         for (var i = 0; i < this.objects.length; i++) {
             POLY.GL.draw(this.objects[i]);
         }
+
+        // for (var i = 0; i < 1; i++) {
+        // // for (var i = 0; i < this.cubeTests.length; i++) {
+        //     this.cubeTests[i].tickX += this.cubeTests[i].speedX;
+        //     this.cubeTests[i].tickY += this.cubeTests[i].speedY;
+        //     this.cubeTests[i].position.x = Math.sin(this.cubeTests[i].tickX / 100)
+        //     this.cubeTests[i].position.y = Math.cos(this.cubeTests[i].tickY / 100)
+        //     this.findNeighbours(this.cubeTests[i], true);
+        //
+        //
+        //     POLY.GL.draw(this.cubeTests[i], true);
+        // }
+
+        for (var i = 0; i < this.pointsGrid.length; i++) {
+            this.pointsGrid[i].program.bind();
+            POLY.GL.draw(this.pointsGrid[i]);
+        }
+
         // POLY.GL.draw(this.cubeCrossProduct);
 	}
 

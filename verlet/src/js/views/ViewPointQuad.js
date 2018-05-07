@@ -40,7 +40,8 @@ export default class ViewPointQuad
     render(debug)
     {
 
-        this.z += (this.easeZ - this.z) * .3;
+        this.z = this.easeZ;
+        // this.z += (this.easeZ - this.z) * .3;
         this.program.bind();
         this.view.position.x = this.x;
         this.view.position.y = this.y;
@@ -49,7 +50,7 @@ export default class ViewPointQuad
         // if(debug)
         // {
         // }
-        POLY.GL.draw(this.view);
+        // POLY.GL.draw(this.view);
 
     }
 }
