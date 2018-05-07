@@ -17,8 +17,7 @@ void main(void) {
     float cy = smoothstep( 0.492, 0.5, abs(vUv.y - 0.5));
     float c = cy + cx; // could be min or max, try it yourself
 
-    gl_FragColor = vec4(color * (1.0 - c), .2);
-    gl_FragColor.rgb *= .2;
+    gl_FragColor = vec4(color * (1.0 - c), 1.);
 
     // gl_FragColor = vec4(outColor, 1.0);
 }

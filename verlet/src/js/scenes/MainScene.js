@@ -132,10 +132,10 @@ export default class MainScene
 
 				if(dist <= minDist)
 				{
-					let depth = Math2.map(dist, 0, minDist, -.012, 0);
-                    if(depth < -.012)
+					let depth = Math2.map(dist, 0, minDist, -.008, 0);
+                    if(depth < -.008)
                     {
-                        depth = -.012
+                        depth = -.008
                     }
 
                     pG.accZ = depth;
@@ -166,6 +166,15 @@ export default class MainScene
 
 	_onDown(e)
 	{
+        // if (document.body.mozRequestFullScreen) {
+		// 				// This is how to go into fullscren mode in Firefox
+		// 				// Note the "moz" prefix, which is short for Mozilla.
+		// 	document.body.mozRequestFullScreen();
+		// } else if (document.body.webkitRequestFullScreen) {
+		// 				// This is how to go into fullscreen mode in Chrome and Safari
+		// 				// Both of those browsers are based on the Webkit project, hence the same prefix.
+		// 	document.body.webkitRequestFullScreen();
+		// }
 		if(this._isDown) return;
 
 		this._isDown = true;

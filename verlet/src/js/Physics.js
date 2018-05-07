@@ -7,10 +7,10 @@ export default class Physics
         this.previousTime = 0;
         this.currentTime = 0;
 
-        this.fixedDeltaTime = 16;
+        this.fixedDeltaTime = 4;
         this.fixedDeltaTimeSeconds = this.fixedDeltaTime / 1000.0;
         this.leftOverDeltaTime = 0;
-        this.constraintAccuracy = 3;
+        this.constraintAccuracy = 20;
     }
 
     update(pointmasses)
