@@ -21,6 +21,7 @@ export default class ViewPointQuad
         this.easeZ = 0;
         this.targetSpeedX = 0;
         this.speedX = 0;
+        this.speedY = 0;
 
         this.id = Math.floor(Math.random() * 2000)
 
@@ -35,11 +36,12 @@ export default class ViewPointQuad
         this.view.scale.set(.05);
     }
 
-    setSpeed(speed)
+    setSpeed(speedX, speedY)
     {
         // if(speed > this.speedX)
         // {
-            this.speedX = speed;
+            this.speedX = speedX;
+            this.speedY = speedY;
         // }
     }
 

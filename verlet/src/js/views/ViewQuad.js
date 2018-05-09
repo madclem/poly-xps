@@ -17,7 +17,10 @@ export default class ViewQuad
 
         this.points = [];
         this.positions = [];
-        this.dragSpeeds = [];
+        this.dragSpeeds = {
+            x:[],
+            y:[]
+        };
 
         this.program = new POLY.Program(vert, frag, {
             color: {
@@ -79,11 +82,6 @@ export default class ViewQuad
             //     p4Pos.x, p4Pos.y, p4Pos.z
             // ];
 
-            let minSpeedX = 100000000000;
-            let minSpeedY = 100000000000;
-            let maxSpeedX = -100000000000;
-            let maxSpeedY = -100000000000;
-
             let ind = 0;
             for (var i = 0; i < this.points.length; i++) {
 
@@ -93,7 +91,8 @@ export default class ViewQuad
                 this.positions[ind + 1] = this.points[i].y;
                 this.positions[ind + 2] = this.points[i].z;
 
-                this.dragSpeeds[i] = this.points[i].speedX;
+                this.dragSpeeds.x[i] = this.points[i].speedX;
+                this.dragSpeeds.y[i] = this.points[i].speedY;
 
                 ind+= 3;
             }
@@ -105,12 +104,13 @@ export default class ViewQuad
             let maxX = -100000000000;
             let maxY = -100000000000;
             for (var i = 0; i < this.positions.length; i+=3) {
-                let dragSpeed = this.dragSpeeds[i/3];
-                let x = this.positions[i] - dragSpeed;
+                let dragSpeedX = this.dragSpeeds.x[i/3];
+                let dragSpeedY = this.dragSpeeds.y[i/3];
+                let x = this.positions[i] - dragSpeedX;
                 if(x < minX) minX = x;
                 else if(x > maxX) maxX = x;
 
-                let y = this.positions[i + 1];
+                let y = this.positions[i + 1] - dragSpeedY;
                 if(y < minY) minY = y;
                 else if(y > maxY) maxY = y;
             }

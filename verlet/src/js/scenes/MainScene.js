@@ -72,7 +72,7 @@ export default class MainScene
 		this.previousPos = {x:0, y:0}
 		this.speedX = 0;
 		this.speedY = 0;
-		this.dragSpeed = 0;
+		this.dragSpeed = {x:0, y:0};
         this.cameraX = 0;
         this.cameraY = 0;
 
@@ -545,27 +545,18 @@ export default class MainScene
 
         if(this._isDown)
         {
-            // this.speedX = (this.pos.x - this.previousPos.x) * 4;
-            // this.speedY = this.pos.y - this.previousPos.y;
-            // this.speedX += ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .06;
-            // this.speedY += ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .06;
-
-
             if(this.intersection)
             {
                 this.findNeighbours(this.intersection, true);
                 this.impactVerlet(this.intersection);
             }
         }
-        else {
-            // this.speedX *= .9;
-            // this.speedY *= .9;
-        }
 
         this.speedX += ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .06;
         this.speedY += ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .06;
 
-        this.dragSpeed += ((SpeedController.speedX)/ POLY.gl.viewportWidth - this.dragSpeed) * .06;
+        this.dragSpeed.x += ((SpeedController.speedX)/ POLY.gl.viewportWidth - this.dragSpeed.x) * .06;
+        this.dragSpeed.y += ((SpeedController.speedY)/ POLY.gl.viewportHeight - this.dragSpeed.y) * .06;
 
         this.previousPos.x = this.pos.x;
         this.previousPos.y = this.pos.y;
@@ -601,40 +592,33 @@ export default class MainScene
                 if(distY > 4) distY = 4;
 
                 let sx = 0;
-                if(this.dragSpeed && !isNaN(this.dragSpeed) && distX < 4)
+                if(this.dragSpeed.x && !isNaN(this.dragSpeed.x) && distX < 4)
                 {
-
-                    // console.log(this.cameraX);
-                    // let percentageY = Math2.map(distY, 6, 0, 0, 2);
-                    let s = this.dragSpeed;
+                    let s = this.dragSpeed.x;
                     if(s > 2) s = 2;
                     if(s < -2) s = -2;
 
                     sx = s * 15 * 2 * (1 - distY/4) * (1 - distX / 4);
-                    // sx = this.speedX * 15 * (1 - distY/4) * (1 - distX / 4);
-
-                    // pointquad.setSpeed(sx);
-                    // pointquad.x += this.speedX;
                 }
-                pointquad.setSpeed(sx);
-                // this.dragSpeed += (sx - this.dragSpeed) * .3;
-                // console.log(sx);
-                // pointquad.x = this.cameraX;
-                // console.log(distY);
+
+                let distY2 = Math.abs(this.intersection.y - pointquad.y);
+                let distX2 = Math.abs(this.intersection.x - pointquad.x);
+
+                if(distX2 > 3) distX2 = 3;
+
+                let sy = 0;
+                if(this.dragSpeed.y && !isNaN(this.dragSpeed.y) && distY2 < 4)
+                {
+                    let s = -this.dragSpeed.y;
+                    if(s > 1) s = 1;
+                    if(s < -1) s = -1;
+
+                    sy = s * 15 * (1 - distY2/4) * (1 - distX2 / 3);
+                }
+                pointquad.setSpeed(sx, sy);
                 pointquad.x = (this.cameraX + pointquad.origin.x + pointquad.gridPos.x + pointquad.speedX)  %  (Math.abs(this.limitMinX) * 2) ;// this.speedX;
-                // pointquad.x = (this.cameraX + pointquad.origin.x + pointquad.gridPos.x + pointquad.speedX)  %  (Math.abs(this.limitMinX) * 2) ;// this.speedX;
+                pointquad.y = (this.cameraY + pointquad.origin.y + pointquad.gridPos.y + pointquad.speedY)  %  (Math.abs(this.limitMinY) * 2);// this.speedX;
 
-                // pointquad.x = pointquad.origin.x;
-                pointquad.y = (this.cameraY + pointquad.origin.y + pointquad.gridPos.y)  %  (Math.abs(this.limitMinY) * 2);// this.speedX;
-                // pointquad.y = pointquad.origin.y;
-				if(this.speedY && !isNaN(this.speedY))
-				{
-					// pointquad.y += this.speedY;
-				}
-
-                // pointquad.y = pointquad.origin.y;
-
-                // console.log(sx);
 				if(pointquad.y <= this.limitMinY)
 				{
 					reappearTop = true;
@@ -675,7 +659,7 @@ export default class MainScene
 			for (var xView = 0; xView < nbColumns; xView++)
 			{
                 let quad = this.views.pop();
-                quad.stopRender = true;
+                quad.skipRender = true;
 				this.views.splice(0, 0, quad);
 			}
 		}
@@ -694,7 +678,7 @@ export default class MainScene
 			for (var xView = 0; xView < nbColumns; xView++)
 			{
                 let quad = this.views.shift();
-                quad.stopRender = true;
+                quad.skipRender = true;
 				this.views.push(quad);
 			}
 		}
@@ -715,7 +699,7 @@ export default class MainScene
 				let index = this.getViewAtCoordinates(0, yView);
 				let quad = this.views[index];
 
-                quad.stopRender = true;
+                quad.skipRender = true;
 				this.views.splice(index, 1)
 				this.views.splice(index + this.gridQuadsWidth - 2, 0, quad);
 			}
@@ -736,7 +720,7 @@ export default class MainScene
 			{
 				let index = this.getViewAtCoordinates(nbColumns - 1, yView);
 				let quad = this.views[index];
-                quad.stopRender = true;
+                quad.skipRender = true;
 				this.views.splice(index, 1)
 				this.views.splice(index - nbColumns + 1, 0, quad);
 			}
@@ -778,12 +762,12 @@ export default class MainScene
                 let data = this.dataManager.getDataAt(xid, yid);
                 quad.setData(data);
 
-                if(!quad.stopRender)
+                if(!quad.skipRender)
                 {
                     quad.render();
                 }
 
-                quad.stopRender = false;
+                quad.skipRender = false;
 			}
 		}
 
