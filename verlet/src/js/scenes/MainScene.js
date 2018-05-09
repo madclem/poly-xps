@@ -587,6 +587,7 @@ export default class MainScene
 				let index = this.getPointsQuadAtCoordinates(x, y);
 				let pointquad = this.pointsQuad[index];
 
+                // STRETCH
                 let distY = Math.abs(this.intersection.y - pointquad.y);
                 let distX = Math.abs(this.intersection.x - pointquad.x);
                 if(distY > 4) distY = 4;
@@ -616,9 +617,12 @@ export default class MainScene
                     sy = s * 15 * (1 - distY2/4) * (1 - distX2 / 3);
                 }
                 pointquad.setSpeed(sx, sy);
+
+                // set the quad's point position
                 pointquad.x = (this.cameraX + pointquad.origin.x + pointquad.gridPos.x + pointquad.speedX)  %  (Math.abs(this.limitMinX) * 2) ;// this.speedX;
                 pointquad.y = (this.cameraY + pointquad.origin.y + pointquad.gridPos.y + pointquad.speedY)  %  (Math.abs(this.limitMinY) * 2);// this.speedX;
 
+                // reappearing stuff
 				if(pointquad.y <= this.limitMinY)
 				{
 					reappearTop = true;
@@ -627,7 +631,6 @@ export default class MainScene
 				{
 					reappearBottom = true;
 				}
-                //
 				if((pointquad.x - sx) < this.limitMinX)
 				{
 					reappearRight = true;
@@ -637,8 +640,7 @@ export default class MainScene
 					reappearLeft = true;
 				}
 
-
-                this.findNeighbours(pointquad);
+                this.findNeighbours(pointquad); // to get the depth
 				pointquad.render();
 			}
 		}
@@ -646,9 +648,6 @@ export default class MainScene
 		// REORDER THE ACTUAL QUADS
 		if(reappearBottom)
 		{
-            let farPoint = this.pointsQuad[this.getPointsQuadAtCoordinates(0, 0)];
-            let farY = farPoint.y;
-
 			for (var i = 0; i < this.gridQuadsWidth; i++)
 			{
                 let pt = this.pointsQuad.pop();
@@ -665,10 +664,7 @@ export default class MainScene
 		}
 		else if(reappearTop)
 		{
-            let farPoint = this.pointsQuad[this.getPointsQuadAtCoordinates(0, this.gridQuadsHeight - 1)];
-            let farY = farPoint.y;
-
-			for (var i = 0; i < this.gridQuadsWidth; i++)
+            for (var i = 0; i < this.gridQuadsWidth; i++)
 			{
                 let pt = this.pointsQuad.shift();
                 pt.gridPos.y += Math.abs(this.limitMinY) * 2 + this.restingDistances;
@@ -713,7 +709,6 @@ export default class MainScene
                 pt.gridPos.x -= (Math.abs(this.limitMinX) * 2 + this.restingDistances);
                 this.pointsQuad.splice(indexPt, 1)
                 this.pointsQuad.splice(indexPt - this.gridQuadsWidth + 1, 0, pt);
-
             }
 
 			for (var yView = 0; yView < nbLines; yView++)
@@ -727,7 +722,7 @@ export default class MainScene
 		}
 
 
-		// assign the quad points dinamycally + add data to the quads
+		// DATA + GIVE QUAD CORRECT POINTS
 		for (var y = 0; y < nbLines; y++)
 		{
 			for (var x = 0; x < nbColumns; x++)
