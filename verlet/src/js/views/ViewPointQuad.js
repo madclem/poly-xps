@@ -50,9 +50,15 @@ export default class ViewPointQuad
         return this;
     }
 
-    setZ(value)
+    setZ(value, force)
     {
+        if(this.donotupdate) return;
         this.easeZ = value;
+
+        if(force)
+        {
+            this.z = value;
+        }
     }
     render(debug)
     {

@@ -1,5 +1,6 @@
 import * as POLY from 'poly/Poly';
 import MainScene from './scenes/MainScene';
+import Easings from './utils/Easings';
 import PointCollisionScene from './scenes/PointCollisionScene';
 import { Loader } from 'utils';
 import dat from 'dat-gui';
@@ -14,6 +15,7 @@ export default class App
 	{
 		let canvas = document.getElementById("canvas");
 
+		window.Easings = Easings.instance;
     	POLY.init(canvas);
 	    this.gl = POLY.gl;
 	    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);

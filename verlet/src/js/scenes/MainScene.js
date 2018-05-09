@@ -166,11 +166,11 @@ export default class MainScene
 	addEvents()
 	{
 		window.addEventListener('mousedown', (e) => this._onDown(e));
-        window.addEventListener('mouseup', () => this._onUp());
+        window.addEventListener('mouseup', (e) => this._onUp(e));
         window.addEventListener('mousemove', (e) => this._onMove(e));
 
         window.addEventListener('touchstart', (e) => this._onDown(e));
-        window.addEventListener('touchend', () => this._onUp());
+        window.addEventListener('touchend', (e) => this._onUp(e));
         window.addEventListener('touchmove', (e) => this._onMove(e));
         window.addEventListener('keydown', (e) => this._onKeydown(e));
 	}
@@ -181,17 +181,25 @@ export default class MainScene
 
 	_onDown(e)
 	{
-        // if (document.body.mozRequestFullScreen) {
-		// 				// This is how to go into fullscren mode in Firefox
-		// 				// Note the "moz" prefix, which is short for Mozilla.
-		// 	document.body.mozRequestFullScreen();
-		// } else if (document.body.webkitRequestFullScreen) {
-		// 				// This is how to go into fullscreen mode in Chrome and Safari
-		// 				// Both of those browsers are based on the Webkit project, hence the same prefix.
-		// 	document.body.webkitRequestFullScreen();
-		// }
+
+        // if(!this.beenIn)
+        // {
+        //     if (document.body.mozRequestFullScreen) {
+        //         this.beenIn = true;
+        //         // This is how to go into fullscren mode in Firefox
+        //         // Note the "moz" prefix, which is short for Mozilla.
+        //         document.body.mozRequestFullScreen();
+        //     } else if (document.body.webkitRequestFullScreen) {
+        //         this.beenIn = true;
+        //         // This is how to go into fullscreen mode in Chrome and Safari
+        //         // Both of those browsers are based on the Webkit project, hence the same prefix.
+        //         document.body.webkitRequestFullScreen();
+        //     }
+        // }
 
 		if(this._isDown) return;
+
+        this.removeActiveQuad();
 
 
 		this._isDown = true;
@@ -202,16 +210,56 @@ export default class MainScene
 		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
 
 		this.firstPos = {
-			x: x - this.speedX, y: y - this.speedY
+			x: pt.x, y: pt.y
 		};
 
 		this.speed =  this.lastSpeed = 0;
 	}
 
+
+    removeActiveQuad(cb)
+    {
+        if(this.activeQuad)
+        {
+            this.activeQuad.program.bind();
+            this.activeQuad.program.uniforms.active = 0.0;
+
+            // this.activeQuad.points.donotupdate = false;
+            for (var i = 0; i < this.activeQuad.points.length; i++) {
+                let pt = this.activeQuad.points[i];
+                Easings.to(pt, .2 + i * .1, {
+                    onCompleteParams: {pt, i},
+                    onComplete: (data)=>{
+                        pt.donotupdate = false;
+
+
+                        if(data.i === 0)
+                        {
+                            if(cb) cb();
+                            cb = null;
+                        }
+                    },
+                    easeZ: 0,
+                    // delay: .2 + i * .1,
+                    ease: Easings.easeOutCirc,
+                });
+            }
+        }
+
+        this.activeQuad = null;
+    }
+
     onClick(ptx, pty)
     {
+        if(this.activeQuad)
+        {
+            this.removeActiveQuad(()=>{
+            });
 
-        return;
+            // this.onClick(ptx, pty);
+            // return;
+        }
+
         let nbColumns = this.gridQuadsWidth - 1;
 		let nbLines = this.gridQuadsHeight - 1;
 
@@ -235,16 +283,47 @@ export default class MainScene
                     if( Math.abs(ptx - quad.x) <= this.restingDistances/2  && Math.abs(pty - quad.y) <= this.restingDistances/2 )
                     {
                         // quad.setColor(1,0,0);
+                        this.activeQuad = quad;
+                        quad.program.bind();
+                        quad.program.uniforms.active = 1.0;
+
+                        for (var i = 0; i < quad.points.length; i++) {
+                            let pt = quad.points[i]
+
+
+                            Easings.to(pt, .6 + i * .3, {
+                                onStartParams: pt,
+                                onStart: (pt)=>{
+
+                                    pt.donotupdate = true;
+                                },
+                                easeZ: 1,
+                                delay: .2 + i * .1,
+                                onUpdateParams: pt,
+                                ease: Easings.elasticOutSoft,
+                            });
+                        }
+
+                        Easings.to(this, .8, {
+                            cameraX: this.cameraX - quad.x,
+                            ease: Easings.easeOutCirc,
+                            onComplete: ()=>{
+
+                            }
+                        });
+
+                        Easings.to(this, .8, {
+                            cameraY: this.cameraY - quad.y,
+                            ease: Easings.easeOutCirc
+                            // cameraY:  100
+                        });
+
+                        console.log('here', this.cameraX - quad.x);
+                        break;//
                     }
                 }
             }
         }
-
-        // console.log('x', x);
-        // console.log('col', col);
-        // let indexView = this.getViewAtCoordinates(col, line);
-        // let quad = this.views[indexView];
-        // quad.setColor(1,0,0);
     }
 
 	_onMove(e)
@@ -276,7 +355,12 @@ export default class MainScene
 	{
 		this._isDown = false;
 
-        this.onClick(this.intersection.x, this.intersection.y);
+        let pt = getCursorPos(e);
+
+        if(Math.abs(this.firstPos.x - pt.x) < .1 && Math.abs(this.firstPos.y - pt.y) < .1)
+        {
+            this.onClick(this.intersection.x, this.intersection.y);
+        }
         SpeedController.onUp();
 	}
 
@@ -329,6 +413,8 @@ export default class MainScene
 
 	findNeighbours(p1, debug)
 	{
+
+        if(p1.donotupdate) return;
 
 		for (let x = 0; x < this.gridWidth; x++)
         {

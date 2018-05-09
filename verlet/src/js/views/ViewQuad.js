@@ -31,6 +31,10 @@ export default class ViewQuad
             alpha: {
                 type: 'float',
                 value: 1.0 //Math.random() > .9 ? 0.0 : 1.0
+            },
+            active: {
+                type: 'float',
+                value: 0.0 //Math.random() > .9 ? 0.0 : 1.0
             }
         });
 
