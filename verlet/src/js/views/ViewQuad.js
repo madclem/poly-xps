@@ -15,6 +15,10 @@ export default class ViewQuad
         this.dataId = null;
 
 
+        this.points = [];
+        this.positions = [];
+        this.dragSpeeds = [];
+
         this.program = new POLY.Program(vert, frag, {
             color: {
                 type: 'vec3',
@@ -62,24 +66,47 @@ export default class ViewQuad
         {
             this.program.bind();
 
-            let p1Pos = this.pointsRef[0].getPoint();
-            let p2Pos = this.pointsRef[1].getPoint();
-            let p3Pos = this.pointsRef[2].getPoint();
-            let p4Pos = this.pointsRef[3].getPoint();
+            this.points[0] = this.pointsRef[0].getPoint();
+            this.points[1] = this.pointsRef[1].getPoint();
+            this.points[2] = this.pointsRef[2].getPoint();
+            this.points[3] = this.pointsRef[3].getPoint();
 
-            this.positions = [
-                p1Pos.x, p1Pos.y, p1Pos.z,
-                p2Pos.x, p2Pos.y, p2Pos.z,
-                p3Pos.x, p3Pos.y, p3Pos.z,
-                p4Pos.x, p4Pos.y, p4Pos.z
-            ];
+
+            // this.positions = [
+            //     p1Pos.x, p1Pos.y, p1Pos.z,
+            //     p2Pos.x, p2Pos.y, p2Pos.z,
+            //     p3Pos.x, p3Pos.y, p3Pos.z,
+            //     p4Pos.x, p4Pos.y, p4Pos.z
+            // ];
+
+            let minSpeedX = 100000000000;
+            let minSpeedY = 100000000000;
+            let maxSpeedX = -100000000000;
+            let maxSpeedY = -100000000000;
+
+            let ind = 0;
+            for (var i = 0; i < this.points.length; i++) {
+
+                // if(this.points[i].speedX < minSpeedX) minSpeedX = this.points[i].speedX;
+                // if(this.points[i].speedX > maxSpeedX) maxSpeedX = this.points[i].speedX;
+                this.positions[ind] = this.points[i].x;
+                this.positions[ind + 1] = this.points[i].y;
+                this.positions[ind + 2] = this.points[i].z;
+
+                this.dragSpeeds[i] = this.points[i].speedX;
+
+                ind+= 3;
+            }
+
+            // console.log(minSpeedX, maxSpeedX);
 
             let minY = 100000000000;
             let minX = 100000000000;
             let maxX = -100000000000;
             let maxY = -100000000000;
             for (var i = 0; i < this.positions.length; i+=3) {
-                let x = this.positions[i];
+                let dragSpeed = this.dragSpeeds[i/3];
+                let x = this.positions[i] - dragSpeed;
                 if(x < minX) minX = x;
                 else if(x > maxX) maxX = x;
 

@@ -37,7 +37,10 @@ export default class ViewPointQuad
 
     setSpeed(speed)
     {
-        this.speedX = speed;
+        // if(speed > this.speedX)
+        // {
+            this.speedX = speed;
+        // }
     }
 
     getPoint()
@@ -51,12 +54,12 @@ export default class ViewPointQuad
     }
     render(debug)
     {
-        this.z = this.easeZ;
+        // this.z = this.easeZ;
 
-        this.speedX *= .99;
-
+        // this.speedX += (this.targetSpeedX - this.speedX) * 1
         // this.targetSpeedX *= .9;
-        // this.z += (this.easeZ - this.z) * .3;
+        // this.targetSpeedX *= .7;
+        this.z += (this.easeZ - this.z) * .3;
         this.program.bind();
         this.view.position.x = this.x;
         this.view.position.y = this.y;
