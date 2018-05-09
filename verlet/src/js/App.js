@@ -22,7 +22,7 @@ export default class App
 	    this.loader.onComplete.add(this._loadComplete, this);
 	    this.loader.load();
 
-		window.gui = new dat.GUI({ width:300 });
+		// window.gui = new dat.GUI({ width:300 });
 	}
 
 	_loadComplete(resources)

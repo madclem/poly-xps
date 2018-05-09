@@ -61,7 +61,7 @@ export default class ViewPointMass
         let velY = this.y - this.lastY;
         let velZ = this.z - this.lastZ + this.accZ;
 
-        this.velZ += (velZ - this.velZ) * .9;
+        this.velZ += (velZ - this.velZ) * .6;
 
         // dampen velocity
         velX *= 0.99;

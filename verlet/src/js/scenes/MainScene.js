@@ -6,6 +6,8 @@ import PointQuad from '../views/ViewPointQuad';
 import ViewQuad from '../views/ViewQuad';
 import {mat3, mat4, vec3} from 'gl-matrix';
 import Math2 from '../utils/Math2';
+import SpeedController from '../control/SpeedController';
+import DataManager from '../data/DataManager';
 
 let target = vec3.create();
 let pointsOrdered = [];
@@ -29,8 +31,7 @@ export default class MainScene
 {
 	constructor()
 	{
-
-		this.debug = true;
+		this.debug = false;
 		this.gl = null;
 		this.tick = 0;
 		this.gl = POLY.gl;
@@ -38,7 +39,10 @@ export default class MainScene
 		this.camera = new POLY.cameras.PerspectiveCamera();
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
-		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix, 1.4);
+        this.easingValueX = 0;
+        this.easingValueY = 0;
+
+		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix, 2.5);
 		this.orbitalControl.lock(true);
 		// this.orbitalControl.lockZoom(true);
 		POLY.GL.setCamera(this.camera);
@@ -46,7 +50,6 @@ export default class MainScene
 		this.projectionMatrix = mat4.create();
 
 		this._bPlanes = new POLY.helpers.BatchPlanes();
-
 
 		this.gridHeight = 8;
 		this.gridWidth = 12;
@@ -65,6 +68,8 @@ export default class MainScene
 		this.previousPos = {x:0, y:0}
 		this.speedX = 0;
 		this.speedY = 0;
+        this.cameraX = 0;
+        this.cameraY = 0;
 
 		this.physics = new Physics();
 		this.createGridPoints();
@@ -75,6 +80,7 @@ export default class MainScene
 		this.limitMinY = -(this.gridQuadsHeight * this.restingDistances)/2 + this.restingDistances/2;
 		this.limitMinX = -(this.gridQuadsWidth * this.restingDistances)/2 + this.restingDistances/2;
 
+        this.dataManager = new DataManager();
 		this.program = new POLY.Program();
 		this.sphereIntersection = new POLY.geometry.Sphere(this.program);
 		this.sphereIntersection.scale.set(.05);
@@ -96,7 +102,9 @@ export default class MainScene
 
 		this.pinnedPoints = [];
 
-
+        // setTimeout(()=>{
+        //     this.debug = true;
+        // }, 6000)
 	}
 
 	onTraceRay()
@@ -127,18 +135,20 @@ export default class MainScene
 
 				let pG = this.pointsGrid[index];
 
-				let dist = Math.pow(pt.x - pG.x, 2) + Math.pow(pt.y - pG.y, 2);
+				let dist = Math.pow(this.pos.x - pG.x, 2) + Math.pow(this.pos.y - pG.y, 2);
 
 
 				if(dist <= minDist)
 				{
-					let depth = Math2.map(dist, 0, minDist, -.008, 0);
-                    if(depth < -.008)
+					let depth = Math2.map(dist, 0, minDist, -.012, 0);
+                    if(depth < -.012)
                     {
-                        depth = -.008
+                        depth = -.012
                     }
 
                     pG.accZ = depth;
+
+                    // break;
 				}
                 else
                 {
@@ -175,24 +185,69 @@ export default class MainScene
 		// 				// Both of those browsers are based on the Webkit project, hence the same prefix.
 		// 	document.body.webkitRequestFullScreen();
 		// }
+
 		if(this._isDown) return;
+
 
 		this._isDown = true;
 
 		let pt = getCursorPos(e);
+        SpeedController.onDown(pt);
 		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
 		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
 
 		this.firstPos = {
-			x, y
+			x: x - this.speedX, y: y - this.speedY
 		};
 
 		this.speed =  this.lastSpeed = 0;
 	}
 
+    onClick(ptx, pty)
+    {
+
+        return;
+        let nbColumns = this.gridQuadsWidth - 1;
+		let nbLines = this.gridQuadsHeight - 1;
+
+        let totalWidth = (nbColumns) * this.restingDistances + this.restingDistances;
+        let totalHeight = nbLines * this.restingDistances;
+
+        let widthColumn = totalWidth / nbColumns;
+
+
+        let col = Math.floor((ptx + totalWidth/2) / this.restingDistances) - 1;
+        let line = Math.floor((pty + totalHeight/2) / this.restingDistances);
+
+        for (var x = col - 2; x < col + 2; x++) {
+            for (var y = line - 2; y < line + 2; y++) {
+                let indexView = this.getViewAtCoordinates(x, y);
+                let quad = this.views[indexView];
+
+                if(quad)
+                {
+                    console.log(ptx, quad.x);
+                    if( Math.abs(ptx - quad.x) <= this.restingDistances/2  && Math.abs(pty - quad.y) <= this.restingDistances/2 )
+                    {
+                        // quad.setColor(1,0,0);
+                    }
+                }
+            }
+        }
+
+        console.log('x', x);
+        console.log('col', col);
+        // let indexView = this.getViewAtCoordinates(col, line);
+        // let quad = this.views[indexView];
+        // quad.setColor(1,0,0);
+    }
+
 	_onMove(e)
 	{
+
 		let pt = getCursorPos(e);
+
+        SpeedController.onMove(pt);
 
 		let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
 		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
@@ -200,12 +255,24 @@ export default class MainScene
 		this.mouse.x = x;
 		this.mouse.y = y;
 
+        if(this._isDown)
+        {
+            // this.easingValueX = x - this.firstPos.x;
+            // this.easingValueY = y - this.firstPos.y;
+
+            // this.easingValueX *= .8;
+            // this.easingValueX *= .8;
+        }
+
 		this.onTraceRay();
 	}
 
 	_onUp(e)
 	{
 		this._isDown = false;
+
+        this.onClick(this.intersection.x, this.intersection.y);
+        SpeedController.onUp();
 	}
 
 	createGridPoints()
@@ -217,10 +284,11 @@ export default class MainScene
 				let pointmass = new PointMass((-(this.gridWidth - 1) / 2) * this.restingDistancesVerlet + x * this.restingDistancesVerlet, (-(this.gridHeight - 1)/2) * this.restingDistancesVerlet + y * this.restingDistancesVerlet);
                 pointmass.setColor(1,0,0)
 				if (x != 0)
-					pointmass.attachTo(this.pointsGrid[this.pointsGrid.length-1], this.restingDistancesVerlet, this.stiffnesses);
+					pointmass.attachTo(this.pointsGrid[this.pointsGrid.length-1], this.restingDistancesVerlet, this.stiffnesses * 2);
 				if (y != 0)
-					pointmass.attachTo(this.pointsGrid[(y - 1) * (this.gridWidth) + x], this.restingDistancesVerlet, this.stiffnesses);
+					pointmass.attachTo(this.pointsGrid[(y - 1) * (this.gridWidth) + x], this.restingDistancesVerlet, this.stiffnesses * 2);
                 // if (x == 0 || y == 0)
+                // if ((x == 0 && y == 0)|| (x == (this.gridWidth - 1) && y === 0) || (y == (this.gridHeight - 1) && x == (this.gridWidth - 1)) || (y == (this.gridHeight - 1) && x == 0))
                 if (x == 0 || y == 0 || x == (this.gridWidth - 1) || y == (this.gridHeight - 1))
 					pointmass.pinTo(pointmass.x, pointmass.y, 0, true);
 
@@ -435,9 +503,10 @@ export default class MainScene
 
 		let nbQuads = nbColumns * nbLines;
 
+        let index = 0;
 		for (var i = 0; i < nbLines * nbColumns; i++)
 		{
-			let viewQuad = new ViewQuad();
+			let viewQuad = new ViewQuad(i * 2);
 			this.views.push(viewQuad);
 		}
 	}
@@ -462,6 +531,8 @@ export default class MainScene
 
 	render()
 	{
+        SpeedController.update();
+
         this.physics.update(this.pointsGrid);
 
         this.pos.x = this.sphereIntersection.position.x;
@@ -469,8 +540,11 @@ export default class MainScene
 
         if(this._isDown)
         {
-            this.speedX = this.pos.x - this.previousPos.x;
-            this.speedY = this.pos.y - this.previousPos.y;
+            // this.speedX = (this.pos.x - this.previousPos.x) * 4;
+            // this.speedY = this.pos.y - this.previousPos.y;
+            this.speedX += ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .06;
+            this.speedY += ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .06;
+
 
             if(this.intersection)
             {
@@ -483,6 +557,12 @@ export default class MainScene
             this.speedY *= .9;
         }
 
+        // this.speedX += (this.easingValueX - this.speedX) * .3;
+        // this.speedY += (this.easingValueY - this.speedY) * .3;
+
+        // this.easingValueX *= .8;
+        // this.easingValueX *= .8;
+
         this.previousPos.x = this.pos.x;
         this.previousPos.y = this.pos.y;
 
@@ -492,16 +572,10 @@ export default class MainScene
 		this.orbitalControl.update();
 		this._bPlanes.draw();
 
-		// RENDER THE QUADS
-		for (var yView = 0; yView < nbLines; yView++)
-		{
-			for (var xView = 0; xView < nbColumns; xView++)
-			{
-				let index = this.getViewAtCoordinates(xView, yView);
-				let quad = this.views[index];
-				quad.render();
-			}
-		}
+        this.cameraX += this.speedX;
+        this.cameraY += this.speedY;
+
+
 
 		// LOOP THE QUAD'S POINTS GRID
 		let reappearLeft = false;
@@ -517,8 +591,14 @@ export default class MainScene
 				let index = this.getPointsQuadAtCoordinates(x, y);
 				let pointquad = this.pointsQuad[index];
 
+                // let distY = Math.abs(this.intersection.y - pointquad.y);
+                // if(distY > 3) distY = 3;
+
 				if(this.speedX && !isNaN(this.speedX))
 				{
+					// pointquad.x = (this.cameraX %  this.dataManager.size.width + pointquad.origin.x);// this.speedX;
+                    // let percentageY = Math2.map(distY, 0, );
+                    // let sX = this.speedX/20 + distY
 					pointquad.x += this.speedX;
 				}
 				if(this.speedY && !isNaN(this.speedY))
@@ -543,6 +623,7 @@ export default class MainScene
 				{
 					reappearLeft = true;
 				}
+
 
                 this.findNeighbours(pointquad);
 				pointquad.render();
@@ -638,7 +719,7 @@ export default class MainScene
 		}
 
 
-		// assign the quad points dinamycally
+		// assign the quad points dinamycally + add data to the quads
 		for (var y = 0; y < nbLines; y++)
 		{
 			for (var x = 0; x < nbColumns; x++)
@@ -653,10 +734,30 @@ export default class MainScene
 				let indexView = this.getViewAtCoordinates(x, y);
 
 				let quad = this.views[indexView];
-
 				quad.attachPointRef(pts);
+
+                // loop datas
+                let totalWidth = this.dataManager.size.width;
+                let totalHeight = this.dataManager.size.height;
+                let gridSize = 1;
+                let xid = (-this.cameraX + quad.x - this.restingDistances / 2 + (this.gridWidth) / 2)/ gridSize;
+                xid %= (totalWidth);
+                if(xid < 0) xid += totalWidth;
+
+                let yid = (-this.cameraY + quad.y - this.restingDistances / 2 + (this.gridHeight) / 2)/ gridSize;
+                yid%= (totalHeight);
+                if(yid < 0) yid += totalHeight;
+
+                xid = Math.floor(xid);
+                yid = Math.floor(yid);
+
+                let data = this.dataManager.getDataAt(xid, yid);
+                quad.setData(data);
+
+				quad.render();
 			}
 		}
+
 
 
 		for (var i = 0; i < this.pointsGrid.length; i++)

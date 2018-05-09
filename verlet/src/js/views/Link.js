@@ -3,15 +3,12 @@ export default class Link
 {
     constructor(which1, which2, restingDist, stiff, tearSensitivity, drawMe)
     {
-        this.restingDistance = restingDist;
+        this.restingDistance = restingDist ;
         this.stiffness = stiff;
         this.tearSensitivity = tearSensitivity;
 
         this.p1 = which1;
         this.p2 = which2;
-
-        // if you want this link to be invisible, set this to false
-        this.drawThis = false;
     }
 
     solve() {

@@ -13,35 +13,20 @@ class SpeedController
 		this.speedX = 0;
 		this.speedY = 0;
 		this.targetSpeed = 0;
-
-		document.addEventListener('mousedown', this.onMouseDown.bind(this));
-		document.addEventListener('touchstart', this.onMouseDown.bind(this));
-		document.addEventListener('mouseup', this.onUp.bind(this));
-		document.addEventListener('touchend', this.onUp.bind(this));
-		document.addEventListener('mousemove', this.onMouseMove.bind(this));
-		document.addEventListener('touchmove', this.onMouseMove.bind(this));
 	}
 
 
 	onUp()
-  {
+  	{
 		this.isDown = false;
 
 	}
-	onMouseDown(e)
-  {
+	onDown(pt)
+  	{
 		this.isDown = true;
 
-		if(e.clientX){
-			this.previousPos.x = this.pos.x = e.clientX;
-			this.previousPos.y = this.pos.y = e.clientX;
-		}
-		else {
-			this.previousPos.x = this.pos.x = e.targetTouches[0].pageX;
-			this.previousPos.y = this.pos.y = e.targetTouches[0].pageY;
-
-		}
-
+		this.previousPos.x = this.pos.x = pt.x;
+		this.previousPos.y = this.pos.y = pt.y;
 		this.speed =  this.lastSpeed = 0;
 	}
 
@@ -89,23 +74,16 @@ class SpeedController
 		return velocity;
 	}
 
-	onMouseMove(e)
+	onMove(pt)
 	{
 
 		this.tick++;
 
 
-		if(e.clientX)
-    {
-			this.pos.x = e.clientX;
-			this.pos.y = e.clientY;
-		}
-		else {
-			this.pos.x = e.targetTouches[0].pageX;
-			this.pos.y = e.targetTouches[0].pageY;
-		}
+		if(!this.isDown) return;
 
-
+		this.pos.x = pt.x;
+		this.pos.y = pt.y;
 
 		// if(this.tick % 10 === 0)
     // {
@@ -136,6 +114,11 @@ class SpeedController
 	}
 	// }
 
+	update()
+	{
+		this.speedX *= .9;
+		this.speedY *= .9;
+	}
 
 	// reset(view)
   // {
