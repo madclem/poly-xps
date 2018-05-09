@@ -584,6 +584,7 @@ export default class MainScene
 		let reappearBottom = false;
 
 
+
 		for (let y = 0; y < this.gridQuadsHeight; y++)   // due to the way PointMasss are attached, we need the y loop on the outside
 		{
 			for (let x = 0; x < this.gridQuadsWidth; x++)
@@ -594,19 +595,28 @@ export default class MainScene
                 // let distY = Math.abs(this.intersection.y - pointquad.y);
                 // if(distY > 3) distY = 3;
 
+                // console.log(this.cameraX);
+                // pointquad.x = this.cameraX;
+                pointquad.x = (this.cameraX + pointquad.origin.x + pointquad.gridPos.x)  %  (Math.abs(this.limitMinX) * 2);// this.speedX;
+                // pointquad.x = pointquad.origin.x;
+                pointquad.y = (this.cameraY + pointquad.origin.y + pointquad.gridPos.y)  %  (Math.abs(this.limitMinY) * 2);// this.speedX;
+                // pointquad.y = pointquad.origin.y;
 				if(this.speedX && !isNaN(this.speedX))
 				{
-					// pointquad.x = (this.cameraX %  this.dataManager.size.width + pointquad.origin.x);// this.speedX;
+
+                    // console.log(this.cameraX);
                     // let percentageY = Math2.map(distY, 0, );
                     // let sX = this.speedX/20 + distY
-					pointquad.x += this.speedX;
+					// pointquad.x += this.speedX;
 				}
 				if(this.speedY && !isNaN(this.speedY))
 				{
-					pointquad.y += this.speedY;
+					// pointquad.y += this.speedY;
 				}
 
-				if(pointquad.y < this.limitMinY)
+                // pointquad.y = pointquad.origin.y;
+
+				if(pointquad.y <= this.limitMinY)
 				{
 					reappearTop = true;
 				}
@@ -614,8 +624,8 @@ export default class MainScene
 				{
 					reappearBottom = true;
 				}
-
-				if(pointquad.x <= this.limitMinX)
+                //
+				if(pointquad.x < this.limitMinX)
 				{
 					reappearRight = true;
 				}
@@ -639,18 +649,16 @@ export default class MainScene
 			for (var i = 0; i < this.gridQuadsWidth; i++)
 			{
                 let pt = this.pointsQuad.pop();
-                pt.y = farY - this.restingDistances;
+                pt.gridPos.y -= (Math.abs(this.limitMinY) * 2 + this.restingDistances);
 				this.pointsQuad.unshift(pt);
 			}
 
-			this.beenIn = true;
 			for (var xView = 0; xView < nbColumns; xView++)
 			{
-				this.views.splice(0, 0, this.views.pop());
+                let quad = this.views.pop();
+                quad.stopRender = true;
+				this.views.splice(0, 0, quad);
 			}
-
-            this.temp = true;
-
 		}
 		else if(reappearTop)
 		{
@@ -660,27 +668,26 @@ export default class MainScene
 			for (var i = 0; i < this.gridQuadsWidth; i++)
 			{
                 let pt = this.pointsQuad.shift();
-                pt.y = farY + this.restingDistances;
-
+                pt.gridPos.y += Math.abs(this.limitMinY) * 2 + this.restingDistances;
 				this.pointsQuad.push(pt);
 			}
 
 			for (var xView = 0; xView < nbColumns; xView++)
 			{
-				this.views.push(this.views.shift());
+                let quad = this.views.shift();
+                quad.stopRender = true;
+				this.views.push(quad);
 			}
 		}
 
 		if(reappearRight)
 		{
-            let farPoint = this.pointsQuad[this.getPointsQuadAtCoordinates(this.gridQuadsWidth - 1, 0)];
-            let farX = farPoint.x;
             for (var y = 0; y < this.gridQuadsHeight; y++)
             {
                 let indexPt = this.getPointsQuadAtCoordinates(0, y);
                 let pt = this.pointsQuad[indexPt];
 
-                pt.x = farX + this.restingDistances;
+                pt.gridPos.x += Math.abs(this.limitMinX) * 2 + this.restingDistances;
                 this.pointsQuad.splice(indexPt, 1);
                 this.pointsQuad.splice(indexPt + this.gridQuadsWidth -1, 0, pt);
             }
@@ -689,19 +696,18 @@ export default class MainScene
 				let index = this.getViewAtCoordinates(0, yView);
 				let quad = this.views[index];
 
+                quad.stopRender = true;
 				this.views.splice(index, 1)
 				this.views.splice(index + this.gridQuadsWidth - 2, 0, quad);
 			}
 		}
 		else if(reappearLeft)
 		{
-            let farPoint = this.pointsQuad[this.getPointsQuadAtCoordinates(0, 0)];
-            let farX = farPoint.x;
             for (var y = 0; y < this.gridQuadsHeight; y++)
             {
                 let indexPt = this.getPointsQuadAtCoordinates(this.gridQuadsWidth-1, y);
                 let pt = this.pointsQuad[indexPt];
-                pt.x = farX - this.restingDistances;
+                pt.gridPos.x -= (Math.abs(this.limitMinX) * 2 + this.restingDistances);
                 this.pointsQuad.splice(indexPt, 1)
                 this.pointsQuad.splice(indexPt - this.gridQuadsWidth + 1, 0, pt);
 
@@ -711,8 +717,7 @@ export default class MainScene
 			{
 				let index = this.getViewAtCoordinates(nbColumns - 1, yView);
 				let quad = this.views[index];
-
-				quad.program.bind();
+                quad.stopRender = true;
 				this.views.splice(index, 1)
 				this.views.splice(index - nbColumns + 1, 0, quad);
 			}
@@ -754,7 +759,12 @@ export default class MainScene
                 let data = this.dataManager.getDataAt(xid, yid);
                 quad.setData(data);
 
-				quad.render();
+                if(!quad.stopRender)
+                {
+                    quad.render();
+                }
+
+                quad.stopRender = false;
 			}
 		}
 

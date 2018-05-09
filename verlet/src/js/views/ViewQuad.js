@@ -18,7 +18,8 @@ export default class ViewQuad
         this.program = new POLY.Program(vert, frag, {
             color: {
                 type: 'vec3',
-                value: [1,1,1]
+                value: [Math.random(),Math.random(), Math.random()]
+                // value: [1,1,1]
             },
             alpha: {
                 type: 'float',

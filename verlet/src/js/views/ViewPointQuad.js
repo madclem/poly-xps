@@ -10,10 +10,17 @@ export default class ViewPointQuad
             x: xPos,
             y: yPos
         }
+
+        this.gridPos = {
+            x: 0,
+            y: 0,
+        }
         this.x = xPos;
         this.y = yPos;
         this.z = 0;
         this.easeZ = 0;
+        this.targetSpeedX = 0;
+        this.speedX = 0;
 
         this.id = Math.floor(Math.random() * 2000)
 
@@ -28,6 +35,11 @@ export default class ViewPointQuad
         this.view.scale.set(.05);
     }
 
+    setSpeed(speed)
+    {
+        this.speedX = speed;
+    }
+
     getPoint()
     {
         return this;
@@ -39,8 +51,11 @@ export default class ViewPointQuad
     }
     render(debug)
     {
-
         this.z = this.easeZ;
+
+        this.speedX *= .99;
+
+        // this.targetSpeedX *= .9;
         // this.z += (this.easeZ - this.z) * .3;
         this.program.bind();
         this.view.position.x = this.x;
