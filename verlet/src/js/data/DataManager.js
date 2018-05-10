@@ -29,7 +29,7 @@ export default class DataManager
                 let d = {
                     id,
                     color: [c[0]/255, c[1]/255, c[2]/255],
-                    title: 'kiki',
+                    title: 'THIS IS A TEST',
                     image: null
                 }
 

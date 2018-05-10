@@ -8,6 +8,7 @@ import {mat3, mat4, vec3} from 'gl-matrix';
 import Math2 from '../utils/Math2';
 import SpeedController from '../control/SpeedController';
 import DataManager from '../data/DataManager';
+import UIManager from '../UIManager';
 
 
 let target = vec3.create();
@@ -87,6 +88,7 @@ export default class MainScene
 		this.limitMinX = -(this.gridQuadsWidth * this.restingDistances)/2 + this.restingDistances/2;
 
         this.dataManager = new DataManager();
+        this.uiManager = new UIManager();
 		this.program = new POLY.Program();
 		this.sphereIntersection = new POLY.geometry.Sphere(this.program);
 		this.sphereIntersection.scale.set(.05);
@@ -220,6 +222,8 @@ export default class MainScene
     {
         if(this.activeQuad)
         {
+            this.isOnActiveQuad = false;
+            this.uiManager.hideTitle();
             this.activeQuad.program.bind();
             this.activeQuad.program.uniforms.active = 0.0;
 
@@ -287,6 +291,7 @@ export default class MainScene
                     if( Math.abs(ptx - quad.x) <= this.restingDistances/2  && Math.abs(pty - quad.y) <= this.restingDistances/2 )
                     {
                         // quad.setColor(1,0,0);
+                        this.uiManager.showTitle(quad.data.title);
                         this.activeQuad = quad;
                         quad.program.bind();
                         quad.program.uniforms.active = 1.0;
@@ -319,11 +324,10 @@ export default class MainScene
                         Easings.to(this, .5, {
                             cameraY: this.cameraY - quad.y,
                             ease: Easings.easeOutSine
-                            // cameraY:  100
                         });
 
-                        console.log('here', this.cameraX - quad.x);
-                        break;//
+
+                        break;
                     }
                 }
             }
@@ -357,7 +361,40 @@ export default class MainScene
         }
 
 		this.onTraceRay();
+
+        if(this.activeQuad)
+        {
+            this.onActiveQuad();
+        }
 	}
+
+    onActiveQuad()
+    {
+		let origin = this.orbitalControl._position;
+        let plane = [
+            [0,0,this.activeQuad.points[0].z],
+            [1,1,this.activeQuad.points[0].z],
+            [0, -1, this.activeQuad.points[0].z]
+        ];
+		let intersection = Math2.intersectionLinePlane([origin, target], plane);
+
+        if( Math.abs(intersection.x - this.activeQuad.x) <= this.restingDistances/2  && Math.abs(intersection.y - this.activeQuad.y) <= this.restingDistances/2 )
+        {
+            if(!this.isOnActiveQuad)
+            {
+                this.uiManager.onHover();
+                this.isOnActiveQuad = true;
+            }
+        }
+        else
+        {
+            if(this.isOnActiveQuad)
+            {
+                this.uiManager.onOut();
+                this.isOnActiveQuad = false;
+            }
+        }
+    }
 
 	_onUp(e)
 	{

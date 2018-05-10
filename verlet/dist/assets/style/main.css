@@ -20,8 +20,9 @@ div#containerTitle
     text-align: center;
 }
 
-h2
+#title
 {
+    text-decoration: none;
     display: inline-block;
     padding: 10px;
     color: white;

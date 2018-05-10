@@ -62,6 +62,7 @@ export default class ViewQuad
     {
         if(data.id === this.dataId) return;
 
+        this.data = data;
         this.dataId = data.id;
         this.program.bind();
         this.program.uniforms.color = data.color;
