@@ -9,6 +9,7 @@ import Math2 from '../utils/Math2';
 import SpeedController from '../control/SpeedController';
 import DataManager from '../data/DataManager';
 
+
 let target = vec3.create();
 let pointsOrdered = [];
 
@@ -199,8 +200,6 @@ export default class MainScene
 
 		if(this._isDown) return;
 
-        this.removeActiveQuad();
-
 
 		this._isDown = true;
 
@@ -225,6 +224,11 @@ export default class MainScene
             this.activeQuad.program.uniforms.active = 0.0;
 
             // this.activeQuad.points.donotupdate = false;
+
+            setTimeout(()=>{
+                if(cb) cb();
+                cb = null;
+            }, 600)
             for (var i = 0; i < this.activeQuad.points.length; i++) {
                 let pt = this.activeQuad.points[i];
                 Easings.to(pt, .2 + i * .1, {
@@ -233,10 +237,10 @@ export default class MainScene
                         pt.donotupdate = false;
 
 
-                        if(data.i === 0)
+                        if(data.i === 3)
                         {
-                            if(cb) cb();
-                            cb = null;
+                            // if(cb) cb();
+                            // cb = null;
                         }
                     },
                     easeZ: 0,
@@ -254,10 +258,10 @@ export default class MainScene
         if(this.activeQuad)
         {
             this.removeActiveQuad(()=>{
+                this.onClick(ptx, pty);
             });
 
-            // this.onClick(ptx, pty);
-            // return;
+            return;
         }
 
         let nbColumns = this.gridQuadsWidth - 1;
@@ -291,30 +295,30 @@ export default class MainScene
                             let pt = quad.points[i]
 
 
-                            Easings.to(pt, .6 + i * .3, {
+                            Easings.to(pt, .6 + i * .15, {
                                 onStartParams: pt,
                                 onStart: (pt)=>{
 
                                     pt.donotupdate = true;
                                 },
                                 easeZ: 1,
-                                delay: .2 + i * .1,
+                                delay: .2 + i * .02,
                                 onUpdateParams: pt,
                                 ease: Easings.elasticOutSoft,
                             });
                         }
 
-                        Easings.to(this, .8, {
+                        Easings.to(this, .5, {
                             cameraX: this.cameraX - quad.x,
-                            ease: Easings.easeOutCirc,
+                            ease: Easings.easeOutSine,
                             onComplete: ()=>{
 
                             }
                         });
 
-                        Easings.to(this, .8, {
+                        Easings.to(this, .5, {
                             cameraY: this.cameraY - quad.y,
-                            ease: Easings.easeOutCirc
+                            ease: Easings.easeOutSine
                             // cameraY:  100
                         });
 
@@ -346,6 +350,10 @@ export default class MainScene
 
             // this.easingValueX *= .8;
             // this.easingValueX *= .8;
+            if(this.activeQuad && (Math.abs(this.firstPos.x - pt.x) > 2 || Math.abs(this.firstPos.y - pt.y) > 2))
+            {
+                this.removeActiveQuad();
+            }
         }
 
 		this.onTraceRay();

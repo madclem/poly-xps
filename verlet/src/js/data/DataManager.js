@@ -13,6 +13,10 @@ export default class DataManager
             [121, 152, 201],
         ]
 
+        let types = [
+            'photo', 'link'
+        ]
+
         this.size = {
             width: 4,
             height: 4,
@@ -22,10 +26,24 @@ export default class DataManager
             for (var j = 0; j <= this.size.height; j++) {
                 let idC = i + j;
                 let c = colors[idC % colors.length];
-                this.data.push({
+                let d = {
                     id,
-                    color: [c[0]/255, c[1]/255, c[2]/255]
-                });
+                    color: [c[0]/255, c[1]/255, c[2]/255],
+                    title: 'kiki',
+                    image: null
+                }
+
+                if(Math.random() > .6)
+                {
+                    d.type = 'link';
+                    d.url = 'http://google.co.uk';
+                }
+                else
+                {
+                    d.type = 'photo';
+                    d.url = 'http://google.co.uk';
+                }
+                this.data.push(d);
 
                 id++;
             }

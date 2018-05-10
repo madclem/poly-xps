@@ -5,6 +5,7 @@ import * as POLY from 'poly/Poly';
 let App;
 let _init = ()=>
 {
+
 	let canvas = document.getElementById("canvas");
 	POLY.init(canvas);
 
