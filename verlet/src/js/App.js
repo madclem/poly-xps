@@ -23,6 +23,17 @@ export default class App
 	    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	    this.loader = new Loader();
 	    this.loader.addManifest(Manifests.default, window.ASSET_URL);
+	    this.loader.addAssets([
+			window.ASSET_URL + 'image/hey-duggee.jpg',
+			window.ASSET_URL + 'image/dangermouse.jpg',
+			window.ASSET_URL + 'image/ddd-2018.jpg',
+			window.ASSET_URL + 'image/dennis.jpg',
+			window.ASSET_URL + 'image/dreamy.jpg',
+			window.ASSET_URL + 'image/giugiu.jpg',
+			window.ASSET_URL + 'image/night-eye.jpg',
+			window.ASSET_URL + 'image/sleigher-3000.jpg',
+			window.ASSET_URL + 'image/starwars.jpg',
+		]);
 	    this.loader.onComplete.add(this._loadComplete, this);
 	    this.loader.load();
 

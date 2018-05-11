@@ -1,6 +1,6 @@
 import * as POLY from 'poly/Poly';
 import vert from '../shaders/quadColor.vert';
-import frag from '../shaders/quadColor.frag';
+import frag from '../shaders/quadImage.frag';
 
 export default class ViewQuad
 {
@@ -12,6 +12,7 @@ export default class ViewQuad
         this.x = 0;
         this.y = 0;
 
+        this.beenHere = 0;
         this.dataId = null;
 
 
@@ -28,6 +29,10 @@ export default class ViewQuad
                 value: [Math.random(),Math.random(), Math.random()]
                 // value: [1,1,1]
             },
+            uTexture: {
+                type: 'texture',
+                value: 0
+            },
             alpha: {
                 type: 'float',
                 value: 1.0 //Math.random() > .9 ? 0.0 : 1.0
@@ -38,9 +43,16 @@ export default class ViewQuad
             }
         });
 
+        this.texture = new POLY.Texture(window.ASSET_URL + 'image/giugiu.jpg');
 
+        const uvs = [
+			0.0, 0.0,
+			1.0, 0.0,
+			1.0, 1.0,
+			0.0, 1.0,
+		];
         this.quad = new POLY.geometry.Quad(this.program);
-        this.quad.addAttribute(this.quad.uvs, 'aUv', 2);
+        this.quad.addAttribute(uvs, 'aUv', 2);
     }
 
     attachPointRef(pts)
@@ -62,16 +74,24 @@ export default class ViewQuad
     {
         if(data.id === this.dataId) return;
 
+        if(this.beenHere > 2) return;
         this.data = data;
         this.dataId = data.id;
-        this.program.bind();
-        this.program.uniforms.color = data.color;
+
+
+
+        this.texture.updateTexture(POLY.loadedResources[window.ASSET_URL + 'image/' + data.image].data);
+        this.beenHere++;
+
+        // this.program.bind();
+        // this.program.uniforms.color = data.color;
     }
 
     render()
     {
         if(this.pointsRef.length > 0)
         {
+            this.texture.bind();
             this.program.bind();
 
             this.points[0] = this.pointsRef[0].getPoint();
