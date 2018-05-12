@@ -41,11 +41,13 @@ class SpeedController
 		var x_dist;
 		var y_dist, interval,vx, vy, t, negX, negY, velocity;
 
-		if (this.previousTime === false) {return 0;}
+		if (!this.previousTime) { return 0;}
+		// if (!this.previousTime || (this.previousTime - this.tick) > -2 ) { return 0;}
 		t = this.previousTime;
 		new_x = this.previousPos.x;
 		new_y = this.previousPos.y;
-		new_t = Date.now();
+		new_t = this.tick;;
+
 
 		x_dist = new_x - x;
 
@@ -55,17 +57,27 @@ class SpeedController
 		negX = x_dist < 0 ? 1: -1;
 		negY = y_dist < 0 ? 1: -1;
           // update values:
+
+		if(interval > 2) interval = 1;
+
+		vx = (negX * Math.sqrt(x_dist*x_dist))/ (interval/10);
+		vy = (negY * Math.sqrt(y_dist*y_dist))/ (interval/10);
+
+
+		if(!isFinite(vx))
+		{
+
+			console.log('infiinity', new_t, t, interval);
+		}
+
 		x = new_x;
 		y = new_y;
 
-		vx = negX * Math.sqrt(x_dist*x_dist)/ (interval/50);
-		vy = negY * Math.sqrt(y_dist*y_dist)/ (interval/50);
+		if(isNaN(vx)) vx = 0;
+		if(isNaN(vy)) vy = 0;
 
 		this.speedX = vx;
 		this.speedY = vy;
-
-		if(isNaN(vx)) vx = 0;
-		if(isNaN(vy)) vy = 0;
 
 		velocity = Math.sqrt(x_dist*x_dist+y_dist*y_dist)/ (interval/50);
 		//
@@ -107,8 +119,8 @@ class SpeedController
 
 		this.lastSpeed = this.speed;
 		// }
+		this.previousTime = this.tick;
 
-		this.previousTime = Date.now();
 		this.previousPos.x = this.pos.x;
 		this.previousPos.y = this.pos.y;
 	}
@@ -116,6 +128,7 @@ class SpeedController
 
 	update()
 	{
+		this.tick++;
 		this.speedX *= .9;
 		this.speedY *= .9;
 	}

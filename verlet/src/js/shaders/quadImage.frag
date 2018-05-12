@@ -1,8 +1,11 @@
 precision highp float;
 
-// uniform vec3 color;
+uniform vec3 color;
 uniform float alpha;
+uniform float hasColor;
 uniform sampler2D uTexture;
+uniform float active;
+uniform float percentage;
 
 varying vec3 vPos;
 varying vec2 vUv;
@@ -10,12 +13,12 @@ varying float shadow;
 
 void main(void) {
 
-    // vec3 outColor = vec3(1.);
-    vec3 outColor = texture2D(uTexture, vUv.xy).rgb;
+    vec4 texel = texture2D(uTexture, vUv.xy);
+    vec3 outColor = texel.rgb;
     // vec3 outColor = vNormal;
-    if(vUv.y > .99 || vUv.y < .01 || vUv.x > .99 || vUv.x < .01)
+    if(texel.a <= .1)
     {
-        // discard;
+        outColor = color;
     }
 
     float cx = smoothstep( 0.492, 0.5, abs(vUv.x - 0.5));
@@ -30,6 +33,10 @@ void main(void) {
     vec3 p = normalize(vPos);
 
     vec3 col = mix(outColor, vec3(0.0), shadow);
+
+    col = mix(col, vec3(0.0), percentage * .6 * (1.0 - active));
+
+    // col += vec3(1.) * active;
     gl_FragColor = vec4(col, 1.0);
     // gl_FragColor = vec4(col * (1.0 - c), 1.0);
     // gl_FragColor = vec4(outColor, alpha);

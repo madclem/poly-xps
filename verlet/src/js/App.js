@@ -1,4 +1,5 @@
 import * as POLY from 'poly/Poly';
+import TextureManager from './TextureManager';
 import MainScene from './scenes/MainScene';
 import Easings from './utils/Easings';
 import PointCollisionScene from './scenes/PointCollisionScene';
@@ -23,7 +24,19 @@ export default class App
 	    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	    this.loader = new Loader();
 	    this.loader.addManifest(Manifests.default, window.ASSET_URL);
-	    this.loader.addAssets([
+
+		this._textures = [
+			window.ASSET_URL + 'image/dm_idle_01.png',
+			window.ASSET_URL + 'image/dm_idle_02.png',
+			window.ASSET_URL + 'image/dm_idle_03.png',
+			window.ASSET_URL + 'image/dm_idle_04.png',
+			window.ASSET_URL + 'image/dm_idle_05.png',
+			window.ASSET_URL + 'image/dm_idle_06.png',
+			window.ASSET_URL + 'image/dm_idle_07.png',
+			window.ASSET_URL + 'image/dm_idle_08.png',
+			window.ASSET_URL + 'image/dm_idle_09.png',
+			window.ASSET_URL + 'image/dm_idle_10.png',
+			window.ASSET_URL + 'image/dm_idle_11.png',
 			window.ASSET_URL + 'image/hey-duggee.jpg',
 			window.ASSET_URL + 'image/dangermouse.jpg',
 			window.ASSET_URL + 'image/ddd-2018.jpg',
@@ -33,7 +46,8 @@ export default class App
 			window.ASSET_URL + 'image/night-eye.jpg',
 			window.ASSET_URL + 'image/sleigher-3000.jpg',
 			window.ASSET_URL + 'image/starwars.jpg',
-		]);
+		]
+	    this.loader.addAssets(this._textures);
 	    this.loader.onComplete.add(this._loadComplete, this);
 	    this.loader.load();
 
@@ -81,6 +95,9 @@ export default class App
 	{
 		POLY.loadedResources = resources;
 		// this.scene = new PointCollisionScene();
+
+		TextureManager.addTextures(this._textures);
+
 		this.scene = new MainScene();
 		this.scene.resize();
 

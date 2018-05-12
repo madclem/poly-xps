@@ -222,6 +222,11 @@ export default class MainScene
     {
         if(this.activeQuad)
         {
+
+            for (var k = 0; k < this.views.length; k++) {
+                this.views[k].fade(0);
+            }
+
             this.isOnActiveQuad = false;
             this.uiManager.hideTitle();
             this.activeQuad.program.bind();
@@ -233,6 +238,7 @@ export default class MainScene
                 if(cb) cb();
                 cb = null;
             }, 600)
+
             for (var i = 0; i < this.activeQuad.points.length; i++) {
                 let pt = this.activeQuad.points[i];
                 Easings.to(pt, .2 + i * .1, {
@@ -262,7 +268,7 @@ export default class MainScene
         if(this.activeQuad)
         {
             this.removeActiveQuad(()=>{
-                this.onClick(ptx, pty);
+                // this.onClick(ptx, pty);
             });
 
             return;
@@ -327,6 +333,9 @@ export default class MainScene
                         });
 
 
+                        for (var k = 0; k < this.views.length; k++) {
+                            this.views[k].fade(1);
+                        }
                         break;
                     }
                 }
@@ -683,11 +692,18 @@ export default class MainScene
             }
         }
 
-        this.speedX += ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .06;
-        this.speedY += ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .06;
+        if(!isNaN(SpeedController.speedX) && !isNaN(SpeedController.speedY))
+        {
+            this.speedX += ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .06;
+            this.speedY += ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .06;
 
-        this.dragSpeed.x += ((SpeedController.speedX)/ POLY.gl.viewportWidth - this.dragSpeed.x) * .06;
-        this.dragSpeed.y += ((SpeedController.speedY)/ POLY.gl.viewportHeight - this.dragSpeed.y) * .06;
+            if(isNaN(this.speedX))
+            {
+                // console.log('here', SpeedController.speedX, POLY.gl.viewportWidth);
+            }
+            this.dragSpeed.x += ((SpeedController.speedX)/ POLY.gl.viewportWidth - this.dragSpeed.x) * .06;
+            this.dragSpeed.y += ((SpeedController.speedY)/ POLY.gl.viewportHeight - this.dragSpeed.y) * .06;
+        }
 
         this.previousPos.x = this.pos.x;
         this.previousPos.y = this.pos.y;
@@ -886,6 +902,11 @@ export default class MainScene
                 yid = Math.floor(yid);
 
                 let data = this.dataManager.getDataAt(xid, yid);
+
+                if(!data)
+                {
+                    console.log(this.cameraX, this.speedX, quad.x, this.restingDistances / 2, (this.gridWidth) / 2, gridSize);
+                }
                 quad.setData(data);
 
                 if(!quad.skipRender)
