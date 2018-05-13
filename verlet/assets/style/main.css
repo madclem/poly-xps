@@ -11,3 +11,21 @@ canvas
     left: 0;
     top: 0;
 }
+
+div#containerTitle
+{
+    top: 50px;
+    width: 100%;
+    position:relative;
+    text-align: center;
+}
+
+#title
+{
+    text-decoration: none;
+    display: inline-block;
+    padding: 10px;
+    color: white;
+    letter-spacing: 6px;
+    font-size: 45px;
+}

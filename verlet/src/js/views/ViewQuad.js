@@ -10,6 +10,7 @@ export default class ViewQuad
         this.pointsRef = [];
         this.id = Math.floor(Math.random() * 2000)
 
+        this.zoom = 1;
         this.x = 0;
         this.y = 0;
 
@@ -49,6 +50,10 @@ export default class ViewQuad
             active: {
                 type: 'float',
                 value: 0.0 //Math.random() > .9 ? 0.0 : 1.0
+            },
+            zoom: {
+                type: 'float',
+                value: 1.0 //Math.random() > .9 ? 0.0 : 1.0
             }
         });
 
@@ -74,6 +79,35 @@ export default class ViewQuad
                 this.needsUpdate = true;
             }
         })
+    }
+
+    onHover()
+    {
+        // this.zoom = 1;
+        Easings.killTweensOf(this);
+        Easings.to(this, 2, {
+            zoom: .8,
+            ease: Easings.easeOutSine,
+            onUpdate: ()=>{
+                this.program.bind();
+                this.program.uniforms.zoom = this.zoom;
+            }
+        });
+
+
+    }
+
+    onOut()
+    {
+        Easings.killTweensOf(this);
+        Easings.to(this, 2, {
+            zoom: 1,
+            ease: Easings.easeOutSine,
+            onUpdate: ()=>{
+                this.program.bind();
+                this.program.uniforms.zoom = this.zoom;
+            }
+        });
     }
 
     attachPointRef(pts)

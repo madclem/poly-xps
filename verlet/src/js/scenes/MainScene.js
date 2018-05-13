@@ -391,6 +391,7 @@ export default class MainScene
             if(!this.isOnActiveQuad)
             {
                 this.uiManager.onHover();
+                this.activeQuad.onHover()
                 this.isOnActiveQuad = true;
             }
         }
@@ -398,6 +399,7 @@ export default class MainScene
         {
             if(this.isOnActiveQuad)
             {
+                this.activeQuad.onOut()
                 this.uiManager.onOut();
                 this.isOnActiveQuad = false;
             }
@@ -717,6 +719,22 @@ export default class MainScene
         this.cameraY += this.speedY;
 
 
+        let div = document.getElementById("test");
+        let width = (this.restingDistances + 1) /2 * POLY.gl.viewportWidth;
+        div.style.width = POLY.gl.viewportHeight * .6 + 'px';
+        div.style.height = POLY.gl.viewportHeight * .6 + 'px';
+
+        let top = -(POLY.gl.viewportHeight * .6/2);
+        let left = -(POLY.gl.viewportHeight * .6/2);
+
+        if(this.activeQuad)
+        {
+            left += this.activeQuad.x * POLY.gl.viewportHeight * .6;
+            top -= this.activeQuad.y * POLY.gl.viewportHeight * .6;
+        }
+        div.style.marginLeft = left + 'px';
+        div.style.marginTop = top + 'px';
+
 
 		// LOOP THE QUAD'S POINTS GRID
 		let reappearLeft = false;
@@ -943,5 +961,8 @@ export default class MainScene
 	resize()
 	{
 		this.camera.setAspectRatio(POLY.GL.aspectRatio);
+
+        // let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
+		// let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
 	}
 }

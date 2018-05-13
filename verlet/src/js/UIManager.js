@@ -45,7 +45,7 @@ export default class UIManager
         {
             this.container.style.opacity = 0;
 
-            return;
+            // return;
         }
         TweenLite.to("#containerTitle", .5, {
             opacity: 0,

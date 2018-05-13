@@ -12,7 +12,7 @@ varying vec2 vUv;
 varying float shadow;
 
 void main(void) {
-
+    
     vec4 texel = texture2D(uTexture, vUv.xy);
     vec3 outColor = texel.rgb;
     // vec3 outColor = vNormal;

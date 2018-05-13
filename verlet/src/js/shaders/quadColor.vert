@@ -8,6 +8,7 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 uniform float active;
+uniform float zoom;
 
 
 varying vec3 vPos;
@@ -16,7 +17,12 @@ varying float shadow;
 
 void main(void) {
 
-    vUv = aUv;
+    vec2 scaleCenter = vec2(0.5, 0.5);
+
+    vUv = (aUv - scaleCenter) * zoom + scaleCenter;
+
+
+    // vUv = aUv;
     vec4 pos = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
     vPos = aPosition;
     // vPos = pos.rgb;
