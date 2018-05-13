@@ -9,6 +9,7 @@ import Math2 from '../utils/Math2';
 import SpeedController from '../control/SpeedController';
 import DataManager from '../data/DataManager';
 import UIManager from '../UIManager';
+import Device from '../utils/Device';
 
 
 let target = vec3.create();
@@ -184,21 +185,19 @@ export default class MainScene
 
 	_onDown(e)
 	{
+        let fullscreen = ((window.fullScreen) || (window.innerWidth == screen.width && window.innerHeight == screen.height));
 
-        // if(!this.beenIn)
-        // {
-        //     if (document.body.mozRequestFullScreen) {
-        //         this.beenIn = true;
-        //         // This is how to go into fullscren mode in Firefox
-        //         // Note the "moz" prefix, which is short for Mozilla.
-        //         document.body.mozRequestFullScreen();
-        //     } else if (document.body.webkitRequestFullScreen) {
-        //         this.beenIn = true;
-        //         // This is how to go into fullscreen mode in Chrome and Safari
-        //         // Both of those browsers are based on the Webkit project, hence the same prefix.
-        //         document.body.webkitRequestFullScreen();
-        //     }
-        // }
+        if(Device.android && !fullscreen)
+        {
+            if (document.body.mozRequestFullScreen)
+            {
+                document.body.mozRequestFullScreen();
+            }
+            else if (document.body.webkitRequestFullScreen)
+            {
+                document.body.webkitRequestFullScreen();
+            }
+        }
 
 		if(this._isDown) return;
 

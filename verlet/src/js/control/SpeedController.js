@@ -60,15 +60,8 @@ class SpeedController
 
 		if(interval > 2) interval = 1;
 
-		vx = (negX * Math.sqrt(x_dist*x_dist))/ (interval/10);
-		vy = (negY * Math.sqrt(y_dist*y_dist))/ (interval/10);
-
-
-		if(!isFinite(vx))
-		{
-
-			console.log('infiinity', new_t, t, interval);
-		}
+		vx = (negX * Math.sqrt(x_dist*x_dist))/ (interval/6);
+		vy = (negY * Math.sqrt(y_dist*y_dist))/ (interval/6);
 
 		x = new_x;
 		y = new_y;
@@ -79,7 +72,7 @@ class SpeedController
 		this.speedX = vx;
 		this.speedY = vy;
 
-		velocity = Math.sqrt(x_dist*x_dist+y_dist*y_dist)/ (interval/50);
+		velocity = Math.sqrt(x_dist*x_dist+y_dist*y_dist)/ (interval/20);
 		//
 		if(isNaN(velocity)) velocity = 0;
 
@@ -97,20 +90,12 @@ class SpeedController
 		this.pos.x = pt.x;
 		this.pos.y = pt.y;
 
-		// if(this.tick % 10 === 0)
-    // {
-      // let pos = e.data.getLocalPosition(this.view);
-
-		// if(this.isDown) {
 		let speed = Math.abs(this.calculateSpeed());
-
-
 
 		if (speed > 60) {
 			speed = 60;
 		}
 		speed /= 60;
-      // speed = speed;
 
 		speed = this.easeInOutSine(speed, 0, 1, 1);
 		this.speed += (speed - this.lastSpeed) * .1;
@@ -132,11 +117,6 @@ class SpeedController
 		this.speedX *= .9;
 		this.speedY *= .9;
 	}
-
-	// reset(view)
-  // {
-	//
-	// }
 
 	easeInOutSine (t, b, c, d) {
 		return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
