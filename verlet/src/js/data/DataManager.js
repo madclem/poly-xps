@@ -5,6 +5,10 @@ const data = [
         images: ['giugiu.jpg'],
         color: false,
         codeColor: [],
+        colorGradient: [33/255, 104/255, 235/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     },
     {
@@ -12,6 +16,10 @@ const data = [
         images: ['dangermouse.jpg'],
         color: true,
         codeColor: [249/255, 211/255, 34/255],
+        colorGradient: [33/255, 104/255, 235/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     },
     {
@@ -19,6 +27,10 @@ const data = [
         images: ['ddd-2018.jpg'],
         color: false,
         codeColor: [],
+        colorGradient: [212/255, 84/255, 84/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     },
     {
@@ -26,6 +38,10 @@ const data = [
         images: ['dennis.jpg'],
         color: false,
         codeColor: [],
+        colorGradient: [232/255, 28/255, 43/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     },
     {
@@ -33,6 +49,10 @@ const data = [
         images: ['dreamy.jpg'],
         color: false,
         codeColor: [],
+        colorGradient: [33/255, 104/255, 235/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     },
     {
@@ -52,6 +72,10 @@ const data = [
         ],
         color: false,
         codeColor: [249/255, 211/255, 34/255],
+        colorGradient: [33/255, 104/255, 235/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     },
     {
@@ -59,6 +83,10 @@ const data = [
         images: ['night-eye.jpg'],
         color: false,
         codeColor: [],
+        colorGradient: [20/255, 48/255, 82/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     },
     {
@@ -66,6 +94,10 @@ const data = [
         images: ['sleigher-3000.jpg'],
         color: false,
         codeColor: [],
+        colorGradient: [33/255, 104/255, 235/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     },
     {
@@ -73,6 +105,10 @@ const data = [
         images: ['starwars.jpg'],
         color: false,
         codeColor: [],
+        colorGradient: [33/255, 104/255, 235/255],
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
         type: 'photo'
     }
 ]

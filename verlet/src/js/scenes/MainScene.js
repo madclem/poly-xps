@@ -296,7 +296,8 @@ export default class MainScene
                     if( Math.abs(ptx - quad.x) <= this.restingDistances/2  && Math.abs(pty - quad.y) <= this.restingDistances/2 )
                     {
                         // quad.setColor(1,0,0);
-                        this.uiManager.showTitle(quad.data.title);
+                        this.uiManager.setData(quad.data);
+                        this.uiManager.showTitle();
                         this.activeQuad = quad;
                         quad.program.bind();
                         quad.program.uniforms.active = 1.0;
@@ -322,7 +323,20 @@ export default class MainScene
                             cameraX: this.cameraX - quad.x,
                             ease: Easings.easeOutSine,
                             onComplete: ()=>{
+                                let div = document.getElementById("overlay");
+                                div.style.width = POLY.gl.viewportHeight * .6 + 'px';
+                                div.style.height = POLY.gl.viewportHeight * .6 + 'px';
 
+                                let top = -(POLY.gl.viewportHeight * .6/2);
+                                let left = -(POLY.gl.viewportHeight * .6/2);
+
+                                if(this.activeQuad)
+                                {
+                                    left += this.activeQuad.x * POLY.gl.viewportHeight * .6;
+                                    top -= this.activeQuad.y * POLY.gl.viewportHeight * .6;
+                                }
+                                div.style.marginLeft = left + 'px';
+                                div.style.marginTop = top + 'px';
                             }
                         });
 
@@ -717,24 +731,6 @@ export default class MainScene
 
         this.cameraX += this.speedX;
         this.cameraY += this.speedY;
-
-
-        let div = document.getElementById("test");
-        let width = (this.restingDistances + 1) /2 * POLY.gl.viewportWidth;
-        div.style.width = POLY.gl.viewportHeight * .6 + 'px';
-        div.style.height = POLY.gl.viewportHeight * .6 + 'px';
-
-        let top = -(POLY.gl.viewportHeight * .6/2);
-        let left = -(POLY.gl.viewportHeight * .6/2);
-
-        if(this.activeQuad)
-        {
-            left += this.activeQuad.x * POLY.gl.viewportHeight * .6;
-            top -= this.activeQuad.y * POLY.gl.viewportHeight * .6;
-        }
-        div.style.marginLeft = left + 'px';
-        div.style.marginTop = top + 'px';
-
 
 		// LOOP THE QUAD'S POINTS GRID
 		let reappearLeft = false;

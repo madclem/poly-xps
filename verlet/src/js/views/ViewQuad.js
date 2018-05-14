@@ -35,6 +35,11 @@ export default class ViewQuad
                 value: [Math.random(),Math.random(), Math.random()]
                 // value: [1,1,1]
             },
+            colorGradient: {
+                type: 'vec3',
+                value: [Math.random(),Math.random(), Math.random()]
+                // value: [1,1,1]
+            },
             uTexture: {
                 type: 'texture',
                 value: 0
@@ -141,10 +146,11 @@ export default class ViewQuad
             this.textures.push(TextureManager.getTexture(window.ASSET_URL + 'image/' + data.images[i]));
         }
         // this.beenHere++;
+        this.program.bind();
+        this.program.uniforms.colorGradient = data.colorGradient;
 
         if(data.codeColor && data.codeColor.length > 0)
         {
-            this.program.bind();
             this.program.uniforms.color = data.codeColor;
         }
     }
