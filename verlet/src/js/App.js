@@ -96,12 +96,17 @@ export default class App
 		POLY.loadedResources = resources;
 		// this.scene = new PointCollisionScene();
 
-		TextureManager.addTextures(this._textures);
+		TextureManager.addTextures(this._textures, ()=>{
 
-		this.scene = new MainScene();
-		this.scene.resize();
+			let loader = document.getElementById('loader');
+			loader.style.display = "none";
+			
+			this.scene = new MainScene();
+			this.scene.resize();
+			//
+			POLY.utils.loop.add(this._update.bind(this));
+		});
 
-	    POLY.utils.loop.add(this._update.bind(this));
 	}
 
 	resize()

@@ -70,11 +70,23 @@
 
 }
 
+
 body, html
 {
     border: 0;
     margin: 0;
     padding: 0;
+}
+
+#loader
+{
+    width: 100%;
+    height: 100%;
+    position:fixed;
+    top:0;
+    left:0;
+    background-color: #000000;
+    z-index: 12;
 }
 
 canvas
@@ -94,7 +106,7 @@ canvas
     left: 0px;
     background-color: #000000;
     height: 80px;
-    z-index: 1000;
+    z-index: 10;
     font-family: "din_condensed";
     color: #fff;
     letter-spacing: 3px;

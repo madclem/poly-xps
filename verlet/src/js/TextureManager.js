@@ -1,10 +1,12 @@
 import * as POLY from 'poly/Poly';
+import Signal from 'signals';
 
 export default new class TextureManager
 {
     constructor()
     {
         this.textures = {}
+        this.currentTextureToLoad = null;
     }
 
     getTexture(id)
@@ -12,10 +14,49 @@ export default new class TextureManager
         return this.textures[id];
     }
 
-    addTextures(arrayTextures)
+    addTextures(arrayTextures, cb)
     {
-        for (var i = 0; i < arrayTextures.length; i++) {
-            this.textures[arrayTextures[i]] = new POLY.Texture(arrayTextures[i]);
+        this.idFunc = POLY.utils.loop.add(this.update.bind(this))
+        this.indexImageLoaded = 0;
+        this.arrayTextures = arrayTextures;
+        this.loadNext();
+
+        this.cb = cb;
+    }
+
+    loadNext()
+    {
+        if(this.arrayTextures[this.indexImageLoaded])
+        {
+            this.textures[this.arrayTextures[this.indexImageLoaded]] = new POLY.Texture(this.arrayTextures[this.indexImageLoaded]);
+            this.currentTextureToLoad = this.textures[this.arrayTextures[this.indexImageLoaded]];
+        }
+        else
+        {
+            POLY.utils.loop.remove(this.idFunc)
+
+            if(this.cb) 
+            {
+                this.cb();
+                this.cb = null;
+            }
+        }
+        // for (var i = 0; i < arrayTextures.length; i++) {
+        //     this.textures[arrayTextures[i]] = new POLY.Texture(arrayTextures[i]);
+        // }
+    }
+
+    update()
+    {
+        console.log('update texture', this.indexImageLoaded);
+        if(this.currentTextureToLoad)
+        {
+            if(this.currentTextureToLoad._loaded)
+            {
+                this.indexImageLoaded++;
+                this.loadNext();
+                // this.currentTextureToLoad = null;
+            }
         }
     }
 }

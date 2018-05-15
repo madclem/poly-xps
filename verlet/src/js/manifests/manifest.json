@@ -15,6 +15,7 @@
         "image/./dm_idle_10.png",
         "image/./dm_idle_11.png",
         "image/./dreamy.jpg",
+        "image/./github-icon.png",
         "image/./giugiu.jpg",
         "image/./hey-duggee.jpg",
         "image/./hey-duggee.png",
@@ -22,6 +23,7 @@
         "image/./night-eye.jpg",
         "image/./sky_gradient.jpg",
         "image/./sleigher-3000.jpg",
-        "image/./starwars.jpg"
+        "image/./starwars.jpg",
+        "image/./twitter-icon.png"
     ]
 }
