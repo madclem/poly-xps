@@ -6,6 +6,11 @@ const data = [
         color: false,
         codeColor: [],
         colorGradient: [33/255, 104/255, 235/255],
+        team: {
+            art: [],
+            dev: []
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",
@@ -17,6 +22,11 @@ const data = [
         color: true,
         codeColor: [249/255, 211/255, 34/255],
         colorGradient: [33/255, 104/255, 235/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",
@@ -28,6 +38,11 @@ const data = [
         color: false,
         codeColor: [],
         colorGradient: [212/255, 84/255, 84/255],
+        team: {
+            art: ['Julien suard'],
+            dev: []
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",
@@ -39,6 +54,11 @@ const data = [
         color: false,
         codeColor: [],
         colorGradient: [232/255, 28/255, 43/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",
@@ -50,6 +70,11 @@ const data = [
         color: false,
         codeColor: [],
         colorGradient: [33/255, 104/255, 235/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",
@@ -73,6 +98,11 @@ const data = [
         color: false,
         codeColor: [249/255, 211/255, 34/255],
         colorGradient: [33/255, 104/255, 235/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",
@@ -84,6 +114,11 @@ const data = [
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",
@@ -95,6 +130,11 @@ const data = [
         color: false,
         codeColor: [],
         colorGradient: [33/255, 104/255, 235/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",
@@ -106,6 +146,11 @@ const data = [
         color: false,
         codeColor: [],
         colorGradient: [33/255, 104/255, 235/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
         client: "Disney",
         producer: "Goodboy Digital",
         date: "2017",

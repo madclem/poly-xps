@@ -344,16 +344,16 @@ export default class MainScene
                             ease: Easings.easeOutSine,
                             onUpdate:()=>{
                                 let div = document.getElementById("overlay");
-                                div.style.width = POLY.gl.viewportHeight * .6 + 'px';
-                                div.style.height = POLY.gl.viewportHeight * .605 + 'px';
+                                div.style.width = POLY.gl.viewportHeight * .601 + 'px';
+                                div.style.height = POLY.gl.viewportHeight * .602 + 'px';
 
-                                let top = -(POLY.gl.viewportHeight * .6/2);
-                                let left = -(POLY.gl.viewportHeight * .6/2);
+                                let top = -(POLY.gl.viewportHeight * .602/2);
+                                let left = -(POLY.gl.viewportHeight * .601/2);
 
                                 if(this.activeQuad)
                                 {
-                                    left += this.activeQuad.x * POLY.gl.viewportHeight * .6;
-                                    top -= this.activeQuad.y * POLY.gl.viewportHeight * .6;
+                                    left += this.activeQuad.x * POLY.gl.viewportHeight * .601;
+                                    top -= this.activeQuad.y * POLY.gl.viewportHeight * .602;
                                 }
                                 div.style.marginLeft = left + 'px';
                                 div.style.marginTop = top + 'px';
@@ -453,7 +453,7 @@ export default class MainScene
 	_onUp(e)
 	{
         if(!Device.desktop && !e.touches) return;
-        
+
         let pt = getCursorPos(e);
 
         let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
@@ -752,11 +752,18 @@ export default class MainScene
 
         if(!isNaN(SpeedController.speedX) && !isNaN(SpeedController.speedY))
         {
-            this.speedX += ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .06;
-            this.speedY += ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .06;
+            let newx = ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .05;
+            if(newx > .04) newx = .04;
+            if(newx < -.04) newx = -.04;
 
-            this.dragSpeed.x += ((SpeedController.speedX)/ POLY.gl.viewportWidth - this.dragSpeed.x) * .06;
-            this.dragSpeed.y += ((SpeedController.speedY)/ POLY.gl.viewportHeight - this.dragSpeed.y) * .06;
+            let newy = ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .05;
+            if(newy > .04) newy = .04;
+            if(newy < -.04) newy = -.04;
+            this.speedX += newx;
+            this.speedY += newy;
+
+            this.dragSpeed.x += ((SpeedController.speedX)/ POLY.gl.viewportWidth - this.dragSpeed.x) * .04;
+            this.dragSpeed.y += ((SpeedController.speedY)/ POLY.gl.viewportHeight - this.dragSpeed.y) * .04;
         }
 
         this.previousPos.x = this.pos.x;

@@ -3,6 +3,14 @@ export default class UIManager
 {
     constructor()
     {
+        this.teamSection = document.getElementById("teamSection");
+        this.art = document.getElementById("art");
+        this.dev = document.getElementById("dev");
+        this.titleAboutIt = document.getElementById("titleAboutIt");
+        this.titleTeam = document.getElementById("titleTeam");
+        this.description = document.getElementById("description");
+        this.listArtists = document.getElementById("listArtists");
+        this.listDevs = document.getElementById("listDevs");
         this.container = document.getElementById("overlay");
         this.aboutScreen = document.getElementById("aboutScreen");
         this.about = document.getElementById("buttonAbout");
@@ -74,10 +82,65 @@ export default class UIManager
         });
     }
 
+
+    slide(element, id, from, to, duration, delay, cb)
+    {
+        element.style.opacity = 0;
+        element.style.top = from + 'px';
+        TweenLite.to(id, duration,
+        {
+            delay: delay,
+            top: to,
+            ease: Sine.easeInOut
+        });
+
+        TweenLite.to(id, duration/2,
+        {
+            scaleY: 3,
+            delay: delay,
+            ease: Circ.easeIn,
+            onComplete: ()=>{
+                TweenLite.to(id, duration/2,
+                {
+                    scaleY: 1,
+                    ease: Circ.easeOut
+                });
+            }
+        });
+
+        TweenLite.to(id, duration/2,
+        {
+            delay: duration/3 + delay,
+            opacity: 1,
+            ease: Circ.easeOut,
+            onComplete: ()=>{
+                if(cb) cb();
+            }
+        });
+    }
+
     showAbout()
     {
 
         if(this.aboutDisplayed) return;
+
+        this.art.style.opacity = 0;
+        this.dev.style.opacity = 0;
+        this.description.style.opacity = 0;
+
+        this.slide(this.titleAboutIt, "#titleAboutIt", 60, 0, .4, .1,
+        ()=>{
+            TweenLite.to("#description", .3, {
+                opacity: 1
+            });
+        });
+        this.slide(this.titleTeam, "#titleTeam", 60, 0, .4, .4,
+        ()=>{
+            TweenLite.to(["#dev", "#art"], .3, {
+                opacity: 1
+            });
+        });
+
 
         this.aboutScreen.style.display= 'block';
         this.aboutDisplayed = true;
@@ -86,7 +149,7 @@ export default class UIManager
 
         TweenLite.to("#aboutSlideIn", .4, {
             top: "0%",
-            ease: Circ.easeOut
+            ease: Circ.easeInOut
         });
 
         TweenLite.to("#link", .2, {
@@ -106,6 +169,39 @@ export default class UIManager
         this.date.innerHTML = data.date;
         this.producerName.innerHTML = data.producer;
         this.client.innerHTML = data.client;
+
+        this.description.innerHTML = data.description;
+        let team = data.team;
+        if(team.art.length === 0 && team.dev.length === 0)
+        {
+            // hide team section
+            this.teamSection.style.display = 'none';
+        }
+        else {
+            this.teamSection.style.display = 'block';
+            // show team section
+            let ulContentArt = '';
+            for (var i = 0; i < team.art.length; i++) {
+                ulContentArt += '<li>' + team.art[i] + '</li>';
+            }
+
+            if(team.art.length === 0)
+            {
+                ulContentArt = '<li>N/A</li>';
+            }
+
+            let ulContentDev = '';
+            for (var i = 0; i < team.dev.length; i++) {
+                ulContentDev += '<li>' + team.dev[i] + '</li>';
+            }
+            if(team.dev.length === 0)
+            {
+                ulContentDev = '<li>N/A</li>';
+            }
+
+            this.listArtists.innerHTML = ulContentArt;
+            this.listDevs.innerHTML = ulContentDev;
+        }
     }
 
     showTitle(title)
@@ -222,6 +318,8 @@ export default class UIManager
 
         }
 
+        this.hideAbout();
+
         // TweenLite.to(".top", .01, {
         //     width: 0,
         //     ease: Circ.easeOut
@@ -241,29 +339,29 @@ export default class UIManager
 
     onHover()
     {
-        TweenLite.to("#containerTitle", 1, {
-            scaleY: .9,
-            ease: Back.easeOut.config(1.2)
-        });
-
-        TweenLite.to("#titleProject", 1, {
-            letterSpacing: 10,
-            autoRound:false,
-            ease: Back.easeOut.config(1.2)
-        });
+        // TweenLite.to("#containerTitle", 1, {
+        //     scaleY: .9,
+        //     ease: Back.easeOut.config(1.2)
+        // });
+        //
+        // TweenLite.to("#titleProject", 1, {
+        //     letterSpacing: 10,
+        //     autoRound:false,
+        //     ease: Back.easeOut.config(1.2)
+        // });
     }
 
     onOut()
     {
-        TweenLite.to("#containerTitle", .6, {
-            scaleY: 1,
-            ease: Back.easeOut.config(1.2)
-        });
-
-        TweenLite.to("#titleProject", .6, {
-            letterSpacing: 6,
-            autoRound:false,
-            ease: Back.easeOut.config(1.2)
-        });
+        // TweenLite.to("#containerTitle", .6, {
+        //     scaleY: 1,
+        //     ease: Back.easeOut.config(1.2)
+        // });
+        //
+        // TweenLite.to("#titleProject", .6, {
+        //     letterSpacing: 6,
+        //     autoRound:false,
+        //     ease: Back.easeOut.config(1.2)
+        // });
     }
 }

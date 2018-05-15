@@ -1,24 +1,376 @@
-body
+@font-face {
+    font-family: 'avenir_roman';
+    src: url('../fonts/avenir_roman.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'din_condensed';
+    src: url('../fonts/din_condensed.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@media only screen and (max-height: 600px) {
+    /* div#overlay #buttonProject {
+        display:none;
+    } */
+
+    div#overlay #titleProject
+    {
+        margin-top: -20px!important;
+    }
+
+    div#overlay #about {
+        display:none;
+    }
+
+    div#overlay #buttonProject #insideButtonProject
+    {
+        width: 60px!important;
+        height: 60px!important;
+        margin-top: 0px!important;
+        top: 20px!important;
+    }
+
+    div#overlay #buttonProject #insideButtonProject:hover
+    {
+        width: 70px!important;
+        height: 70px!important;
+        margin-top: -5px!important;
+        /* left: -5px; */
+    }
+
+
+    #header
+    {
+        height: 40px!important;
+    }
+
+    #header span
+    {
+        font-size: 15px!important;
+    }
+
+    div#overlay #titleProject
+    {
+        font-size: 22px!important;
+    }
+
+    div#overlay #aboutScreen h2
+    {
+        font-size: 22px!important;
+    }
+
+    div#overlay
+    {
+        font-size: 10px!important;
+    }
+
+}
+
+body, html
 {
     border: 0;
+    margin: 0;
+    padding: 0;
 }
 
 canvas
 {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
+    width: 100%;
+    height: 100%;
+    position: fixed;
     left: 0;
     top: 0;
 }
 
-div#containerTitle
+#header
 {
-    top: 50px;
     width: 100%;
-    position:relative;
-    text-align: center;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background-color: #000000;
+    height: 80px;
+    z-index: 1000;
+    font-family: "din_condensed";
+    color: #fff;
+    letter-spacing: 3px;
 }
+
+#header a
+{
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+
+#header img.twitter
+{
+    right: 50px;
+}
+
+#header img.github
+{
+    right: 100px;
+}
+
+#header img:hover
+{
+    width: 40px;
+    height: 40px;
+    margin-top: -20px;
+    margin-right: -3px;
+}
+
+#header img
+{
+    position: absolute;
+    top: 50%;
+    border: none;
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin-top: -17px;
+    text-decoration: none;
+    transition: all .1s ease;
+}
+
+#header span
+{
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50px;
+    font-size: 20px;
+    margin-top: -8px;
+    /* padding: 20px; */
+    /* margin: auto; */
+}
+
+div#overlay #buttonProject
+{
+    text-align:center;
+    width: 100%;
+    position: absolute;
+    top: 50%
+}
+
+
+
+div#overlay #buttonProject #insideButtonProject
+{
+    margin: auto;
+    display:inline-block;
+    width: 90px;
+    height: 90px;
+    background-color: #000000;
+    transition: all .2s ease;
+    cursor: pointer;
+    position: relative;
+    margin-top: 0px;
+    top: 0;
+    left: 0;
+}
+
+div#overlay #buttonProject #insideButtonProject:hover
+{
+    width: 100px;
+    height: 100px;
+    margin-top: -5px;
+    /* left: -5px; */
+}
+
+div#overlay #buttonProject #insideButtonProject:hover img
+{
+    width: 40px;
+    height: 40px;
+    margin-top: -20px;
+    margin-left: -20px;
+}
+
+
+div#overlay #buttonProject #insideButtonProject img
+{
+    width: 30px;
+    height: 30px;
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
+    transition: all .2s ease;
+}
+
+div#overlay .top
+{
+    height: 30px;
+    width: 0%;
+    padding-top: 15px;
+    margin: auto;
+    border-bottom: 1px solid #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+div#overlay .top #date
+{
+    left: 0;
+    position: absolute;
+}
+
+div#overlay .top #client
+{
+    position: absolute;
+    right: 0;
+    /* text-align: right; */
+}
+
+div#overlay #aboutScreen
+{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    display:none;
+}
+
+div#overlay #aboutScreen #aboutSlideIn #aboutBack
+{
+    position: absolute;
+    top: 90%;
+    left: 5%;
+    padding: 10px;
+    cursor: pointer;
+}
+
+div#overlay #aboutScreen #aboutSlideIn
+{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #000;
+}
+
+div#overlay #aboutScreen h2
+{
+    font-family: "din_condensed";
+    font-size: 40px;
+    margin: 50px auto 0 auto;
+    width: 100%;
+    text-align: center;
+    position:relative;
+}
+
+div#overlay #aboutScreen .sub
+{
+    width: 40%;
+    text-align:center;
+
+}
+
+div#overlay #aboutScreen .sub ul
+{
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    text-decoration: none;
+    list-style-type: none;
+    text-transform: uppercase;
+    font-weight: 100;
+}
+
+div#overlay #aboutScreen #art
+{
+    margin-left: 5%;
+}
+div#overlay #aboutScreen #dev
+{
+    float:right;
+    margin-right: 5%;
+}
+
+div#overlay #aboutScreen h2.team
+{
+    margin-top: 10px;
+}
+
+div#overlay #aboutScreen p#description
+{
+    text-align: justify;
+    text-justify: inter-word;
+    padding: 5% 10%;
+}
+
+div#overlay #about #link
+{
+    padding: 0;
+    margin: 0;
+    padding:  12px;
+    cursor: pointer;
+}
+
+div#overlay #about #buttonAbout
+{
+    background-color: #000;
+    text-align:right;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    position:relative;
+}
+
+div#overlay #about
+{
+
+    color: #fff;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    position:absolute;
+    top: 99%;
+    overflow: hidden;
+}
+
+div#overlay #titleProject
+{
+    margin:auto;
+    font-family: 'din_condensed';
+    font-size: 40px;
+    text-align:center;
+    position: relative;
+    letter-spacing: 6px;
+    max-width: 98%;
+    top: 0px;
+}
+
+div#overlay .top #producer
+{
+    /* width: 100%; */
+    margin:auto;
+    text-align: center;
+    overflow: hidden;
+}
+
+
+div#overlay
+{
+    font-family: 'avenir_roman';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 200px;
+    height: 200px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
 
 #title
 {
@@ -28,4 +380,5 @@ div#containerTitle
     color: white;
     letter-spacing: 6px;
     font-size: 45px;
+    display:none;
 }
