@@ -55,7 +55,7 @@ export default class MainScene
 
 		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix, 2.5);
 		this.orbitalControl.lock(true);
-		// this.orbitalControl.lockZoom(true);
+		this.orbitalControl.lockZoom(true);
 		POLY.GL.setCamera(this.camera);
 
 		this.projectionMatrix = mat4.create();
@@ -79,6 +79,8 @@ export default class MainScene
 		this.pointsQuad = [];
 		this.views = [];
         this.viewsVerlet = [];
+		this.easeSpeedWheel = {x:0, y:0}
+		this.speedWheel = {x:0, y:0}
 		this.pos = {x:0, y:0}
 		this.previousPos = {x:0, y:0}
 		this.speedX = 0;
@@ -186,7 +188,17 @@ export default class MainScene
         window.addEventListener('touchstart', (e) => this._onDown(e));
         window.addEventListener('touchend', (e) => this._onUp(e));
         window.addEventListener('touchmove', (e) => this._onMove(e));
+
+        window.addEventListener('mousewheel', this._onMouseWheel.bind(this));
 	}
+
+    _onMouseWheel(e) {
+        this.easeSpeedWheel.x = e.wheelDeltaX * .0001;
+        this.easeSpeedWheel.y = e.wheelDeltaY * .0001;
+
+        if(this.easeSpeedWheel.y > .05) this.easeSpeedWheel.y = .05;
+        else if(this.easeSpeedWheel.y < -.05) this.easeSpeedWheel.y = -.05;
+    }
 
 	_onKeydown()
 	{
@@ -753,18 +765,38 @@ export default class MainScene
         if(!isNaN(SpeedController.speedX) && !isNaN(SpeedController.speedY))
         {
             let newx = ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .05;
-            if(newx > .04) newx = .04;
-            if(newx < -.04) newx = -.04;
+            // if(newx > .04) newx = .04;
+            // if(newx < -.04) newx = -.04;
 
             let newy = ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .05;
-            if(newy > .04) newy = .04;
-            if(newy < -.04) newy = -.04;
+            // if(newy > .04) newy = .04;
+            // if(newy < -.04) newy = -.04;
             this.speedX += newx;
             this.speedY += newy;
 
             this.dragSpeed.x += ((SpeedController.speedX)/ POLY.gl.viewportWidth - this.dragSpeed.x) * .04;
             this.dragSpeed.y += ((SpeedController.speedY)/ POLY.gl.viewportHeight - this.dragSpeed.y) * .04;
         }
+
+
+        // WHEEL SPEED
+
+        this.easeSpeedWheel.x *= .3;
+        this.easeSpeedWheel.y *= .3;
+        let newWheelX = (this.easeSpeedWheel.x - this.speedWheel.x) * .3;
+        let newWheelY = (this.easeSpeedWheel.y - this.speedWheel.y) * .3;
+        if(newWheelX > .04) newWheelX = .04;
+        if(newWheelX < -.04) newWheelX = -.04;
+        if(newWheelY > .04) newWheelY = .04;
+        if(newWheelY < -.04) newWheelY = -.04;
+        this.speedWheel.x += newWheelX;
+        this.speedWheel.y += newWheelY;
+        this.speedX += this.speedWheel.x;
+        this.speedY -= this.speedWheel.y;
+
+        this.dragSpeed.x += ((this.speedWheel.x / 3));
+        this.dragSpeed.y += ((this.speedWheel.y / 3));
+
 
         this.previousPos.x = this.pos.x;
         this.previousPos.y = this.pos.y;
