@@ -1,7 +1,7 @@
 
 const data = [
     {
-        title: 'MY DOG.',
+        title: 'GIUGIU THE DOG',
         images: ['giugiu.jpg'],
         color: false,
         codeColor: [],

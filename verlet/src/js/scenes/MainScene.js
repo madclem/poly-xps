@@ -17,12 +17,20 @@ let pointsOrdered = [];
 
 // generic function to get cursor position
 const getCursorPos = function (e) {
-    if(e.touches) {
+    if(e.touches && e.touches.length > 0) {
         return {
             x:e.touches[0].pageX,
             y:e.touches[0].pageY
         };
-    } else {
+    }
+    else if(e.changedTouches && e.changedTouches.length > 0)
+    {
+        return {
+            x:e.changedTouches[0].pageX,
+            y:e.changedTouches[0].pageY
+        };
+    }
+    else {
         return {
             x:e.clientX,
             y:e.clientY
@@ -116,7 +124,7 @@ export default class MainScene
         // }, 6000)
 	}
 
-	onTraceRay()
+	onTraceRay(debug)
 	{
 		this.rayCamera = this.camera.getRay([this.mouse.x, this.mouse.y, 1], this.rayCamera);
 		let origin = this.orbitalControl._position;
@@ -129,6 +137,8 @@ export default class MainScene
 		let intersection = Math2.intersectionLinePlane([origin, target], this.plane);
         this.sphereIntersection.position.set(intersection.x, intersection.y, intersection.z);
 		this.intersection = intersection;
+
+        return {x : intersection.x, y: intersection.y}
 	}
 
 	impactVerlet(pt)
@@ -176,7 +186,6 @@ export default class MainScene
         window.addEventListener('touchstart', (e) => this._onDown(e));
         window.addEventListener('touchend', (e) => this._onUp(e));
         window.addEventListener('touchmove', (e) => this._onMove(e));
-        window.addEventListener('keydown', (e) => this._onKeydown(e));
 	}
 
 	_onKeydown()
@@ -201,6 +210,7 @@ export default class MainScene
 
 		if(this._isDown) return;
 
+        this.onTraceRay();
 
 		this._isDown = true;
 
@@ -214,6 +224,10 @@ export default class MainScene
 		};
 
 		this.speed =  this.lastSpeed = 0;
+
+
+        // e.preventDefault()
+
 	}
 
 
@@ -262,14 +276,20 @@ export default class MainScene
         this.activeQuad = null;
     }
 
+
     onClick(ptx, pty)
     {
         if(this.activeQuad)
         {
-            this.removeActiveQuad(()=>{
-                // this.onClick(ptx, pty);
-            });
 
+            if(!this.isOnActiveQuad)
+            {
+                this.removeActiveQuad(()=>{
+                    // this.onClick(ptx, pty);
+                });
+
+            }
+        //
             return;
         }
 
@@ -322,10 +342,10 @@ export default class MainScene
                         Easings.to(this, .5, {
                             cameraX: this.cameraX - quad.x,
                             ease: Easings.easeOutSine,
-                            onComplete: ()=>{
+                            onUpdate:()=>{
                                 let div = document.getElementById("overlay");
                                 div.style.width = POLY.gl.viewportHeight * .6 + 'px';
-                                div.style.height = POLY.gl.viewportHeight * .6 + 'px';
+                                div.style.height = POLY.gl.viewportHeight * .605 + 'px';
 
                                 let top = -(POLY.gl.viewportHeight * .6/2);
                                 let left = -(POLY.gl.viewportHeight * .6/2);
@@ -337,6 +357,9 @@ export default class MainScene
                                 }
                                 div.style.marginLeft = left + 'px';
                                 div.style.marginTop = top + 'px';
+                            },
+                            onComplete: ()=>{
+
                             }
                         });
 
@@ -349,11 +372,15 @@ export default class MainScene
                         for (var k = 0; k < this.views.length; k++) {
                             this.views[k].fade(1);
                         }
-                        break;
+
+                        return true;
+                        // break;
                     }
                 }
             }
         }
+
+        return false;
     }
 
 	_onMove(e)
@@ -376,7 +403,7 @@ export default class MainScene
 
             // this.easingValueX *= .8;
             // this.easingValueX *= .8;
-            if(this.activeQuad && (Math.abs(this.firstPos.x - pt.x) > 2 || Math.abs(this.firstPos.y - pt.y) > 2))
+            if(this.activeQuad && (Math.abs(this.firstPos.x - pt.x) > 2 || Math.abs(this.firstPos.y - pt.y) > 2.5))
             {
                 this.removeActiveQuad();
             }
@@ -388,6 +415,9 @@ export default class MainScene
         {
             this.onActiveQuad();
         }
+
+
+        // e.preventDefault()
 	}
 
     onActiveQuad()
@@ -400,7 +430,7 @@ export default class MainScene
         ];
 		let intersection = Math2.intersectionLinePlane([origin, target], plane);
 
-        if( Math.abs(intersection.x - this.activeQuad.x) <= this.restingDistances/2  && Math.abs(intersection.y - this.activeQuad.y) <= this.restingDistances/2 )
+        if( Math.abs(intersection.x - this.activeQuad.x) <= this.restingDistances/2  && Math.abs(intersection.y - this.activeQuad.y) <= (this.restingDistances/2 + .1) )
         {
             if(!this.isOnActiveQuad)
             {
@@ -422,14 +452,27 @@ export default class MainScene
 
 	_onUp(e)
 	{
-		this._isDown = false;
-
+        if(!Device.desktop && !e.touches) return;
+        
         let pt = getCursorPos(e);
 
-        if(Math.abs(this.firstPos.x - pt.x) < .1 && Math.abs(this.firstPos.y - pt.y) < .1)
+        let x = (pt.x / POLY.gl.viewportWidth) * 2 - 1;
+		let y = - (pt.y / POLY.gl.viewportHeight) * 2 + 1;
+
+		this.mouse.x = x;
+		this.mouse.y = y;
+
+        let intersection = this.onTraceRay(true);
+
+        if(Math.abs(this.firstPos.x - pt.x) < 2 && Math.abs(this.firstPos.y - pt.y) < 2)
         {
-            this.onClick(this.intersection.x, this.intersection.y);
+            setTimeout(()=>{
+                this.onClick(this.intersection.x, this.intersection.y);
+            }, 100)
+
         }
+
+        this._isDown = false;
         SpeedController.onUp();
 	}
 
@@ -712,10 +755,6 @@ export default class MainScene
             this.speedX += ((SpeedController.speedX * 3)/ POLY.gl.viewportWidth - this.speedX) * .06;
             this.speedY += ((-SpeedController.speedY * 2)/ POLY.gl.viewportHeight - this.speedY) * .06;
 
-            if(isNaN(this.speedX))
-            {
-                // console.log('here', SpeedController.speedX, POLY.gl.viewportWidth);
-            }
             this.dragSpeed.x += ((SpeedController.speedX)/ POLY.gl.viewportWidth - this.dragSpeed.x) * .06;
             this.dragSpeed.y += ((SpeedController.speedY)/ POLY.gl.viewportHeight - this.dragSpeed.y) * .06;
         }
@@ -729,8 +768,11 @@ export default class MainScene
 		this.orbitalControl.update();
 		this._bPlanes.draw();
 
-        this.cameraX += this.speedX;
-        this.cameraY += this.speedY;
+        if(!this.activeQuad)
+        {
+            this.cameraX += this.speedX;
+            this.cameraY += this.speedY;
+        }
 
 		// LOOP THE QUAD'S POINTS GRID
 		let reappearLeft = false;

@@ -1,4 +1,6 @@
 
+import Device from '../utils/Device';
+
 class SpeedController
 {
 	constructor()
@@ -46,7 +48,16 @@ class SpeedController
 		t = this.previousTime;
 		new_x = this.previousPos.x;
 		new_y = this.previousPos.y;
-		new_t = this.tick;;
+		// new_t = this.tick;;
+
+		if(!Device.safari)
+		{
+			new_t = Date.now();
+		}
+		else {
+			new_t = this.tick;;
+		}
+
 
 
 		x_dist = new_x - x;
@@ -58,10 +69,19 @@ class SpeedController
 		negY = y_dist < 0 ? 1: -1;
           // update values:
 
-		if(interval > 2) interval = 1;
+		// if(interval > 4) interval = 4;
+		// if(interval <= 1) interval = 1;
 
-		vx = (negX * Math.sqrt(x_dist*x_dist))/ (interval/6);
-		vy = (negY * Math.sqrt(y_dist*y_dist))/ (interval/6);
+		if(!Device.safari)
+		{
+			vx = negX * Math.sqrt(x_dist*x_dist)/ (interval/50);
+			vy = negY * Math.sqrt(y_dist*y_dist)/ (interval/50);
+		}
+		else {
+			vx = (negX * Math.sqrt(x_dist*x_dist))/ (interval/6);
+			vy = (negY * Math.sqrt(y_dist*y_dist))/ (interval/6);
+		}
+
 
 		x = new_x;
 		y = new_y;
@@ -104,7 +124,16 @@ class SpeedController
 
 		this.lastSpeed = this.speed;
 		// }
-		this.previousTime = this.tick;
+
+		if(!Device.safari)
+		{
+			this.previousTime = Date.now();
+		}
+		else
+		{
+			this.previousTime = this.tick;
+		}
+
 
 		this.previousPos.x = this.pos.x;
 		this.previousPos.y = this.pos.y;

@@ -12,6 +12,15 @@
     font-style: normal;
 }
 
+@media only screen {
+    div#overlay #buttonProject {
+        display:none;
+    }
+    div#overlay #about {
+        display:none;
+    }
+}
+
 body
 {
     border: 0;
@@ -26,10 +35,64 @@ canvas
     top: 0;
 }
 
+div#overlay #buttonProject
+{
+    text-align:center;
+    width: 100%;
+    position: absolute;
+    top: 50%
+}
+
+
+
+div#overlay #buttonProject #insideButtonProject
+{
+    margin: auto;
+    display:inline-block;
+    width: 90px;
+    height: 90px;
+    background-color: #000000;
+    transition: all .2s ease;
+    cursor: pointer;
+    position: relative;
+    margin-top: 0px;
+    top: 0;
+    left: 0;
+}
+
+div#overlay #buttonProject #insideButtonProject:hover
+{
+    width: 100px;
+    height: 100px;
+    margin-top: -5px;
+    /* left: -5px; */
+}
+
+div#overlay #buttonProject #insideButtonProject:hover img
+{
+    width: 40px;
+    height: 40px;
+    margin-top: -20px;
+    margin-left: -20px;
+}
+
+
+div#overlay #buttonProject #insideButtonProject img
+{
+    width: 30px;
+    height: 30px;
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
+    transition: all .2s ease;
+}
+
 div#overlay .top
 {
     height: 30px;
-    width: 90%;
+    width: 0%;
     padding-top: 15px;
     margin: auto;
     border-bottom: 1px solid #ffffff;
@@ -58,7 +121,18 @@ div#overlay #aboutScreen
     top: 0;
     left: 0;
     overflow: hidden;
+    display:none;
 }
+
+div#overlay #aboutScreen #aboutSlideIn #aboutBack
+{
+    position: absolute;
+    top: 90%;
+    left: 5%;
+    padding: 10px;
+    cursor: pointer;
+}
+
 div#overlay #aboutScreen #aboutSlideIn
 {
     width: 100%;
@@ -93,16 +167,26 @@ div#overlay #about #link
     cursor: pointer;
 }
 
-div#overlay #about
+div#overlay #about #buttonAbout
 {
     background-color: #000;
     text-align:right;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    position:relative;
+}
+
+div#overlay #about
+{
+
     color: #fff;
     width: 100%;
     padding: 0;
     margin: 0;
     position:absolute;
-    top: 100%;
+    top: 99%;
+    overflow: hidden;
 }
 
 div#overlay #titleProject
@@ -111,7 +195,10 @@ div#overlay #titleProject
     font-family: 'din_condensed';
     font-size: 40px;
     text-align:center;
-    margin-top: 40px;
+    position: relative;
+    letter-spacing: 6px;
+    max-width: 98%;
+    top: 0px;
 }
 
 div#overlay .top #producer
@@ -121,6 +208,7 @@ div#overlay .top #producer
     text-align: center;
     overflow: hidden;
 }
+
 
 div#overlay
 {
@@ -134,13 +222,6 @@ div#overlay
     font-size: 14px;
 }
 
-div#containerTitle
-{
-    top: 50px;
-    width: 100%;
-    position:relative;
-    text-align: center;
-}
 
 #title
 {
