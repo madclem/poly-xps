@@ -332,6 +332,7 @@ export default class MainScene
                         this.uiManager.setData(quad.data);
                         this.uiManager.showTitle();
                         this.activeQuad = quad;
+                        quad.reveal(true);
                         quad.program.bind();
                         quad.program.uniforms.active = 1.0;
 
@@ -999,7 +1000,7 @@ export default class MainScene
 
                 if(!quad.skipRender)
                 {
-                    quad.render();
+                    quad.render(this.cameraX, this.cameraY);
                 }
 
                 quad.skipRender = false;

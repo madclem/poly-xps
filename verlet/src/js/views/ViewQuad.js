@@ -15,6 +15,8 @@ export default class ViewQuad
         this.y = 0;
 
         this.percentage = 0;
+        this.percentageBlack = 0;
+        this.percentageTransition = 0;
         this.speed = .2;
         this.count = .3;
 
@@ -40,17 +42,29 @@ export default class ViewQuad
                 value: [Math.random(),Math.random(), Math.random()]
                 // value: [1,1,1]
             },
-            uTexture: {
+            uDefaultImage: {
                 type: 'texture',
                 value: 0
+            },
+            uRevealImage: {
+                type: 'texture',
+                value: 1
+            },
+            uTransitionImage: {
+                type: 'texture',
+                value: 2
             },
             percentage: {
                 type: 'float',
                 value: this.percentage //Math.random() > .9 ? 0.0 : 1.0
             },
-            alpha: {
+            percentageBlack: {
                 type: 'float',
-                value: 1.0 //Math.random() > .9 ? 0.0 : 1.0
+                value: this.percentageBlack //Math.random() > .9 ? 0.0 : 1.0
+            },
+            percentageTransition: {
+                type: 'float',
+                value: this.percentageTransition //Math.random() > .9 ? 0.0 : 1.0
             },
             active: {
                 type: 'float',
@@ -71,10 +85,44 @@ export default class ViewQuad
 			0.0, 1.0,
 		];
         this.quad = new POLY.geometry.Quad(this.program);
-        // this.quad.state.blend = true;
         this.quad.addAttribute(uvs, 'aUv', 2);
+
+
+        this.revealTexture = new POLY.Texture(window.ASSET_URL + 'image/arcade.jpg');
+        this.transitionImage = new POLY.Texture(window.ASSET_URL + 'image/transition/dechire_00000.jpg');
+
+
+            // this.reveal(true);
     }
 
+
+    reveal(show)
+    {
+
+        let tick = 0;
+        Easings.to(this, .5, {
+            delay: .2,
+            percentageTransition: show ? 1.1 : 0,
+            onUpdate: (obj, percentage)=>{
+                let frame = Math.floor(20 * percentage);
+                let id = frame < 10 ? '0' + frame : frame;
+                this.transitionImage = TextureManager.getTexture(window.ASSET_URL + 'image/transition/dechire_000' + id + '.jpg')
+                this.needsUpdate = true;
+            }
+        })
+
+        // let obj = {
+        //     tick: 0
+        // }
+        // Easings.to(obj, 2, {
+        //     delay: .2,
+        //     tick: 2,
+        //     ease: Easings.easeOutSine,
+        //     onUpdate: ()=>{
+        //         this.needsUpdate = true;
+        //     }
+        // })
+    }
     fade(value = 1)
     {
         Easings.to(this, 2, {
@@ -86,9 +134,21 @@ export default class ViewQuad
         })
     }
 
+    shut(close = true)
+    {
+        Easings.to(this, .2, {
+            percentageBlack: close ? 1 : 0,
+            ease: Easings.easeOutCirc,
+            onUpdate: ()=>{
+                this.needsUpdate = true;
+            }
+        })
+    }
+
     onHover()
     {
         // this.zoom = 1;
+        return;
         Easings.killTweensOf(this);
         Easings.to(this, 2, {
             zoom: .8,
@@ -104,6 +164,8 @@ export default class ViewQuad
 
     onOut()
     {
+        return;
+
         Easings.killTweensOf(this);
         Easings.to(this, 2, {
             zoom: 1,
@@ -161,17 +223,23 @@ export default class ViewQuad
 
         if(this.pointsRef.length > 0)
         {
+
+
             if(this.textures.length === 1)
             {
-                this.textures[0].bind();
+                this.textures[0].bind(0);
             }
             else
             {
                 this.count += this.speed;
                 let frame = Math.floor(this.count);
                 let texture = this.textures[frame % this.textures.length];
-                texture.bind();
+                texture.bind(0);
             }
+
+            this.revealTexture.bind(1);
+            this.transitionImage.bind(2);
+
             this.program.bind();
 
             this.points[0] = this.pointsRef[0].getPoint();
@@ -226,6 +294,8 @@ export default class ViewQuad
             if(this.needsUpdate)
             {
                 this.program.uniforms.percentage = this.percentage;
+                this.program.uniforms.percentageBlack = this.percentageBlack;
+                this.program.uniforms.percentageTransition = this.percentageTransition;
             }
 
             this.quad.updatePosition('aPosition', this.positions);

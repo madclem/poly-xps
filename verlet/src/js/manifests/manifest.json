@@ -1,7 +1,29 @@
 {
     "default": [
+        "image/./arcade.jpg",
+        "image/./christmas_experiment1.jpg",
+        "image/./christmas_experiment2.jpg",
+        "image/./cooking.jpg",
+        "image/./dangermouse.jpg",
+        "image/./ddd-2018.jpg",
+        "image/./denis.jpg",
+        "image/./dreamy1.jpg",
+        "image/./dreamy2.jpg",
+        "image/./fighter1.jpg",
+        "image/./fighter2.jpg",
+        "image/./fighter3.jpg",
         "image/./github-icon.png",
+        "image/./giugiu.jpg",
+        "image/./gumble.jpg",
+        "image/./icon_glasses.jpg",
+        "image/./icon_rugby.jpg",
+        "image/./icon_trumpet.jpg",
+        "image/./lego.jpg",
         "image/./link-icon.png",
+        "image/./night-eye.jpg",
+        "image/./sherrifcali.jpg",
+        "image/./sleigher3000.jpg",
+        "image/./starwars_rebels.jpg",
         "image/./twitter-icon.png"
     ]
 }

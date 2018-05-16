@@ -48,7 +48,6 @@ export default new class TextureManager
 
     update()
     {
-        console.log('update texture', this.indexImageLoaded);
         if(this.currentTextureToLoad)
         {
             if(this.currentTextureToLoad._loaded)

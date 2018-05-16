@@ -182,7 +182,7 @@ export default class Easings
             }
 
             if(o.vars.onUpdate){
-              o.vars.onUpdate(o.vars.onUpdateParams);
+              o.vars.onUpdate(o.vars.onUpdateParams, o.currentIteration/o.duration);
             }
 
             o.currentIteration += 1;// do something here
