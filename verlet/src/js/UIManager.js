@@ -209,6 +209,7 @@ export default class UIManager
         // this.date.style.marginTop = "-100px";
         // this.producerName.style.marginTop = "-100px";
         // this.client.style.marginTop = "-100px";
+        this.container.style.display = "block";
         this.top.style.width = 0;
         this.container.style.opacity = 1;
         this.producerName.style.opacity = 0;
@@ -313,10 +314,13 @@ export default class UIManager
             // return;
             // this.date.style.marginTop = "-100px";
             this.producerName.style.opacity = 0;
+            this.container.style.display = "none";
             // this.client.style.marginTop = "-100px";
 
 
         }
+
+        this.buttonProject.style.opacity = 0;
 
         this.hideAbout();
 
@@ -333,7 +337,10 @@ export default class UIManager
 
         TweenLite.to("#overlay", .5, {
             opacity: 0,
-            ease: Circ.easeOut
+            ease: Circ.easeOut,
+            onComplete: ()=>{
+                this.container.style.display = "none";
+            }
         });
     }
 

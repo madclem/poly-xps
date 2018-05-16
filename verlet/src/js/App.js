@@ -16,36 +16,41 @@ export default class App
 {
 	constructor()
 	{
-		let canvas = document.getElementById("canvas");
 
 		window.Easings = Easings.instance;
-    	POLY.init(canvas);
+
+		let canvas = document.getElementById("canvas");
+		POLY.init(canvas);
 	    this.gl = POLY.gl;
-	    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+
 	    this.loader = new Loader();
 	    this.loader.addManifest(Manifests.default, window.ASSET_URL);
 
 		this._textures = [
-			window.ASSET_URL + 'image/dm_idle_01.png',
-			window.ASSET_URL + 'image/dm_idle_02.png',
-			window.ASSET_URL + 'image/dm_idle_03.png',
-			window.ASSET_URL + 'image/dm_idle_04.png',
-			window.ASSET_URL + 'image/dm_idle_05.png',
-			window.ASSET_URL + 'image/dm_idle_06.png',
-			window.ASSET_URL + 'image/dm_idle_07.png',
-			window.ASSET_URL + 'image/dm_idle_08.png',
-			window.ASSET_URL + 'image/dm_idle_09.png',
-			window.ASSET_URL + 'image/dm_idle_10.png',
-			window.ASSET_URL + 'image/dm_idle_11.png',
-			window.ASSET_URL + 'image/hey-duggee.jpg',
-			window.ASSET_URL + 'image/dangermouse.jpg',
-			window.ASSET_URL + 'image/ddd-2018.jpg',
-			window.ASSET_URL + 'image/dennis.jpg',
-			window.ASSET_URL + 'image/dreamy.jpg',
-			window.ASSET_URL + 'image/giugiu.jpg',
-			window.ASSET_URL + 'image/night-eye.jpg',
-			window.ASSET_URL + 'image/sleigher-3000.jpg',
-			window.ASSET_URL + 'image/starwars.jpg',
+window.ASSET_URL + 'image/arcade.jpg',
+window.ASSET_URL + 'image/christmas_experiment1.jpg',
+window.ASSET_URL + 'image/christmas_experiment2.jpg',
+window.ASSET_URL + 'image/cooking.jpg',
+window.ASSET_URL + 'image/dangermouse.jpg',
+window.ASSET_URL + 'image/ddd-2018.jpg',
+window.ASSET_URL + 'image/denis.jpg',
+window.ASSET_URL + 'image/dreamy1.jpg',
+window.ASSET_URL + 'image/dreamy2.jpg',
+window.ASSET_URL + 'image/fighter1.jpg',
+window.ASSET_URL + 'image/fighter2.jpg',
+window.ASSET_URL + 'image/fighter3.jpg',
+window.ASSET_URL + 'image/giugiu.jpg',
+window.ASSET_URL + 'image/gumble.jpg',
+window.ASSET_URL + 'image/icon_glasses.jpg',
+window.ASSET_URL + 'image/icon_rugby.jpg',
+window.ASSET_URL + 'image/icon_trumpet.jpg',
+window.ASSET_URL + 'image/lego.jpg',
+window.ASSET_URL + 'image/night-eye.jpg',
+window.ASSET_URL + 'image/sherrifcali.jpg',
+window.ASSET_URL + 'image/sleigher3000.jpg',
+window.ASSET_URL + 'image/starwars_rebels.jpg',
+
 		]
 	    this.loader.addAssets(this._textures);
 	    this.loader.onComplete.add(this._loadComplete, this);
@@ -96,16 +101,16 @@ export default class App
 		POLY.loadedResources = resources;
 		// this.scene = new PointCollisionScene();
 
-		TextureManager.addTextures(this._textures, ()=>{
 
+		TextureManager.addTextures(this._textures, ()=>{
 			let loader = document.getElementById('loader');
 			loader.style.display = "none";
-			
+
 			this.scene = new MainScene();
 			this.scene.resize();
-			//
-			POLY.utils.loop.add(this._update.bind(this));
 		});
+
+		POLY.utils.loop.add(this._update.bind(this));
 
 	}
 
@@ -124,6 +129,11 @@ export default class App
 		this.gl.clearColor(0,0,0,1);
 	    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-		this.scene.render();
+		if(this.scene)
+		{
+			// console.log('here');
+			this.scene.render();
+		}
+
 	}
 }

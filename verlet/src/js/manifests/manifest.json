@@ -1,29 +1,7 @@
 {
     "default": [
-        "image/./dangermouse.jpg",
-        "image/./ddd-2018.jpg",
-        "image/./dennis.jpg",
-        "image/./dm_idle_01.png",
-        "image/./dm_idle_02.png",
-        "image/./dm_idle_03.png",
-        "image/./dm_idle_04.png",
-        "image/./dm_idle_05.png",
-        "image/./dm_idle_06.png",
-        "image/./dm_idle_07.png",
-        "image/./dm_idle_08.png",
-        "image/./dm_idle_09.png",
-        "image/./dm_idle_10.png",
-        "image/./dm_idle_11.png",
-        "image/./dreamy.jpg",
         "image/./github-icon.png",
-        "image/./giugiu.jpg",
-        "image/./hey-duggee.jpg",
-        "image/./hey-duggee.png",
         "image/./link-icon.png",
-        "image/./night-eye.jpg",
-        "image/./sky_gradient.jpg",
-        "image/./sleigher-3000.jpg",
-        "image/./starwars.jpg",
         "image/./twitter-icon.png"
     ]
 }

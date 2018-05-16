@@ -35,7 +35,7 @@ export default new class TextureManager
         {
             POLY.utils.loop.remove(this.idFunc)
 
-            if(this.cb) 
+            if(this.cb)
             {
                 this.cb();
                 this.cb = null;
@@ -53,6 +53,7 @@ export default new class TextureManager
         {
             if(this.currentTextureToLoad._loaded)
             {
+                this.currentTextureToLoad.bind();
                 this.indexImageLoaded++;
                 this.loadNext();
                 // this.currentTextureToLoad = null;

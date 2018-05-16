@@ -56,11 +56,12 @@ export default class MainScene
 		this.orbitalControl = new POLY.control.OrbitalControl(this.camera.matrix, 2.5);
 		this.orbitalControl.lock(true);
 		this.orbitalControl.lockZoom(true);
+        this.orbitalControl.update();
 		POLY.GL.setCamera(this.camera);
 
 		this.projectionMatrix = mat4.create();
 
-		this._bPlanes = new POLY.helpers.BatchPlanes();
+
 
 		this.gridHeight = 8;
 		this.gridWidth = 12;
@@ -540,15 +541,15 @@ export default class MainScene
 
         if(p1.donotupdate) return;
 
-		for (let x = 0; x < this.gridWidth; x++)
-        {
-            for (let y = 0; y < this.gridHeight; y++)
-            {
-                let index = this.getPointsAtCoordinates(x, y);
-                let pG = this.pointsGrid[index];
-                pG.program.bind();
-            }
-        }
+		// for (let x = 0; x < this.gridWidth; x++)
+        // {
+        //     for (let y = 0; y < this.gridHeight; y++)
+        //     {
+        //         let index = this.getPointsAtCoordinates(x, y);
+        //         let pG = this.pointsGrid[index];
+        //         // pG.program.bind();
+        //     }
+        // }
 
 		// find column
 
@@ -746,6 +747,8 @@ export default class MainScene
 
 	render()
 	{
+
+
         SpeedController.update();
 
         this.physics.update(this.pointsGrid);
@@ -804,9 +807,6 @@ export default class MainScene
 		let nbColumns = this.gridQuadsWidth - 1;
 		let nbLines = this.gridQuadsHeight - 1;
 
-		this.orbitalControl.update();
-		this._bPlanes.draw();
-
         if(!this.activeQuad)
         {
             this.cameraX += this.speedX;
@@ -818,8 +818,6 @@ export default class MainScene
 		let reappearRight = false;
 		let reappearTop = false;
 		let reappearBottom = false;
-
-
 
         for (let y = 0; y < this.gridQuadsHeight; y++)   // due to the way PointMasss are attached, we need the y loop on the outside
 		{
@@ -997,10 +995,6 @@ export default class MainScene
 
                 let data = this.dataManager.getDataAt(xid, yid);
 
-                if(!data)
-                {
-                    console.log(this.cameraX, this.speedX, quad.x, this.restingDistances / 2, (this.gridWidth) / 2, gridSize);
-                }
                 quad.setData(data);
 
                 if(!quad.skipRender)
