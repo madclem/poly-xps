@@ -1,8 +1,13 @@
+import Signal from 'signals';
 
 export default class UIManager
 {
     constructor()
     {
+
+        this.onMenu = new Signal();
+
+        this.menu = document.getElementById("menu");
         this.teamSection = document.getElementById("teamSection");
         this.art = document.getElementById("art");
         this.dev = document.getElementById("dev");
@@ -44,6 +49,13 @@ export default class UIManager
         });
         this.aboutBack.addEventListener("touchend", ()=>{
             this.hideAbout();
+        });
+
+        this.menu.addEventListener("click", ()=>{
+            this.onMenu.dispatch();
+        });
+        this.menu.addEventListener("touchend", ()=>{
+            this.onMenu.dispatch();
         });
 
         this.container.addEventListener("mouseenter", ()=>{

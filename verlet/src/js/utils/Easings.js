@@ -1,5 +1,6 @@
 import * as POLY from 'poly/Poly';
 
+let countTween = 0;
 export default class Easings
 {
     constructor()
@@ -27,6 +28,8 @@ export default class Easings
     };
 
     to(obj, duration, vars, test){
+
+      countTween++;
       var tween = {
         delete: false,
         currentIteration: 0,
@@ -97,6 +100,7 @@ export default class Easings
       }
 
       tween.props = varToTween;
+      tween.id = countTween;
 
       // if(!obj.tweens){
       //   obj.tweens = [
@@ -114,7 +118,26 @@ export default class Easings
         // this.loop.add(this.update.bind(this), this);
       }
 
+      return countTween;
+
     };
+
+    killTweensWithId(id)
+    {
+        for (var i = 0; i < this.tweens.length; i++) {
+          var t = this.tweens[i];
+          // console.log("trytodelete");
+          // same object ?
+          if(t.id === id){
+            // t.delete = true;
+            t = null;
+            this.tweens.splice(i, 1);
+            i--;
+
+            break;
+          }
+        }
+    }
 
     isFunction(obj) {
       return !!(obj && obj.constructor && obj.call && obj.apply);

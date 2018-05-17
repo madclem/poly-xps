@@ -14,9 +14,14 @@ export default class ViewQuad
         this.x = 0;
         this.y = 0;
 
+        this.idTween = null;
         this.percentage = 0;
         this.percentageBlack = 0;
         this.percentageTransition = 0;
+        this.percentageX = 0;
+        this.percentageY = 0;
+        this.percentageLogoMenu = 0;
+        this.TtoBorRtoL = 0;
         this.speed = .2;
         this.count = .3;
 
@@ -35,12 +40,10 @@ export default class ViewQuad
             color: {
                 type: 'vec3',
                 value: [Math.random(),Math.random(), Math.random()]
-                // value: [1,1,1]
             },
             colorGradient: {
                 type: 'vec3',
                 value: [Math.random(),Math.random(), Math.random()]
-                // value: [1,1,1]
             },
             uDefaultImage: {
                 type: 'texture',
@@ -56,27 +59,41 @@ export default class ViewQuad
             },
             percentage: {
                 type: 'float',
-                value: this.percentage //Math.random() > .9 ? 0.0 : 1.0
+                value: this.percentage
+            },
+            percentageX: {
+                type: 'float',
+                value: 0
+            },
+            percentageY: {
+                type: 'float',
+                value: 0
             },
             percentageBlack: {
                 type: 'float',
-                value: this.percentageBlack //Math.random() > .9 ? 0.0 : 1.0
+                value: this.percentageBlack
             },
             percentageTransition: {
                 type: 'float',
-                value: this.percentageTransition //Math.random() > .9 ? 0.0 : 1.0
+                value: this.percentageTransition
+            },
+            percentageLogoMenu: {
+                type: 'float',
+                value: 0.0
             },
             active: {
                 type: 'float',
-                value: 0.0 //Math.random() > .9 ? 0.0 : 1.0
+                value: 0.0
+            },
+            TtoBorRtoL: {
+                type: 'float',
+                value: 0.0
             },
             zoom: {
                 type: 'float',
-                value: 1.0 //Math.random() > .9 ? 0.0 : 1.0
+                value: 1.0
             }
         });
-
-        // this.texture = new POLY.Texture(window.ASSET_URL + 'image/giugiu.jpg');
 
         const uvs = [
 			0.0, 0.0,
@@ -91,39 +108,82 @@ export default class ViewQuad
         this.revealTexture = new POLY.Texture(window.ASSET_URL + 'image/arcade.jpg');
         this.transitionImage = new POLY.Texture(window.ASSET_URL + 'image/transition/dechire_00000.jpg');
 
-
-            // this.reveal(true);
+        this.iconTexture = null;
     }
 
+
+    showMenuIcon(x = 1, y = 0, TtoBorRtoL, delay = 0)
+    {
+        this.TtoBorRtoL = TtoBorRtoL ? 1 : 0;
+        this.isMenuIcon = true;
+        this.needsUpdate = true;
+        Easings.to(this, .3, {
+            delay,
+            percentageX: x,
+            percentageY: y,
+            ease: Easings.easeInCirc,
+            onUpdate: ()=>{
+                this.needsUpdate = true;
+            },
+            onComplete:()=>{
+                this.iconTexture = TextureManager.getTexture(window.ASSET_URL + 'image/test-icon.png');
+
+                Easings.to(this, .3, {
+                    percentageLogoMenu: 1,
+                    ease: Easings.easeOutCirc,
+                    onUpdate: ()=>{
+                        this.needsUpdate = true;
+                    }
+                })
+            }
+        })
+    }
+
+    removeMenuIcon()
+    {
+        this.TtoBorRtoL *= -1;
+        if(this.TtoBorRtoL < 0) this.TtoBorRtoL = 0;
+
+        Easings.to(this, .4, {
+            percentageLogoMenu: 0,
+            ease: Easings.easeOutCirc,
+            onUpdate: ()=>{
+                this.needsUpdate = true;
+            },
+            onComplete: ()=>{
+                this.isMenuIcon = false;
+                this.iconTexture = null;
+
+                this.needsUpdate = true;
+                Easings.to(this, .6, {
+                    percentageX: 0,
+                    percentageY: 0,
+                    ease: Easings.easeOutCirc,
+                    onUpdate: ()=>{
+                        this.needsUpdate = true;
+                    }
+                })
+            }
+        })
+    }
 
     reveal(show)
     {
+        if(!this.data.icon) return;
 
-        let tick = 0;
         Easings.to(this, .5, {
-            delay: .2,
-            percentageTransition: show ? 1.1 : 0,
+            delay: show ? .2 : 0,
+            percentageTransition: show ? 1 : 0,
             onUpdate: (obj, percentage)=>{
-                let frame = Math.floor(20 * percentage);
+                let frame = Math.floor(20 * this.percentageTransition);
                 let id = frame < 10 ? '0' + frame : frame;
                 this.transitionImage = TextureManager.getTexture(window.ASSET_URL + 'image/transition/dechire_000' + id + '.jpg')
                 this.needsUpdate = true;
-            }
+            },
         })
-
-        // let obj = {
-        //     tick: 0
-        // }
-        // Easings.to(obj, 2, {
-        //     delay: .2,
-        //     tick: 2,
-        //     ease: Easings.easeOutSine,
-        //     onUpdate: ()=>{
-        //         this.needsUpdate = true;
-        //     }
-        // })
     }
-    fade(value = 1)
+
+    fade(value = 1.1)
     {
         Easings.to(this, 2, {
             percentage: value,
@@ -134,10 +194,11 @@ export default class ViewQuad
         })
     }
 
-    shut(close = true)
+    shut(close = true, delay = 0)
     {
-        Easings.to(this, .2, {
+        Easings.to(this, .8, {
             percentageBlack: close ? 1 : 0,
+            delay: delay,
             ease: Easings.easeOutCirc,
             onUpdate: ()=>{
                 this.needsUpdate = true;
@@ -147,10 +208,13 @@ export default class ViewQuad
 
     onHover()
     {
-        // this.zoom = 1;
-        return;
-        Easings.killTweensOf(this);
-        Easings.to(this, 2, {
+        if(this.idTween !== null)
+        {
+            Easings.killTweensWithId(this.idTween);
+            this.idTween = null;
+        }
+
+        this.idTween = Easings.to(this, 2, {
             zoom: .8,
             ease: Easings.easeOutSine,
             onUpdate: ()=>{
@@ -164,10 +228,13 @@ export default class ViewQuad
 
     onOut()
     {
-        return;
+        if(this.idTween !== null)
+        {
+            Easings.killTweensWithId(this.idTween);
+            this.idTween = null;
+        }
 
-        Easings.killTweensOf(this);
-        Easings.to(this, 2, {
+        this.idTween = Easings.to(this, 2, {
             zoom: 1,
             ease: Easings.easeOutSine,
             onUpdate: ()=>{
@@ -224,18 +291,24 @@ export default class ViewQuad
         if(this.pointsRef.length > 0)
         {
 
-
+            let texture;
             if(this.textures.length === 1)
             {
-                this.textures[0].bind(0);
+                texture = this.textures[0];
             }
             else
             {
                 this.count += this.speed;
                 let frame = Math.floor(this.count);
-                let texture = this.textures[frame % this.textures.length];
-                texture.bind(0);
+                texture = this.textures[frame % this.textures.length];
             }
+
+            if(this.iconTexture !== null)
+            {
+                texture = this.iconTexture;
+            }
+
+            texture.bind(0);
 
             this.revealTexture.bind(1);
             this.transitionImage.bind(2);
@@ -248,18 +321,9 @@ export default class ViewQuad
             this.points[3] = this.pointsRef[3].getPoint();
 
 
-            // this.positions = [
-            //     p1Pos.x, p1Pos.y, p1Pos.z,
-            //     p2Pos.x, p2Pos.y, p2Pos.z,
-            //     p3Pos.x, p3Pos.y, p3Pos.z,
-            //     p4Pos.x, p4Pos.y, p4Pos.z
-            // ];
 
             let ind = 0;
             for (var i = 0; i < this.points.length; i++) {
-
-                // if(this.points[i].speedX < minSpeedX) minSpeedX = this.points[i].speedX;
-                // if(this.points[i].speedX > maxSpeedX) maxSpeedX = this.points[i].speedX;
                 this.positions[ind] = this.points[i].x;
                 this.positions[ind + 1] = this.points[i].y;
                 this.positions[ind + 2] = this.points[i].z;
@@ -295,7 +359,16 @@ export default class ViewQuad
             {
                 this.program.uniforms.percentage = this.percentage;
                 this.program.uniforms.percentageBlack = this.percentageBlack;
-                this.program.uniforms.percentageTransition = this.percentageTransition;
+
+                this.program.uniforms.percentageX = this.percentageX;
+                this.program.uniforms.percentageY = this.percentageY;
+                this.program.uniforms.TtoBorRtoL = this.TtoBorRtoL;
+                this.program.uniforms.percentageLogoMenu = this.percentageLogoMenu;
+
+                if(this.data.icon)
+                {
+                    this.program.uniforms.percentageTransition = this.percentageTransition;
+                }
             }
 
             this.quad.updatePosition('aPosition', this.positions);

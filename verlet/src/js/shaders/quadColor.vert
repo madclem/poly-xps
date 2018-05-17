@@ -13,7 +13,6 @@ uniform float zoom;
 
 varying vec3 vPos;
 varying vec2 vUv;
-varying vec2 vUv2;
 varying float shadow;
 
 void main(void) {
@@ -22,7 +21,7 @@ void main(void) {
 
     vUv = (aUv - scaleCenter) * zoom + scaleCenter;
 
-    vUv2 = aUv;
+
 
 
     // vUv = aUv;

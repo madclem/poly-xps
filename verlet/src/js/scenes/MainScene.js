@@ -89,6 +89,7 @@ export default class MainScene
 		this.dragSpeed = {x:0, y:0};
         this.cameraX = 0;
         this.cameraY = 0;
+        this.menuActive = false;
 
 		this.physics = new Physics();
 		this.createGridPoints();
@@ -101,6 +102,7 @@ export default class MainScene
 
         this.dataManager = new DataManager();
         this.uiManager = new UIManager();
+        this.uiManager.onMenu.add(this.showMenu, this);
 		this.program = new POLY.Program();
 		this.sphereIntersection = new POLY.geometry.Sphere(this.program);
 		this.sphereIntersection.scale.set(.05);
@@ -121,11 +123,163 @@ export default class MainScene
 		this.addEvents();
 
 		this.pinnedPoints = [];
-
-        // setTimeout(()=>{
-        //     this.debug = true;
-        // }, 6000)
 	}
+
+    getQuadAtPos(ptx, pty)
+    {
+        let nbColumns = this.gridQuadsWidth - 1;
+		let nbLines = this.gridQuadsHeight - 1;
+
+        let totalWidth = (nbColumns) * this.restingDistances + this.restingDistances;
+        let totalHeight = nbLines * this.restingDistances;
+
+        let widthColumn = totalWidth / nbColumns;
+
+
+        let col = Math.floor((ptx + totalWidth/2) / this.restingDistances) - 1;
+        let line = Math.floor((pty + totalHeight/2) / this.restingDistances);
+
+        for (var x = col - 2; x < col + 2; x++) {
+
+            for (var y = line - 2; y < line + 2; y++) {
+                let indexView = this.getViewAtCoordinates(x, y);
+                let quad = this.views[indexView];
+
+                if(quad)
+                {
+                    // console.log(ptx, quad.x);
+                    if( Math.abs(ptx - quad.x) <= this.restingDistances/2  && Math.abs(pty - quad.y) <= this.restingDistances/2 )
+                    {
+                        return { quad, x, y };
+                    }
+                }
+            }
+        }
+    }
+
+    hideMenu()
+    {
+        if(!this.menuActive) return;
+
+        Easings.to(this.orbitalControl, 1.2, {
+            _targetRadius: 3,
+            ease: Easings.easeInOutCirc,
+            onUpdate: ()=>{
+                if(this.orbitalControl._targetRadius > 2.5) this.orbitalControl._targetRadius = 2.5;
+                this.orbitalControl.update();
+
+            },
+            onComplete: ()=>{
+                this.menuActive = false;
+                this.orbitalControl._targetRadius = 2.5;
+                this.orbitalControl._radius = 2.5
+                this.orbitalControl.update();
+            }
+        })
+
+        for (var i = 0; i < this.views.length; i++) {
+            let q = this.views[i];
+            if(q.isMenuIcon)
+            {
+                q.removeMenuIcon();
+            }
+            else {
+                q.shut(false, Math.random());
+            }
+        }
+    }
+
+    showMenu()
+    {
+
+        if(this.menuActive) return;
+
+        this.menuActive = true;
+        // Im sure there is a smart way to do this, but it's late :/
+        let data = this.getQuadAtPos(0,0);
+
+        let quad = data.quad;
+
+        if(!quad) return;
+
+        let x = data.x;
+        let y = data.y;
+
+        let topLeftQuad;
+        let topRightQuad;
+        let bottomRightQuad;
+        let bottomLeftQuad;
+
+        // specially here
+        if(quad.x > 0 && quad.y > 0)
+        {
+            topLeftQuad = this.views[this.getViewAtCoordinates(x-1, y)]
+            topRightQuad = quad;
+            bottomRightQuad = this.views[this.getViewAtCoordinates(x, y - 1)];
+            bottomLeftQuad = this.views[this.getViewAtCoordinates(x - 1, y - 1)];
+        }
+        else if(quad.x > 0)
+        {
+            topLeftQuad = this.views[this.getViewAtCoordinates(x-1, y + 1)]
+            topRightQuad = this.views[this.getViewAtCoordinates(x, y + 1)];
+            bottomRightQuad = quad;
+            bottomLeftQuad = this.views[this.getViewAtCoordinates(x - 1, y)];
+
+
+        }
+        else if(quad.x <= 0 && quad.y > 0)
+        {
+            topLeftQuad = this.views[this.getViewAtCoordinates(x, y + 1)];
+            topRightQuad = this.views[this.getViewAtCoordinates(x + 1, y + 1)];
+            bottomRightQuad = this.views[this.getViewAtCoordinates(x + 1, y)];
+            bottomLeftQuad = quad;
+        }
+        else
+        {
+            topLeftQuad = quad;
+            topRightQuad = this.views[this.getViewAtCoordinates(x + 1, y)];
+            bottomRightQuad = this.views[this.getViewAtCoordinates(x + 1, y - 1)];
+            bottomLeftQuad = this.views[this.getViewAtCoordinates(x, y - 1)];
+        }
+
+        let speed = .8;
+        topLeftQuad.showMenuIcon(1,0,false, .2 * speed)
+        bottomLeftQuad.showMenuIcon(0,1,true, .45 * speed)
+        bottomRightQuad.showMenuIcon(1,0,false, .7 * speed)
+        topRightQuad.showMenuIcon(0,1,false, .95 * speed)
+
+        for (var i = 0; i < this.views.length; i++) {
+            let q = this.views[i];
+            if(!q.isMenuIcon)
+            {
+                q.shut(true, Math.random() * .8);
+            }
+        }
+
+        Easings.to(this, .8, {
+            cameraX: this.cameraX - topLeftQuad.x - this.restingDistances/2,
+            ease: Easings.easeInOutCirc,
+        });
+
+        Easings.to(this, .8, {
+            cameraY: this.cameraY - topLeftQuad.y + this.restingDistances/2,
+            ease: Easings.easeInOutCirc
+        });
+
+        Easings.to(this.orbitalControl, 1.2, {
+            _targetRadius: 2.2,
+            delay: .4,
+            ease: Easings.easeInOutCirc,
+            onUpdate: ()=>{
+                this.orbitalControl.update();
+            }
+        })
+
+        // quad.setColor(1,1,1)
+
+
+
+    }
 
 	onTraceRay(debug)
 	{
@@ -168,6 +322,8 @@ export default class MainScene
                         depth = -.012
                     }
 
+                    if(this.menuActive) depth *= .05;
+
                     pG.accZ = depth;
 
                     // break;
@@ -182,13 +338,14 @@ export default class MainScene
 
 	addEvents()
 	{
-		window.addEventListener('mousedown', (e) => this._onDown(e));
-        window.addEventListener('mouseup', (e) => this._onUp(e));
-        window.addEventListener('mousemove', (e) => this._onMove(e));
+        let mainContainer = document.getElementById("mainContainer");
+		mainContainer.addEventListener('mousedown', (e) => this._onDown(e));
+        mainContainer.addEventListener('mouseup', (e) => this._onUp(e));
+        mainContainer.addEventListener('mousemove', (e) => this._onMove(e));
 
-        window.addEventListener('touchstart', (e) => this._onDown(e));
-        window.addEventListener('touchend', (e) => this._onUp(e));
-        window.addEventListener('touchmove', (e) => this._onMove(e));
+        mainContainer.addEventListener('touchstart', (e) => this._onDown(e));
+        mainContainer.addEventListener('touchend', (e) => this._onUp(e));
+        mainContainer.addEventListener('touchmove', (e) => this._onMove(e));
 
         window.addEventListener('mousewheel', this._onMouseWheel.bind(this));
 	}
@@ -255,6 +412,9 @@ export default class MainScene
 
             this.isOnActiveQuad = false;
             this.uiManager.hideTitle();
+
+            this.activeQuad.removeMenuIcon();
+            this.activeQuad.reveal(false);
             this.activeQuad.program.bind();
             this.activeQuad.program.uniforms.active = 0.0;
 
@@ -306,95 +466,86 @@ export default class MainScene
             return;
         }
 
-        let nbColumns = this.gridQuadsWidth - 1;
-		let nbLines = this.gridQuadsHeight - 1;
 
-        let totalWidth = (nbColumns) * this.restingDistances + this.restingDistances;
-        let totalHeight = nbLines * this.restingDistances;
+        let quad = this.getQuadAtPos(ptx, pty).quad;
 
-        let widthColumn = totalWidth / nbColumns;
+        if(!quad) return false;
 
+        if(this.menuActive && !quad.isMenuIcon)
+        {
+            this.hideMenu();
 
-        let col = Math.floor((ptx + totalWidth/2) / this.restingDistances) - 1;
-        let line = Math.floor((pty + totalHeight/2) / this.restingDistances);
+            return;
+        }
+        else if(this.menuActive)
+        {
+            // click on icon = do something
 
-        for (var x = col - 2; x < col + 2; x++) {
-            for (var y = line - 2; y < line + 2; y++) {
-                let indexView = this.getViewAtCoordinates(x, y);
-                let quad = this.views[indexView];
+            return;
 
-                if(quad)
-                {
-                    // console.log(ptx, quad.x);
-                    if( Math.abs(ptx - quad.x) <= this.restingDistances/2  && Math.abs(pty - quad.y) <= this.restingDistances/2 )
-                    {
-                        // quad.setColor(1,0,0);
-                        this.uiManager.setData(quad.data);
-                        this.uiManager.showTitle();
-                        this.activeQuad = quad;
-                        quad.reveal(true);
-                        quad.program.bind();
-                        quad.program.uniforms.active = 1.0;
-
-                        for (var i = 0; i < quad.points.length; i++) {
-                            let pt = quad.points[i]
-
-
-                            Easings.to(pt, .6 + i * .15, {
-                                onStartParams: pt,
-                                onStart: (pt)=>{
-
-                                    pt.donotupdate = true;
-                                },
-                                easeZ: 1,
-                                delay: .2 + i * .02,
-                                onUpdateParams: pt,
-                                ease: Easings.elasticOutSoft,
-                            });
-                        }
-
-                        Easings.to(this, .5, {
-                            cameraX: this.cameraX - quad.x,
-                            ease: Easings.easeOutSine,
-                            onUpdate:()=>{
-                                let div = document.getElementById("overlay");
-                                div.style.width = POLY.gl.viewportHeight * .601 + 'px';
-                                div.style.height = POLY.gl.viewportHeight * .602 + 'px';
-
-                                let top = -(POLY.gl.viewportHeight * .602/2);
-                                let left = -(POLY.gl.viewportHeight * .601/2);
-
-                                if(this.activeQuad)
-                                {
-                                    left += this.activeQuad.x * POLY.gl.viewportHeight * .601;
-                                    top -= this.activeQuad.y * POLY.gl.viewportHeight * .602;
-                                }
-                                div.style.marginLeft = left + 'px';
-                                div.style.marginTop = top + 'px';
-                            },
-                            onComplete: ()=>{
-
-                            }
-                        });
-
-                        Easings.to(this, .5, {
-                            cameraY: this.cameraY - quad.y,
-                            ease: Easings.easeOutSine
-                        });
-
-
-                        for (var k = 0; k < this.views.length; k++) {
-                            this.views[k].fade(1);
-                        }
-
-                        return true;
-                        // break;
-                    }
-                }
-            }
         }
 
-        return false;
+        this.activeQuad = quad;
+        // quad.showMenuIcon();
+        this.uiManager.setData(quad.data);
+        this.uiManager.showTitle();
+
+        quad.reveal(true);
+        quad.program.bind();
+        quad.program.uniforms.active = 1.0;
+
+        for (var i = 0; i < quad.points.length; i++) {
+            let pt = quad.points[i]
+
+
+            Easings.to(pt, .6 + i * .15, {
+                onStartParams: pt,
+                onStart: (pt)=>{
+
+                    pt.donotupdate = true;
+                },
+                easeZ: 1,
+                delay: .2 + i * .02,
+                onUpdateParams: pt,
+                ease: Easings.elasticOutSoft,
+            });
+        }
+
+        Easings.to(this, .5, {
+            cameraX: this.cameraX - quad.x,
+            ease: Easings.easeOutSine,
+            onUpdate:()=>{
+                let div = document.getElementById("overlay");
+                div.style.width = POLY.gl.viewportHeight * .601 + 'px';
+                div.style.height = POLY.gl.viewportHeight * .602 + 'px';
+
+                let top = -(POLY.gl.viewportHeight * .602/2);
+                let left = -(POLY.gl.viewportHeight * .601/2);
+
+                if(this.activeQuad)
+                {
+                    left += this.activeQuad.x * POLY.gl.viewportHeight * .601;
+                    top -= this.activeQuad.y * POLY.gl.viewportHeight * .602;
+                }
+                div.style.marginLeft = left + 'px';
+                div.style.marginTop = top + 'px';
+            },
+            onComplete: ()=>{
+
+            }
+        });
+
+        Easings.to(this, .5, {
+            cameraY: this.cameraY - quad.y,
+            ease: Easings.easeOutSine
+        });
+
+
+        for (var k = 0; k < this.views.length; k++) {
+            this.views[k].fade(1);
+        }
+
+        return true;
     }
 
 	_onMove(e)
@@ -808,7 +959,7 @@ export default class MainScene
 		let nbColumns = this.gridQuadsWidth - 1;
 		let nbLines = this.gridQuadsHeight - 1;
 
-        if(!this.activeQuad)
+        if(!this.activeQuad && !this.menuActive)
         {
             this.cameraX += this.speedX;
             this.cameraY += this.speedY;
@@ -1000,7 +1151,7 @@ export default class MainScene
 
                 if(!quad.skipRender)
                 {
-                    quad.render(this.cameraX, this.cameraY);
+                    quad.render();
                 }
 
                 quad.skipRender = false;

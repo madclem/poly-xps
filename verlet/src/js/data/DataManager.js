@@ -2,7 +2,8 @@
 const data = [
     {
         title: 'ICON RUGBY',
-        images: ['icon_rugby.jpg'],
+        images: ['icon_boss.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -35,6 +36,7 @@ const data = [
     {
         title: 'SHADES',
         images: ['icon_glasses.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -81,6 +83,22 @@ const data = [
         type: 'photo'
     },
     {
+        title: 'COOKING',
+        images: ['cooking.jpg'],
+        color: false,
+        codeColor: [],
+        colorGradient: [20/255, 48/255, 82/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
+        type: 'photo'
+    },
+    {
         title: 'CHRISTMAS EXPERIMENT',
         images: ['christmas_experiment1.jpg'],
         color: false,
@@ -98,7 +116,8 @@ const data = [
     },
     {
         title: 'SHADES',
-        images: ['icon_glasses.jpg'],
+        images: ['icon_catch.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -130,7 +149,8 @@ const data = [
     },
     {
         title: 'ICON RUGBY',
-        images: ['icon_rugby.jpg'],
+        images: ['icon_deer.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -161,8 +181,25 @@ const data = [
         type: 'photo'
     },
     {
+        title: 'sleigher3000',
+        images: ['sleigher3000.jpg'],
+        color: false,
+        codeColor: [],
+        colorGradient: [20/255, 48/255, 82/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
+        type: 'photo'
+    },
+    {
         title: 'ICON TRUMPET',
         images: ['icon_trumpet.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -179,6 +216,23 @@ const data = [
     {
         title: 'DANGER MOUSE',
         images: ['dangermouse.jpg'],
+        color: false,
+        codeColor: [],
+        colorGradient: [20/255, 48/255, 82/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
+        type: 'photo'
+    },
+    {
+        title: 'ICON TRUMPET',
+        images: ['icon_dog.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -210,7 +264,8 @@ const data = [
     },
     {
         title: 'SHADES',
-        images: ['icon_glasses.jpg'],
+        images: ['icon_mom.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -258,7 +313,8 @@ const data = [
     },
     {
         title: 'ICON TRUMPET',
-        images: ['icon_trumpet.jpg'],
+        images: ['icon_movie.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -339,7 +395,8 @@ const data = [
 
     {
         title: 'ICON TRUMPET',
-        images: ['icon_trumpet.jpg'],
+        images: ['icon_pen.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -386,8 +443,26 @@ const data = [
         type: 'photo'
     },
     {
+        title: 'ICON TRUMPET',
+        images: ['icon_boss.jpg'],
+        icon: true,
+        color: false,
+        codeColor: [],
+        colorGradient: [20/255, 48/255, 82/255],
+        team: {
+            art: ['Julien suard', 'John Denton'],
+            dev: ['Mat Groves', 'Li Wen']
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
+        type: 'photo'
+    },
+    {
         title: 'ICON RUGBY',
-        images: ['icon_rugby.jpg'],
+        images: ['icon_catch.jpg'],
+        icon: true,
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -418,8 +493,8 @@ const data = [
         type: 'photo'
     },
     {
-        title: 'ICON TRUMPET',
-        images: ['icon_trumpet.jpg'],
+        title: 'SHERIGG CALLI',
+        images: ['sherrifcali.jpg'],
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -466,8 +541,8 @@ export default class DataManager
         ]
 
         this.size = {
-            width: 6,
-            height: 6,
+            width: 9,
+            height: 9,
         }
         let id = 0;
         for (var i = 0; i <= this.size.width; i++) {
