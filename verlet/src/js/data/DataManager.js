@@ -34,6 +34,37 @@ const data = [
         type: 'photo'
     },
     {
+        title: 'TECHNOSQUID',
+        images: [
+            'img001.jpg',
+            'img002.jpg',
+            'img003.jpg',
+            'img004.jpg',
+            'img005.jpg',
+            'img006.jpg',
+            'img007.jpg',
+            'img008.jpg',
+            'img009.jpg',
+            'img010.jpg',
+            'img011.jpg',
+            'img012.jpg',
+            'img013.jpg',
+            'img014.jpg',
+        ],
+        color: false,
+        codeColor: [],
+        colorGradient: [212/255, 84/255, 84/255],
+        team: {
+            art: ['Julien suard'],
+            dev: []
+        },
+        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
+        client: "Disney",
+        producer: "Goodboy Digital",
+        date: "2017",
+        type: 'photo'
+    },
+    {
         title: 'SHADES',
         images: ['icon_glasses.jpg'],
         icon: true,

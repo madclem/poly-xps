@@ -29,6 +29,21 @@ export default class App
 
 		this._textures = [
 
+window.ASSET_URL + 'image/img001.jpg',
+window.ASSET_URL + 'image/img002.jpg',
+window.ASSET_URL + 'image/img003.jpg',
+window.ASSET_URL + 'image/img004.jpg',
+window.ASSET_URL + 'image/img005.jpg',
+window.ASSET_URL + 'image/img006.jpg',
+window.ASSET_URL + 'image/img007.jpg',
+window.ASSET_URL + 'image/img008.jpg',
+window.ASSET_URL + 'image/img009.jpg',
+window.ASSET_URL + 'image/img010.jpg',
+window.ASSET_URL + 'image/img011.jpg',
+window.ASSET_URL + 'image/img012.jpg',
+window.ASSET_URL + 'image/img013.jpg',
+window.ASSET_URL + 'image/img014.jpg',
+
 window.ASSET_URL + 'image/transition/dechire_00000.jpg',
 window.ASSET_URL + 'image/transition/dechire_00001.jpg',
 window.ASSET_URL + 'image/transition/dechire_00002.jpg',
