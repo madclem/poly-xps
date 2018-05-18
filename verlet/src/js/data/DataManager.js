@@ -131,7 +131,31 @@ const data = [
     },
     {
         title: 'CHRISTMAS EXPERIMENT',
-        images: ['christmas_experiment1.jpg'],
+        images: [
+            'trunk_trunk001.jpg',
+            'trunk_trunk002.jpg',
+            'trunk_trunk003.jpg',
+            'trunk_trunk004.jpg',
+            'trunk_trunk005.jpg',
+            'trunk_trunk006.jpg',
+            'trunk_trunk007.jpg',
+            'trunk_trunk008.jpg',
+            'trunk_trunk009.jpg',
+            'trunk_trunk010.jpg',
+            'trunk_trunk011.jpg',
+            'trunk_trunk012.jpg',
+            'trunk_trunk013.jpg',
+            'trunk_trunk014.jpg',
+            'trunk_trunk015.jpg',
+            'trunk_trunk016.jpg',
+            'trunk_trunk017.jpg',
+            'trunk_trunk018.jpg',
+            'trunk_trunk019.jpg',
+            'trunk_trunk020.jpg',
+            'trunk_trunk021.jpg',
+            'trunk_trunk022.jpg',
+            'trunk_trunk023.jpg',
+        ],
         color: false,
         codeColor: [],
         colorGradient: [20/255, 48/255, 82/255],
@@ -162,22 +186,7 @@ const data = [
         date: "2017",
         type: 'photo'
     },
-    {
-        title: 'CHRISTMAS EXPERIMENT 2',
-        images: ['christmas_experiment2.jpg'],
-        color: false,
-        codeColor: [],
-        colorGradient: [20/255, 48/255, 82/255],
-        team: {
-            art: ['Julien suard', 'John Denton'],
-            dev: ['Mat Groves', 'Li Wen']
-        },
-        description: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction.",
-        client: "Disney",
-        producer: "Goodboy Digital",
-        date: "2017",
-        type: 'photo'
-    },
+
     {
         title: 'ICON RUGBY',
         images: ['icon_deer.jpg'],

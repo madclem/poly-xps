@@ -25,7 +25,7 @@ export default class App
 
 
 	    this.loader = new Loader();
-	    this.loader.addManifest(Manifests.default, window.ASSET_URL);
+	    // this.loader.addManifest(Manifests.default, window.ASSET_URL);
 
 		this._textures = [
 
@@ -43,6 +43,30 @@ window.ASSET_URL + 'image/img011.jpg',
 window.ASSET_URL + 'image/img012.jpg',
 window.ASSET_URL + 'image/img013.jpg',
 window.ASSET_URL + 'image/img014.jpg',
+
+window.ASSET_URL + 'image/trunk_trunk001.jpg',
+window.ASSET_URL + 'image/trunk_trunk002.jpg',
+window.ASSET_URL + 'image/trunk_trunk003.jpg',
+window.ASSET_URL + 'image/trunk_trunk004.jpg',
+window.ASSET_URL + 'image/trunk_trunk005.jpg',
+window.ASSET_URL + 'image/trunk_trunk006.jpg',
+window.ASSET_URL + 'image/trunk_trunk007.jpg',
+window.ASSET_URL + 'image/trunk_trunk008.jpg',
+window.ASSET_URL + 'image/trunk_trunk009.jpg',
+window.ASSET_URL + 'image/trunk_trunk010.jpg',
+window.ASSET_URL + 'image/trunk_trunk011.jpg',
+window.ASSET_URL + 'image/trunk_trunk012.jpg',
+window.ASSET_URL + 'image/trunk_trunk013.jpg',
+window.ASSET_URL + 'image/trunk_trunk014.jpg',
+window.ASSET_URL + 'image/trunk_trunk015.jpg',
+window.ASSET_URL + 'image/trunk_trunk016.jpg',
+window.ASSET_URL + 'image/trunk_trunk017.jpg',
+window.ASSET_URL + 'image/trunk_trunk018.jpg',
+window.ASSET_URL + 'image/trunk_trunk019.jpg',
+window.ASSET_URL + 'image/trunk_trunk020.jpg',
+window.ASSET_URL + 'image/trunk_trunk021.jpg',
+window.ASSET_URL + 'image/trunk_trunk022.jpg',
+window.ASSET_URL + 'image/trunk_trunk023.jpg',
 
 window.ASSET_URL + 'image/transition/dechire_00000.jpg',
 window.ASSET_URL + 'image/transition/dechire_00001.jpg',
@@ -66,7 +90,7 @@ window.ASSET_URL + 'image/transition/dechire_00018.jpg',
 window.ASSET_URL + 'image/transition/dechire_00019.jpg',
 window.ASSET_URL + 'image/transition/dechire_00020.jpg',
 
-window.ASSET_URL + 'image/test-icon.png',
+// window.ASSET_URL + 'image/test-icon.png',
 window.ASSET_URL + 'image/arcade.jpg',
 window.ASSET_URL + 'image/christmas_experiment1.jpg',
 window.ASSET_URL + 'image/christmas_experiment2.jpg',
