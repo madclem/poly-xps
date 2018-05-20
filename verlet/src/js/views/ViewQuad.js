@@ -115,6 +115,7 @@ export default class ViewQuad
         this.quad.addAttribute(uvs, 'aUv', 2);
 
         this.transitionImage = new POLY.Texture(window.ASSET_URL + 'image/transition/dechire_00000.jpg');
+        this.defaultRevealTexture = new POLY.Texture(window.ASSET_URL + 'image/transition/dechire_00000.jpg');
 
         this.iconTexture = null;
     }
@@ -129,6 +130,7 @@ export default class ViewQuad
         this.colorMenu = data.colorMenu;
         this.isMenuIcon = true;
         this.needsUpdate = true;
+        // this.isIcon = ;
         Easings.to(this, .3, {
             delay,
             percentageX: x,
@@ -166,6 +168,7 @@ export default class ViewQuad
             onComplete: ()=>{
                 this.isMenuIcon = false;
                 this.iconTexture = null;
+                // this.isIcon = .99;
 
                 this.needsUpdate = true;
                 Easings.to(this, .6, {
@@ -183,7 +186,9 @@ export default class ViewQuad
 
     reveal(show)
     {
-        if(!this.data.icon) return;
+        if(!this.isSupriseIcon) return;
+
+
 
         Easings.to(this, .5, {
             delay: show ? .2 : 0,
@@ -287,7 +292,7 @@ export default class ViewQuad
         // if(!data) return;
         if(data.id === this.dataId) return;
 
-        this.data = data;
+        this.data = Object.assign({}, data);
         this.dataId = data.id;
 
         this.textures = [];
@@ -300,6 +305,8 @@ export default class ViewQuad
         this.program.bind();
         this.program.uniforms.colorGradient = data.colorGradient;
 
+        this.isSupriseIcon = data.icon;
+        this.revealTexture = this.defaultRevealTexture;
         if(data.icon)
         {
             this.revealTexture = TextureManager.getTexture(window.ASSET_URL + 'image/' + data.images_hidden[0])
@@ -313,6 +320,7 @@ export default class ViewQuad
     render()
     {
         if(!this.textures[0]) return;
+
 
         if(this.pointsRef.length > 0)
         {
@@ -336,11 +344,11 @@ export default class ViewQuad
 
             texture.bind(0);
 
-            if(this.data.icon)
-            {
-                this.revealTexture.bind(1);
-                this.transitionImage.bind(2);
-            }
+            // if(this.isIcon)
+            // {
+            // }
+            this.revealTexture.bind(1);
+            this.transitionImage.bind(2);
 
             this.program.bind();
 
@@ -396,7 +404,7 @@ export default class ViewQuad
                 this.program.uniforms.isIcon = this.isIcon;
                 this.program.uniforms.percentageLogoMenu = this.percentageLogoMenu;
 
-                if(this.data.icon)
+                if(this.isIcon)
                 {
                     this.program.uniforms.percentageTransition = this.percentageTransition;
                 }

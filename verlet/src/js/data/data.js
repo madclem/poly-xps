@@ -5,9 +5,9 @@ export default
             size: [7, 7],
             grid: [
                 "dreamy2",   "icon_boss",   "night_eyes",  "icon_catch", "cooking", "icon_deer", "dennis_and_gnasher",
-                "icon_dog",  "starwars_fighter2",    "icon_glasses", "lego", "icon_mom",   "icosphere",   "icon_movie",
-                "particles_stream",    "icon_pen",        "icosphere", "icon_rugby", "ddd", "icon_saxo", "dreamy",
-                "icon_pen",   "gumble",  "icon_twitter",   "sheriff_callie",    "icon_email",   "trunk_santa",   "icon_github",
+                "icon_dog",  "starwars_fighter2",    "icon_glasses", "lego", "icon_mom",   "icosphere",   "handsup",
+                "particles_stream",    "icon_pen",        "icosphere", "handsup", "ddd", "icon_saxo", "dreamy",
+                "icon_pen",   "gumble",  "icon_twitter",   "sheriff_callie",    "icon_pen",   "trunk_santa",   "icon_github",
                 "handsup",   "icon_boss2",   "plane_to_sphere",   "icon_address", "sleigher3000", "night_eyes","starwars_fighter1",
                 "icon_boss", "starwars_fighter3",   "icon_catch",   "starwars_rebels",   "icon_deer",    "dennis_and_gnasher",   "icon_dog",
                 "technosquid",   "icon_mom",    "starwars_arcade",   "icon_movie",   "danger_mouse",    "icon_rugby",    "dreamy2",
@@ -30,8 +30,8 @@ export default
             grid: [
                 "ddd", "night_eyes", "icosphere", "dreamy",
                 "trunk_santa", "plane_to_sphere", "sleigher3000", "technosquid",
-                "dreamy2", "trump", "line_animation", "confettis",
-                "projective_mapping_2d", "ddd", "night_eyes", "particles_stream"
+                "trump", "dreamy2", "line_animation", "confettis",
+                "night_eyes", "ddd", "trump", "particles_stream"
             ]
         },
         about: {
@@ -40,7 +40,7 @@ export default
                 "icon_boss", "icon_catch", "icon_deer", "icon_dog",
                 "icon_glasses", "icon_mom", "icon_movie", "icon_twitter",
                 "icon_boss2", "icon_saxo", "icon_address", "icon_pen",
-                "icon_rugby", "icon_email", "icon_github", "icon_twitter"
+                "icon_rugby", "icon_pen", "icon_github", "icon_twitter"
             ]
         }
     },
@@ -61,6 +61,7 @@ export default
             client: "Nickjr",
             producer: "GOODBOY DIGITAL",
             date: "2017",
+            link: "http://www.nickjr.co.uk/paw-patrol/games/paw-patrol-music-maker/",
             type: 'photo'
         },
         worst_witch: {
@@ -78,6 +79,7 @@ export default
             client: "CBBC",
             producer: "GOODBOY DIGITAL",
             date: "2017",
+            link: "https://www.bbc.co.uk/cbbc/games/the-worst-witch-magic-adventure-game",
             type: 'photo'
         },
         spotbots: {
@@ -95,6 +97,7 @@ export default
             client: "CBEEBIES",
             producer: "GOODBOY DIGITAL",
             date: "2016",
+            link: "https://www.bbc.co.uk/cbeebies/games/spot-bots-switched-on",
             type: 'photo'
         },
         lego_walker: {
@@ -112,6 +115,7 @@ export default
             client: "LEGO",
             producer: "GOODBOY DIGITAL",
             date: "2017",
+            link: "https://www.lego.com/assets/FranchiseSites/Portal/Out-Of-Step/v2/index.html",
             type: 'photo'
         },
         ddd: {
@@ -129,6 +133,7 @@ export default
             client: "DDD",
             producer: "Experiment",
             date: "2018",
+            link: "https://madclem.github.io/ddd-2018/",
             type: 'photo'
         },
         particles_stream: {
@@ -146,12 +151,49 @@ export default
             client: "",
             producer: "Experiment",
             date: "2018",
+            link: "http://work.goodboydigital.com/experiments/clem/particles-stream/",
             type: 'photo'
         },
         handsup: {
             id: 'handsup',
             title: 'HANDS\'UP',
-            images: ['ddd-2018.jpg'],
+            images: [
+                'handsup_001.jpg',
+                'handsup_002.jpg',
+                'handsup_003.jpg',
+                'handsup_004.jpg',
+                'handsup_005.jpg',
+                'handsup_006.jpg',
+                'handsup_007.jpg',
+                'handsup_008.jpg',
+                'handsup_009.jpg',
+                'handsup_010.jpg',
+                'handsup_011.jpg',
+                'handsup_012.jpg',
+                'handsup_013.jpg',
+                'handsup_014.jpg',
+                'handsup_015.jpg',
+                'handsup_016.jpg',
+                'handsup_017.jpg',
+                'handsup_018.jpg',
+                'handsup_019.jpg',
+                'handsup_020.jpg',
+                'handsup_021.jpg',
+                'handsup_022.jpg',
+                'handsup_023.jpg',
+                'handsup_024.jpg',
+                'handsup_025.jpg',
+                'handsup_026.jpg',
+                'handsup_027.jpg',
+                'handsup_028.jpg',
+                'handsup_029.jpg',
+                'handsup_030.jpg',
+                'handsup_031.jpg',
+                'handsup_032.jpg',
+                'handsup_033.jpg',
+                'handsup_034.jpg',
+                'handsup_035.jpg',
+            ],
             color: false,
             codeColor: [],
             colorGradient: [212/255, 84/255, 84/255],
@@ -163,6 +205,7 @@ export default
             client: "Metrological",
             producer: "Goodboy Digital",
             date: "2017",
+            link: "",
             type: 'photo'
         },
 
@@ -196,6 +239,7 @@ export default
             client: "",
             producer: "EXPERIMENT",
             date: "2017",
+            link: "http://work.goodboydigital.com/experiments/clem/technosquid/",
             type: 'photo'
         },
         night_eyes: {
@@ -207,12 +251,13 @@ export default
             colorGradient: [20/255, 48/255, 82/255],
             team: {
                 art: ['Bert'],
-                dev: ['Li Wen']
+                dev: ['<a href="" target="_blank">Wen</a>']
             },
             description: "",
             client: "",
             producer: "CHRISTMAS EXPERIMENT",
             date: "2016",
+            link: "http://work.goodboydigital.com/night-eyes/",
             type: 'photo'
         },
         icosphere: {
@@ -262,6 +307,7 @@ export default
             client: "",
             producer: "EXPERIMENT",
             date: "2017",
+            link: "http://work.goodboydigital.com/experiments/clem/icosphere/",
             type: 'photo'
         },
         plane_to_sphere: {
@@ -279,6 +325,7 @@ export default
             client: "",
             producer: "EXPERIMENT",
             date: "2017",
+            link: "http://work.goodboydigital.com/codevember/clem/02/",
             type: 'photo'
         },
         starwars_arcade: {
@@ -296,11 +343,12 @@ export default
             client: "Disney/lucas",
             producer: "Goodboy Digital",
             date: "2017",
+            link: "https://www.goodboydigital.com/case-study/star-wars-arcade",
             type: 'photo'
         },
         cooking: {
             id: 'cooking',
-            title: 'COOKING',
+            title: 'MY DISNEY STAR CAFE',
             images: ['cooking.jpg'],
             color: false,
             codeColor: [],
@@ -313,6 +361,7 @@ export default
             client: "Disney",
             producer: "Goodboy Digital",
             date: "2016",
+            link: "http://work.goodboydigital.com/star-cafe/",
             type: 'photo'
         },
         trunk_santa: {
@@ -354,6 +403,7 @@ export default
             client: "",
             producer: "CHRISTMAS EXPERIMENT",
             date: "2015",
+            link: "http://work.goodboydigital.com/trunks-santa/",
             type: 'photo'
         },
 
@@ -373,6 +423,7 @@ export default
             client: "",
             producer: "CHRISTMAS EXPERIMENT",
             date: "2017",
+            link: "http://work.goodboydigital.com/sleigher-3000/",
             type: 'photo'
         },
 
@@ -391,6 +442,7 @@ export default
             client: "CBBC",
             producer: "Goodboy Digital",
             date: "2016-18",
+            link: "https://www.bbc.co.uk/cbbc/games/danger-mouse-game",
             type: 'photo'
         },
 
@@ -409,6 +461,7 @@ export default
             client: "CBBC",
             producer: "Goodboy Digital",
             date: "2018",
+            link: "",
             type: 'photo'
         },
 
@@ -427,6 +480,7 @@ export default
             client: "",
             producer: "GOBELINS",
             date: "2014",
+            link: "",
             type: 'photo'
         },
         dreamy2: {
@@ -444,6 +498,7 @@ export default
             client: "",
             producer: "Gobelins",
             date: "2014",
+            link: "",
             type: 'photo'
         },
         starwars_fighter1: {
@@ -461,6 +516,7 @@ export default
             client: "Disney/lucas",
             producer: "Goodboy Digital",
             date: "2016",
+            link: "",
             type: 'photo'
         },
         starwars_fighter2: {
@@ -478,6 +534,7 @@ export default
             client: "Disney/Lucas",
             producer: "Goodboy Digital",
             date: "2016",
+            link: "",
             type: 'photo'
         },
         starwars_fighter3: {
@@ -495,6 +552,7 @@ export default
             client: "Disney/Lucas",
             producer: "Goodboy Digital",
             date: "2016",
+            link: "",
             type: 'photo'
         },
         gumble: {
@@ -512,12 +570,13 @@ export default
             client: "CN",
             producer: "Goodboy Digital",
             date: "2016",
+            link: "",
             type: 'photo'
         },
 
         lego: {
             id: 'lego',
-            title: 'LEGO',
+            title: 'STACKY STACK',
             images: ['lego.jpg'],
             color: false,
             codeColor: [],
@@ -530,6 +589,7 @@ export default
             client: "LEGO",
             producer: "Goodboy Digital",
             date: "2017",
+            link: "https://www.lego.com/assets/FranchiseSites/Portal/Stacky-Stack/v3/index.html",
             type: 'photo'
         },
 
@@ -544,10 +604,11 @@ export default
                 art: ['Matt Allan'],
                 dev: ['TOM Slezakovski', 'Alvin Ourrad']
             },
-            description: "",
+            description: "Sheriff Callie",
             client: "Disney",
             producer: "Goodboy Digital",
             date: "2015",
+            link: "http://work.goodboydigital.com/sheriff-callie/",
             type: 'photo'
         },
         line_animation: {
@@ -565,6 +626,7 @@ export default
             client: "",
             producer: "Experiment",
             date: "2017",
+            link: "http://work.goodboydigital.com/codevember/clem/04/",
             type: 'photo'
         },
         confettis: {
@@ -582,29 +644,13 @@ export default
             client: "",
             producer: "Experiment",
             date: "2017",
-            type: 'photo'
-        },
-        projective_mapping_2d: {
-            id: 'projective_mapping_2d',
-            title: 'INSTANCING IMPLEMENTATION',
-            images: ['starwars_rebels.jpg'],
-            color: false,
-            codeColor: [],
-            colorGradient: [20/255, 48/255, 82/255],
-            team: {
-                art: [],
-                dev: []
-            },
-            description: "",
-            client: "",
-            producer: "Experiment",
-            date: "2017",
+            link: "http://work.goodboydigital.com/experiments/clem/confettis/",
             type: 'photo'
         },
         trump: {
             id: 'trump',
             title: 'ROGUE NEWS',
-            images: ['starwars_rebels.jpg'],
+            images: ['rogue_news.jpg'],
             color: false,
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
@@ -616,6 +662,7 @@ export default
             client: "",
             producer: "Experiment",
             date: "2017",
+            link: "http://rogue-news.com/",
             type: 'photo'
         },
         starwars_rebels: {
@@ -633,12 +680,13 @@ export default
             client: "DISNEY/LUCAS",
             producer: "Goodboy Digital",
             date: "2016",
+            link: "",
             type: 'photo'
         },
         icon_boss: {
             id: 'icon_boss',
             icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
+            images_hidden: ['favourite_boss_revealed.jpg'],
             title: 'MY FAVOURITE BOSS',
             images: ['icon_boss.jpg'],
             color: false,
@@ -652,13 +700,14 @@ export default
             client: "",
             producer: "",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_catch: {
             id: 'icon_catch',
             icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
-            title: 'MASKED SUPER HERO',
+            images_hidden: ['wrestler_revealed.jpg'],
+            title: 'EL MACHO',
             images: ['icon_catch.jpg'],
             color: false,
             codeColor: [],
@@ -669,15 +718,16 @@ export default
             },
             description: "",
             client: "",
-            producer: "",
+            producer: "SUPER HERO / FOOSBALL CHAMPION",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_deer: {
             id: 'icon_deer',
             icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
-            title: 'WILDLING / King of the north',
+            images_hidden: ['king_of_elks_revealed.jpg'],
+            title: 'King of the elks',
             images: ['icon_deer.jpg'],
             color: false,
             codeColor: [],
@@ -688,8 +738,9 @@ export default
             },
             description: "",
             client: "",
-            producer: "",
-            date: "",
+            producer: "NORWAY",
+            date: "2018",
+            link: "",
             type: 'photo'
         },
         icon_dog: {
@@ -709,25 +760,27 @@ export default
             client: "",
             producer: "",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_glasses: {
             id: 'icon_glasses',
             icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
-            title: '',
+            images_hidden: ['shades_revealed.jpg'],
+            title: 'veni vidi vici',
             images: ['icon_glasses.jpg'],
             color: false,
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: [],
-                dev: []
+                art: ['JOHN DENTON'],
+                dev: ['MAT GROVES']
             },
             description: "",
             client: "",
-            producer: "",
+            producer: "APPATHON LIBERTY GLOBAL",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_mom: {
@@ -747,12 +800,13 @@ export default
             client: "",
             producer: "",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_movie: {
             id: 'icon_movie',
             icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
+            images_hidden: ['favourite_movie_revealed.jpg'],
             title: 'J\'aime ce film.',
             images: ['icon_movie.jpg'],
             color: false,
@@ -762,17 +816,18 @@ export default
                 art: [],
                 dev: []
             },
-            description: "",
+            description: "\"Non mais oh ! Comment tu parles de ton père ! T'as pas honte ? Qui c'est qui t'a nourri ?! Jamais moi je parlerais comme ça de mon père, jamais ! Moi mon père il était charron. Et je peux te dire que ça filait doux ! Ça, la mère de la Bath elle mouffetait pas ! Et les gamins pareil !\" <br><br>OSS 117 ",
             client: "",
             producer: "",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_pen: {
             id: 'icon_pen',
-            icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
-            title: 'MY FIRST [DESIGNER] CRUSH',
+            icon: 'true',
+            images_hidden: ['email_revealed.jpg'],
+            title: 'TAKE A TICKET',
             images: ['icon_pen.jpg'],
             color: false,
             codeColor: [],
@@ -783,8 +838,10 @@ export default
             },
             description: "",
             client: "",
-            producer: "",
+            producer: "clem.chenebault@gmail.com",
             date: "",
+            link: "",
+            email: "clem.chenebault@gmail.com",
             type: 'photo'
         },
         icon_rugby: {
@@ -804,6 +861,7 @@ export default
             client: "",
             producer: "",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_saxo: {
@@ -823,14 +881,15 @@ export default
             client: "",
             producer: "",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_address: {
             id: 'icon_address',
             icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
-            title: 'MAISON',
-            images: ['icon_rugby.jpg'],
+            images_hidden: ['address_revealed.jpg'],
+            title: 'LONDON BASED',
+            images: ['icon_saxo.jpg'],
             color: false,
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
@@ -840,15 +899,16 @@ export default
             },
             description: "",
             client: "",
-            producer: "",
+            producer: "E14 8JY",
             date: "",
+            link: "",
             type: 'photo'
         },
         icon_twitter: {
             id: 'icon_twitter',
             icon: true,
             images_hidden: ['starwars_rebels.jpg'],
-            title: 'MAISON',
+            title: '@mad_clem',
             images: ['icon_rugby.jpg'],
             color: false,
             codeColor: [],
@@ -859,15 +919,16 @@ export default
             },
             description: "",
             client: "",
-            producer: "",
+            producer: "TWITTER",
             date: "",
+            link: "https://twitter.com/mad_clem",
             type: 'photo'
         },
         icon_boss2: {
             id: 'icon_boss2',
             icon: true,
             images_hidden: ['starwars_rebels.jpg'],
-            title: 'MAISON',
+            title: 'BOSS 2',
             images: ['icon_rugby.jpg'],
             color: false,
             codeColor: [],
@@ -880,25 +941,7 @@ export default
             client: "",
             producer: "",
             date: "",
-            type: 'photo'
-        },
-        icon_email: {
-            id: 'icon_email',
-            icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
-            title: 'EMAIL',
-            images: ['icon_rugby.jpg'],
-            color: false,
-            codeColor: [],
-            colorGradient: [20/255, 48/255, 82/255],
-            team: {
-                art: [],
-                dev: []
-            },
-            description: "",
-            client: "",
-            producer: "",
-            date: "",
+            link: "",
             type: 'photo'
         },
         icon_github: {
@@ -918,6 +961,7 @@ export default
             client: "",
             producer: "",
             date: "",
+            link: "",
             type: 'photo'
         }
     }

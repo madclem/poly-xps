@@ -103,7 +103,7 @@ export default class MainScene
 		this.limitMinX = -(this.gridQuadsWidth * this.restingDistances)/2 + this.restingDistances/2;
 
         this.dataManager = new DataManager();
-        this.dataManager.fillGrid(dataProjects.layout.lab)
+        this.dataManager.fillGrid(dataProjects.layout.main)
         this.uiManager = new UIManager();
         this.uiManager.onMenu.add(this.showMenu, this);
 		this.program = new POLY.Program();

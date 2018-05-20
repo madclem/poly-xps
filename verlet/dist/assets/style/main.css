@@ -225,6 +225,7 @@ div#overlay .top
     border-bottom: 1px solid #ffffff;
     position: relative;
     overflow: hidden;
+    text-transform: uppercase;
 }
 
 div#overlay .top #date
@@ -285,6 +286,12 @@ div#overlay #aboutScreen .sub
     width: 40%;
     text-align:center;
 
+}
+
+div#overlay #aboutScreen .sub ul li a
+{
+    text-decoration: none;
+    color: #ffffff;
 }
 
 div#overlay #aboutScreen .sub ul
@@ -360,6 +367,7 @@ div#overlay #titleProject
     letter-spacing: 6px;
     max-width: 98%;
     top: 0px;
+    text-transform: uppercase;
 }
 
 div#overlay .top #producer

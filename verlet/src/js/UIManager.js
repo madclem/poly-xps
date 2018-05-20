@@ -5,6 +5,8 @@ export default class UIManager
     constructor()
     {
 
+        this.currentLink = null;
+
         this.onMenu = new Signal();
 
         this.menu = document.getElementById("menu");
@@ -42,6 +44,27 @@ export default class UIManager
         });
         this.aboutLink.addEventListener("touchend", ()=>{
             this.showAbout();
+        });
+
+        this.buttonProject.addEventListener("click", ()=>{
+            if(this.currentLink)
+            {
+                window.open(this.currentLink, '_blank');
+            }
+            else if(this.currentEmail)
+            {
+                location.href = "mailto:"+this.currentEmail;
+            }
+        });
+        this.buttonProject.addEventListener("touchend", ()=>{
+            if(this.currentLink)
+            {
+                window.open(this.currentLink, '_blank');
+            }
+            else if(this.currentEmail)
+            {
+                location.href = "mailto:"+this.currentEmail;
+            }
         });
 
         this.aboutBack.addEventListener("click", ()=>{
@@ -184,12 +207,44 @@ export default class UIManager
 
         this.description.innerHTML = data.description;
         let team = data.team;
+
+        if(data.client === '' && data.date === '' && data.producer === '')
+        {
+            this.top.style.display = 'none';
+        }
+        else
+        {
+            this.top.style.display = 'block';
+        }
+
+        this.currentLink = null;
+        this.currentEmail = null;
+        this.buttonProject.style.display = "inline-block";
+        if(data.link !== "")
+        {
+            this.currentLink = data.link;
+        }
+        else if(data.email && data.email !== "")
+        {
+            this.currentEmail = data.email;
+        }
+        else {
+            this.buttonProject.style.display = "none";
+        }
+
+        this.aboutLink.style.display = 'block';
         if(team.art.length === 0 && team.dev.length === 0)
         {
             // hide team section
             this.teamSection.style.display = 'none';
+
+            if(data.description === "")
+            {
+                this.aboutLink.style.display = 'none';
+            }
         }
-        else {
+        else
+        {
             this.teamSection.style.display = 'block';
             // show team section
             let ulContentArt = '';
