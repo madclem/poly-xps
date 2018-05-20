@@ -77,6 +77,7 @@
     "path": "^0.12.7",
     "raw-loader": "^0.5.1",
     "signals": "^1.0.0",
+    "poly.js": "git+https://github.com/madclem/poly.js.git",
     "stats-js": "^1.0.0-alpha1"
   }
 }

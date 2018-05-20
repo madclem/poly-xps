@@ -6,6 +6,7 @@ export default class DataManager
     {
         this.data = [];
 
+        this.debug = false;
         let colors = [
             [233, 119, 120],
             [137, 199, 182],
@@ -14,7 +15,9 @@ export default class DataManager
             [121, 152, 201],
         ]
 
-        this.fillGrid(data.layout.main);
+        // setTimeout(()=>{
+            // this.fillGrid(data.layout.about);
+        // }, 6000)
     }
 
     fillGrid(layout)
@@ -33,11 +36,13 @@ export default class DataManager
                 let indexData = this.getIndexat(x, y);
                 let d = data.data[layout.grid[indexData]];
 
+                if(this.debug) console.log(data, indexData, layout.grid[indexData]);
                 this.data[indexData]= d;
 
                 id++;
             }
         }
+        if(this.debug) console.log(this.data);
     }
 
     getIndexat(x, y)
@@ -47,6 +52,7 @@ export default class DataManager
     getDataAt(x, y)
 	{
 		let index = this.getIndexat(x, y);
+        if(this.debug) console.log(index, this.data[index]);
 
 		return this.data[index];
 	}

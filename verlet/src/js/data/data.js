@@ -4,17 +4,116 @@ export default
         main: {
             size: [7, 7],
             grid: [
-                "ddd",   "icon_boss",   "night_eyes",  "icon_catch", "cooking", "icon_deer", "dennis_and_gnasher",
-                "icon_dog",  "starwars_fighter2",    "icon_glasses", "lego", "icon_mom",   "night_eyes",   "icon_movie",
-                "particles_stream",    "icon_pen",        "icosphere", "icon_rugby", "trunk_santa", "icon_saxo", "dreamy",
+                "dreamy2",   "icon_boss",   "night_eyes",  "icon_catch", "cooking", "icon_deer", "dennis_and_gnasher",
+                "icon_dog",  "starwars_fighter2",    "icon_glasses", "lego", "icon_mom",   "icosphere",   "icon_movie",
+                "particles_stream",    "icon_pen",        "icosphere", "icon_rugby", "ddd", "icon_saxo", "dreamy",
                 "icon_pen",   "gumble",  "icon_twitter",   "sheriff_callie",    "icon_email",   "trunk_santa",   "icon_github",
                 "handsup",   "icon_boss2",   "plane_to_sphere",   "icon_address", "sleigher3000", "night_eyes","starwars_fighter1",
                 "icon_boss", "starwars_fighter3",   "icon_catch",   "starwars_rebels",   "icon_deer",    "dennis_and_gnasher",   "icon_dog",
                 "technosquid",   "icon_mom",    "starwars_arcade",   "icon_movie",   "danger_mouse",    "icon_rugby",    "dreamy2",
             ]
+        },
+
+        pro: {
+            size: [4, 5],
+            grid: [
+                "cooking", "starwars_fighter2", "lego", "gumble",
+                "sheriff_callie", "handsup", "sleigher3000", "lego_walker",
+                "starwars_rebels", "dennis_and_gnasher", "danger_mouse", "starwars_fighter1",
+                "spotbots", "starwars_fighter3", "starwars_arcade", "worst_witch",
+                "music_maker", "dennis_and_gnasher", "handsup", "danger_mouse",
+            ]
+        },
+
+        lab: {
+            size: [4, 4],
+            grid: [
+                "ddd", "night_eyes", "icosphere", "dreamy",
+                "trunk_santa", "plane_to_sphere", "sleigher3000", "technosquid",
+                "dreamy2", "trump", "line_animation", "confettis",
+                "projective_mapping_2d", "ddd", "night_eyes", "particles_stream"
+            ]
+        },
+        about: {
+            size: [4, 4],
+            grid: [
+                "icon_boss", "icon_catch", "icon_deer", "icon_dog",
+                "icon_glasses", "icon_mom", "icon_movie", "icon_twitter",
+                "icon_boss2", "icon_saxo", "icon_address", "icon_pen",
+                "icon_rugby", "icon_email", "icon_github", "icon_twitter"
+            ]
         }
     },
+
     data: {
+        music_maker: {
+            id: 'music_maker',
+            title: 'Music Maker',
+            images: ['paw_patrol_music_maker.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [212/255, 84/255, 84/255],
+            team: {
+                art: ['Tom Jennings'],
+                dev: []
+            },
+            description: "",
+            client: "Nickjr",
+            producer: "GOODBOY DIGITAL",
+            date: "2017",
+            type: 'photo'
+        },
+        worst_witch: {
+            id: 'worst_witch',
+            title: 'The Worst Witch',
+            images: ['worst-witch.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [212/255, 84/255, 84/255],
+            team: {
+                art: ['Many'],
+                dev: ['Li Wen', 'Jordan Machado']
+            },
+            description: "",
+            client: "CBBC",
+            producer: "GOODBOY DIGITAL",
+            date: "2017",
+            type: 'photo'
+        },
+        spotbots: {
+            id: 'spotbots',
+            title: 'Spotbots',
+            images: ['spotbots_switched_on.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [212/255, 84/255, 84/255],
+            team: {
+                art: ['Toby Sperring'],
+                dev: []
+            },
+            description: "",
+            client: "CBEEBIES",
+            producer: "GOODBOY DIGITAL",
+            date: "2016",
+            type: 'photo'
+        },
+        lego_walker: {
+            id: 'lego_walker',
+            title: 'Out of Step',
+            images: ['lego_out_step.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [212/255, 84/255, 84/255],
+            team: {
+                art: ['John Denton'],
+                dev: ['Mat Groves']
+            },
+            description: "",
+            client: "LEGO",
+            producer: "GOODBOY DIGITAL",
+            date: "2017",
+            type: 'photo'
+        },
         ddd: {
             id: 'ddd',
             title: 'DDD 2018',
@@ -27,7 +126,7 @@ export default
                 dev: []
             },
             description: "",
-            client: "",
+            client: "DDD",
             producer: "Experiment",
             date: "2018",
             type: 'photo'
@@ -119,7 +218,39 @@ export default
         icosphere: {
             id: 'icosphere',
             title: 'ICOSPHERE',
-            images: ['night-eye.jpg'],
+            images: [
+                'blob_001.jpg',
+                'blob_002.jpg',
+                'blob_003.jpg',
+                'blob_004.jpg',
+                'blob_005.jpg',
+                'blob_006.jpg',
+                'blob_007.jpg',
+                'blob_008.jpg',
+                'blob_009.jpg',
+                'blob_010.jpg',
+                'blob_011.jpg',
+                'blob_012.jpg',
+                'blob_013.jpg',
+                'blob_014.jpg',
+                'blob_015.jpg',
+                'blob_016.jpg',
+                'blob_017.jpg',
+                'blob_018.jpg',
+                'blob_019.jpg',
+                'blob_020.jpg',
+                'blob_021.jpg',
+                'blob_022.jpg',
+                'blob_023.jpg',
+                'blob_024.jpg',
+                'blob_025.jpg',
+                'blob_026.jpg',
+                'blob_027.jpg',
+                'blob_028.jpg',
+                'blob_029.jpg',
+                'blob_030.jpg',
+                'blob_031.jpg',
+            ],
             color: false,
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
@@ -136,7 +267,7 @@ export default
         plane_to_sphere: {
             id: 'plane_to_sphere',
             title: 'PLANE TO SPHERE',
-            images: ['night-eye.jpg'],
+            images: ['plane_to_sphere.jpg'],
             color: false,
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
@@ -419,7 +550,74 @@ export default
             date: "2015",
             type: 'photo'
         },
-
+        line_animation: {
+            id: 'line_animation',
+            title: 'LINE ANIMATION',
+            images: ['line_animation.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [20/255, 48/255, 82/255],
+            team: {
+                art: [],
+                dev: []
+            },
+            description: "",
+            client: "",
+            producer: "Experiment",
+            date: "2017",
+            type: 'photo'
+        },
+        confettis: {
+            id: 'confettis',
+            title: 'INSTANCING IMPLEMENTATION',
+            images: ['confettis.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [20/255, 48/255, 82/255],
+            team: {
+                art: [],
+                dev: []
+            },
+            description: "",
+            client: "",
+            producer: "Experiment",
+            date: "2017",
+            type: 'photo'
+        },
+        projective_mapping_2d: {
+            id: 'projective_mapping_2d',
+            title: 'INSTANCING IMPLEMENTATION',
+            images: ['starwars_rebels.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [20/255, 48/255, 82/255],
+            team: {
+                art: [],
+                dev: []
+            },
+            description: "",
+            client: "",
+            producer: "Experiment",
+            date: "2017",
+            type: 'photo'
+        },
+        trump: {
+            id: 'trump',
+            title: 'ROGUE NEWS',
+            images: ['starwars_rebels.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [20/255, 48/255, 82/255],
+            team: {
+                art: ['Julien suard'],
+                dev: []
+            },
+            description: "",
+            client: "",
+            producer: "Experiment",
+            date: "2017",
+            type: 'photo'
+        },
         starwars_rebels: {
             id: 'starwars_rebels',
             title: 'STARWARS TEAM TACTICS',

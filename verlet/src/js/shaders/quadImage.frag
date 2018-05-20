@@ -1,6 +1,7 @@
 precision highp float;
 
 uniform vec3 color;
+uniform vec3 colorMenu;
 uniform sampler2D uDefaultImage;
 uniform sampler2D uRevealImage;
 uniform sampler2D uTransitionImage;
@@ -12,6 +13,8 @@ uniform float TtoBorRtoL;
 uniform float percentageLogoMenu;
 
 // for transition (MENU)
+// isIcon = in order to not have weird black border, we need to add + .002 or -.002 depending if we're showing the menu or not...
+uniform float isIcon; // - 1 or 1
 uniform float percentageX;
 uniform float percentageY;
 
@@ -50,10 +53,10 @@ void main(void) {
     float topToBottom = -1. + TtoBorRtoL * 2.;
 
     vec2 v1 = vec2(percentageX, percentageY);
-    vec2 v2 = vec2(topToBottom0or1 - (vUv.x) * topToBottom +.004, topToBottom0or1 - vUv.y * topToBottom +.004);
+    vec2 v2 = vec2(topToBottom0or1 - (vUv.x) * topToBottom + isIcon * .004, topToBottom0or1 - vUv.y * topToBottom + isIcon * .004);
 
     vec2 mask = vec2(greaterThan(v1, v2));
-    vec3 colorAfterTransitionMenu = mix(colorAfterBlackPercentage, color, mask.x + mask.y);
+    vec3 colorAfterTransitionMenu = mix(colorAfterBlackPercentage, colorMenu, mask.x + mask.y);
 
     // LAST STEP: show the main logo (at the point it's up to the dev to have swap the texture
     // (after PercentageX or percentageY = 1.0) so the image is hidden

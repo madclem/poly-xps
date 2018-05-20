@@ -25,10 +25,12 @@ export default class ViewQuad
         this.speed = .2;
         this.count = .3;
 
+        this.cbMenu = null;
         this.beenHere = 0;
         this.dataId = null;
 
-
+        this.colorMenu = [1,0,0];
+        this.isIcon = 1;
         this.points = [];
         this.positions = [];
         this.dragSpeeds = {
@@ -40,6 +42,10 @@ export default class ViewQuad
             color: {
                 type: 'vec3',
                 value: [Math.random(),Math.random(), Math.random()]
+            },
+            colorMenu: {
+                type: 'vec3',
+                value: [1, 0, 0]
             },
             colorGradient: {
                 type: 'vec3',
@@ -56,6 +62,10 @@ export default class ViewQuad
             uTransitionImage: {
                 type: 'texture',
                 value: 2
+            },
+            isIcon: {
+                type: 'float',
+                value: this.isIcon
             },
             percentage: {
                 type: 'float',
@@ -110,21 +120,26 @@ export default class ViewQuad
     }
 
 
-    showMenuIcon(x = 1, y = 0, TtoBorRtoL, delay = 0)
+    showMenuIcon(x = 1, y = 0, TtoBorRtoL, delay = 0, data, cb)
     {
         this.TtoBorRtoL = TtoBorRtoL ? 1 : 0;
+
+        this.cbMenu = cb;
+
+        this.colorMenu = data.colorMenu;
         this.isMenuIcon = true;
         this.needsUpdate = true;
         Easings.to(this, .3, {
             delay,
             percentageX: x,
             percentageY: y,
+            isIcon: -1,
             ease: Easings.easeInCirc,
             onUpdate: ()=>{
                 this.needsUpdate = true;
             },
             onComplete:()=>{
-                this.iconTexture = TextureManager.getTexture(window.ASSET_URL + 'image/test-icon.png');
+                this.iconTexture = TextureManager.getTexture(window.ASSET_URL + 'image/' + data.icon);
 
                 Easings.to(this, .3, {
                     percentageLogoMenu: 1,
@@ -156,6 +171,7 @@ export default class ViewQuad
                 Easings.to(this, .6, {
                     percentageX: 0,
                     percentageY: 0,
+                    isIcon: 1,
                     ease: Easings.easeOutCirc,
                     onUpdate: ()=>{
                         this.needsUpdate = true;
@@ -202,6 +218,14 @@ export default class ViewQuad
                 this.needsUpdate = true;
             }
         })
+    }
+
+    onPress()
+    {
+        if(this.cbMenu && this.isMenuIcon)
+        {
+            this.cbMenu();
+        }
     }
 
     onHover()
@@ -365,9 +389,11 @@ export default class ViewQuad
                 this.program.uniforms.percentage = this.percentage;
                 this.program.uniforms.percentageBlack = this.percentageBlack;
 
+                this.program.uniforms.colorMenu = this.colorMenu;
                 this.program.uniforms.percentageX = this.percentageX;
                 this.program.uniforms.percentageY = this.percentageY;
                 this.program.uniforms.TtoBorRtoL = this.TtoBorRtoL;
+                this.program.uniforms.isIcon = this.isIcon;
                 this.program.uniforms.percentageLogoMenu = this.percentageLogoMenu;
 
                 if(this.data.icon)

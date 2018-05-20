@@ -10,6 +10,7 @@ import SpeedController from '../control/SpeedController';
 import DataManager from '../data/DataManager';
 import UIManager from '../UIManager';
 import Device from '../utils/Device';
+import dataProjects from '../data/data';
 
 
 let target = vec3.create();
@@ -102,6 +103,7 @@ export default class MainScene
 		this.limitMinX = -(this.gridQuadsWidth * this.restingDistances)/2 + this.restingDistances/2;
 
         this.dataManager = new DataManager();
+        this.dataManager.fillGrid(dataProjects.layout.lab)
         this.uiManager = new UIManager();
         this.uiManager.onMenu.add(this.showMenu, this);
 		this.program = new POLY.Program();
@@ -109,16 +111,8 @@ export default class MainScene
 		this.sphereIntersection.scale.set(.05);
 
 
-
-
-
-        this.cubeCrossProduct = new POLY.geometry.Cube(this.program);
-		this.cubeCrossProduct.scale.set(.1);
-
 		this.rayCamera = new POLY.core.Ray();
-
 		this.mouse = { x: 0, y: 0}
-
         this.plane = [[0,0,0], [1,1,0], [0, -1,0]];
 
 		this.addEvents();
@@ -256,10 +250,22 @@ export default class MainScene
         }
 
         let speed = .8;
-        topLeftQuad.showMenuIcon(1,0,false, .2 * speed)
-        bottomLeftQuad.showMenuIcon(0,1,true, .45 * speed)
-        bottomRightQuad.showMenuIcon(1,0,false, .7 * speed)
-        topRightQuad.showMenuIcon(0,1,false, .95 * speed)
+        topLeftQuad.showMenuIcon(1,0,false, .2 * speed, { colorMenu: [1, 0, 0], icon: 'test-icon.png'}, ()=>{
+            this.dataManager.fillGrid(dataProjects.layout.main);
+            this.hideMenu();
+        });
+        topRightQuad.showMenuIcon(0,1,false, .95 * speed, { colorMenu: [0, 0, 1], icon: 'test-icon.png'}, ()=>{
+            this.dataManager.fillGrid(dataProjects.layout.lab); // lab
+            this.hideMenu();
+        });
+        bottomLeftQuad.showMenuIcon(0,1,true, .45 * speed, { colorMenu: [0, 1, 0], icon: 'test-icon.png'}, ()=>{
+            this.dataManager.fillGrid(dataProjects.layout.pro); // pro
+            this.hideMenu();
+        });
+        bottomRightQuad.showMenuIcon(1,0,false, .7 * speed, { colorMenu: [1, 1, 0], icon: 'test-icon.png'}, ()=>{
+            this.dataManager.fillGrid(dataProjects.layout.about); // about
+            this.hideMenu();
+        });
 
         for (var i = 0; i < this.views.length; i++) {
             let q = this.views[i];
@@ -492,7 +498,7 @@ export default class MainScene
         }
         else if(this.menuActive)
         {
-            // click on icon = do something
+            quad.onPress();
 
             return;
 

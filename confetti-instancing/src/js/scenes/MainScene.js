@@ -19,7 +19,6 @@ export default class MainScene
 		POLY.GL.setCamera(this.camera);
 
 		this.viewBg = new ViewBg(window.ASSET_URL + 'image/sky_gradient.jpg');
-		this._bPlanes = new POLY.helpers.BatchPlanes();
 
 		this.time = 0;
 		this.percentage = 0;
@@ -112,7 +111,7 @@ export default class MainScene
 		this.orbitalControl.update();
 
 		this.viewBg.render();
-		
+
 		this.program.bind();
 		this.program.uniforms.time += .005;
 		POLY.GL.draw(this.particles);
