@@ -21,7 +21,7 @@ export default class ViewQuad
         this.percentageX = 0;
         this.percentageY = 0;
         this.percentageLogoMenu = 0;
-        this.TtoBorRtoL = 0;
+        this.TtoBorRtoL = 0; // TopToBottomOrRightToLeft
         this.speed = .2;
         this.count = .3;
 
@@ -104,8 +104,6 @@ export default class ViewQuad
         this.quad = new POLY.geometry.Quad(this.program);
         this.quad.addAttribute(uvs, 'aUv', 2);
 
-
-        this.revealTexture = new POLY.Texture(window.ASSET_URL + 'image/arcade.jpg');
         this.transitionImage = new POLY.Texture(window.ASSET_URL + 'image/transition/dechire_00000.jpg');
 
         this.iconTexture = null;
@@ -278,6 +276,10 @@ export default class ViewQuad
         this.program.bind();
         this.program.uniforms.colorGradient = data.colorGradient;
 
+        if(data.icon)
+        {
+            this.revealTexture = TextureManager.getTexture(window.ASSET_URL + 'image/' + data.images_hidden[0])
+        }
         if(data.codeColor && data.codeColor.length > 0)
         {
             this.program.uniforms.color = data.codeColor;
@@ -310,8 +312,11 @@ export default class ViewQuad
 
             texture.bind(0);
 
-            this.revealTexture.bind(1);
-            this.transitionImage.bind(2);
+            if(this.data.icon)
+            {
+                this.revealTexture.bind(1);
+                this.transitionImage.bind(2);
+            }
 
             this.program.bind();
 
