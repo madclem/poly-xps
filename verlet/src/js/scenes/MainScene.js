@@ -90,6 +90,7 @@ export default class MainScene
         this.cameraX = 0;
         this.cameraY = 0;
         this.menuActive = false;
+        this.waitingForMenu = false;
 
 		this.physics = new Physics();
 		this.createGridPoints();
@@ -191,6 +192,18 @@ export default class MainScene
 
     showMenu()
     {
+        if(this.waitingForMenu) return;
+
+        if(this.activeQuad)
+        {
+            this.waitingForMenu = true;
+            this.removeActiveQuad(()=>{
+                this.waitingForMenu = false;
+                this.showMenu();
+            });
+
+            return;
+        }
 
         if(this.menuActive) return;
 
