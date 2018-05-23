@@ -207,6 +207,7 @@ window.ASSET_URL + 'image/address_revealed.jpg',
 window.ASSET_URL + 'image/email_revealed.jpg',
 window.ASSET_URL + 'image/wrestler_revealed.jpg',
 window.ASSET_URL + 'image/shades_revealed.jpg',
+window.ASSET_URL + 'image/maman.jpg',
 
 		]
 	    this.loader.addAssets(this._textures);
@@ -257,11 +258,26 @@ window.ASSET_URL + 'image/shades_revealed.jpg',
 	{
 		POLY.loadedResources = resources;
 		// this.scene = new PointCollisionScene();
+		let loader = document.getElementById('loader');
+		let header = document.getElementById('header');
+		loader.style.opacity = 1;
+		header.style.top = '-100px';
 
 
 		TextureManager.addTextures(this._textures, ()=>{
-			let loader = document.getElementById('loader');
-			loader.style.display = "none";
+
+			TweenLite.to("#loader", 1, {
+				delay: 1,
+				opacity: 0,
+				onComplete:()=>{
+					loader.style.display = "none";
+
+					TweenLite.to("#header", .3, {
+						top: 0,
+						ease: Circ.easeOut
+					})
+				}
+			})
 
 			this.scene = new MainScene();
 			this.scene.resize();

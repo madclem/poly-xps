@@ -366,8 +366,61 @@ export default class MainScene
         mainContainer.addEventListener('touchend', (e) => this._onUp(e));
         mainContainer.addEventListener('touchmove', (e) => this._onMove(e));
 
+        document.addEventListener('keydown', (event)=> {
+            this._onKeyDown(event.keyCode);
+        });
+
         window.addEventListener('mousewheel', this._onMouseWheel.bind(this));
 	}
+
+    _onKeyDown(key)
+    {
+        console.log('key', key);
+
+        // left 37
+        // top 38
+        // right 39
+        // bottom 40
+        if(this.activeQuad && key > 36 && key < 41)
+        {
+
+            this.removeActiveQuad(()=>{
+                let x = 0;
+                let y = 0;
+
+                switch (key) {
+                    case 37:
+                    x = -1;
+                    y = 0;
+                    break;
+                    case 38:
+                    x = 0;
+                    y = 1;
+                    break;
+                    case 39:
+                    x = 1;
+                    y = 0;
+                    break;
+                    case 40:
+                    x = 0;
+                    y = -1;
+                    break;
+                    default:
+
+                }
+                let quad = this.getQuadAtPos(x,y).quad;
+
+                // let x = Math.floor((this.gridQuadsWidth - 1)/2 - 1);
+                // let y = Math.floor((this.gridQuadsHeight - 1)/2) - 1;
+                //
+                // let indexView = this.getViewAtCoordinates(x, y);
+                // let quad = this.views[indexView];
+
+                this.selectQuad(quad);
+
+            }, true)
+        }
+    }
 
     _onMouseWheel(e) {
         this.easeSpeedWheel.x = e.wheelDeltaX * .0001;
@@ -504,6 +557,13 @@ export default class MainScene
 
         }
 
+        this.selectQuad(quad);
+
+        return true;
+    }
+
+    selectQuad(quad)
+    {
         this.activeQuad = quad;
         // quad.showMenuIcon();
         this.uiManager.setData(quad.data);
@@ -563,8 +623,6 @@ export default class MainScene
         for (var k = 0; k < this.views.length; k++) {
             this.views[k].fade(1);
         }
-
-        return true;
     }
 
 	_onMove(e)

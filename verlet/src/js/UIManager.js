@@ -402,7 +402,7 @@ export default class UIManager
         // this.client.style.marginTop = "-100px";
 
 
-        TweenLite.to("#overlay", .5, {
+        TweenLite.to("#overlay", .2, {
             opacity: 0,
             ease: Circ.easeOut,
             onComplete: ()=>{

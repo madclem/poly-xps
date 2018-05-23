@@ -167,7 +167,7 @@ div#overlay #buttonProject
     text-align:center;
     width: 100%;
     position: absolute;
-    top: 50%
+    top: 60%
 }
 
 
@@ -318,6 +318,11 @@ div#overlay #aboutScreen #dev
 div#overlay #aboutScreen h2.team
 {
     margin-top: 10px;
+}
+
+div#overlay #aboutScreen p#description a
+{
+    color: #fff;
 }
 
 div#overlay #aboutScreen p#description

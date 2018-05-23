@@ -6,9 +6,9 @@ export default
             grid: [
                 "dreamy2",   "icon_boss",   "night_eyes",  "icon_catch", "cooking", "icon_deer", "dennis_and_gnasher",
                 "icon_dog",  "starwars_fighter2",    "icon_glasses", "lego", "icon_mom",   "icosphere",   "handsup",
-                "particles_stream",    "icon_pen",        "icosphere", "handsup", "ddd", "icon_saxo", "dreamy",
+                "particles_stream",    "icon_pen",        "icosphere", "handsup", "ddd", "icon_twitter", "dreamy",
                 "icon_pen",   "gumble",  "icon_twitter",   "sheriff_callie",    "icon_pen",   "trunk_santa",   "icon_github",
-                "handsup",   "icon_boss2",   "plane_to_sphere",   "icon_address", "sleigher3000", "night_eyes","starwars_fighter1",
+                "handsup",   "icon_julien",   "plane_to_sphere",   "icon_address", "sleigher3000", "night_eyes","starwars_fighter1",
                 "icon_boss", "starwars_fighter3",   "icon_catch",   "starwars_rebels",   "icon_deer",    "dennis_and_gnasher",   "icon_dog",
                 "technosquid",   "icon_mom",    "starwars_arcade",   "icon_movie",   "danger_mouse",    "icon_rugby",    "dreamy2",
             ]
@@ -35,12 +35,12 @@ export default
             ]
         },
         about: {
-            size: [4, 4],
+            size: [3, 4],
             grid: [
-                "icon_boss", "icon_catch", "icon_deer", "icon_dog",
-                "icon_glasses", "icon_mom", "icon_movie", "icon_twitter",
-                "icon_boss2", "icon_saxo", "icon_address", "icon_pen",
-                "icon_rugby", "icon_pen", "icon_github", "icon_twitter"
+                "icon_boss", "icon_catch", "icon_deer",
+                "icon_dog", "icon_glasses", "icon_mom",
+                "icon_movie", "icon_twitter", "icon_julien",
+                "icon_address", "icon_pen", "icon_github"
             ]
         }
     },
@@ -52,13 +52,13 @@ export default
             images: ['paw_patrol_music_maker.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [212/255, 84/255, 84/255],
+            colorGradient: [0,0,0],
             team: {
                 art: ['Tom Jennings'],
                 dev: []
             },
-            description: "",
-            client: "Nickjr",
+            description: "We created three music toys for Nickelodeon and their leading pre-school brands. In addition to that we made a 'grey box' version so that Nick's editorial teams could easily produce new versions for other brands with a minimum of technical experience required. <br><br>TECH: WebGL, Pixi.js, Sono.js",
+            client: "Nickelodeon",
             producer: "GOODBOY DIGITAL",
             date: "2017",
             link: "http://www.nickjr.co.uk/paw-patrol/games/paw-patrol-music-maker/",
@@ -70,12 +70,12 @@ export default
             images: ['worst-witch.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [212/255, 84/255, 84/255],
+            colorGradient: [0,0,0],
             team: {
                 art: ['Many'],
-                dev: ['Li Wen', 'Jordan Machado']
+                dev: ['Li Wen (lead)', 'Jordan Machado']
             },
-            description: "",
+            description: "Read the complete case study <a href='https://www.goodboydigital.com/case-study/the-worst-witch-magic-adventure' target='_blank'> here (by Goodboy) </a> :)  <br><br>TECH: 3D World, Pixi.js, WebGL",
             client: "CBBC",
             producer: "GOODBOY DIGITAL",
             date: "2017",
@@ -88,12 +88,12 @@ export default
             images: ['spotbots_switched_on.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [212/255, 84/255, 84/255],
+            colorGradient: [0,0,0],
             team: {
                 art: ['Toby Sperring'],
                 dev: []
             },
-            description: "",
+            description: "Let's get switched on! We developed 3 mini games for the pre-school brand Spotbots. <br><br>TECHS: Accessibility, Hexagonal Grid, HTML5, WebGL",
             client: "CBEEBIES",
             producer: "GOODBOY DIGITAL",
             date: "2016",
@@ -106,12 +106,13 @@ export default
             images: ['lego_out_step.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [212/255, 84/255, 84/255],
+            colorGradient: [0,0,0],
             team: {
                 art: ['John Denton'],
-                dev: ['Mat Groves']
+                dev: ['Mat Groves (lead)']
             },
-            description: "",
+
+            description: "Read the complete case study <a href='https://www.goodboydigital.com/case-study/out-of-step' target='_blank'> here (by Goodboy) </a> :)  <br><br>TECH: Pixi.js, WebGL",
             client: "LEGO",
             producer: "GOODBOY DIGITAL",
             date: "2017",
@@ -124,12 +125,12 @@ export default
             images: ['ddd-2018.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [212/255, 84/255, 84/255],
+            colorGradient: [194/255,82/255, 56/255],
             team: {
-                art: ['Julien suard'],
+                art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "",
+            description: "Experiment for Design Digital Days 2018: Monolithic. A great opportunity to explore reflection's methods and water effect! <br><br>TECH: 3D, Poly.js, WebGL",
             client: "DDD",
             producer: "Experiment",
             date: "2018",
@@ -142,12 +143,12 @@ export default
             images: ['particles_stream.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [212/255, 84/255, 84/255],
+            colorGradient: [0,0,0],
             team: {
                 art: [],
                 dev: []
             },
-            description: "",
+            description: "First particles using FBO \"ping pong\" and multitextures. Based on Wen's particles <a href='http://blog.bongiovi.tw/webgl-gpu-particle-stream/' target='_blank'>blog post</a> <br><br>TECH: Poly.js, WebGL",
             client: "",
             producer: "Experiment",
             date: "2018",
@@ -196,12 +197,12 @@ export default
             ],
             color: false,
             codeColor: [],
-            colorGradient: [212/255, 84/255, 84/255],
+            colorGradient: [58/255, 107/255,173/255],
             team: {
                 art: ['John Denton'],
                 dev: ['Mat Groves']
             },
-            description: "",
+            description: "\"Liberty Global Appathon\" multiplayer game that we had the chance to develop for the Metrological TV boxes. \"Hands down\" the funniest game we ever did at Goodboy! <br><br>TECH: Websocket, Raspberry PI, Node.js, Pixi.js, WebGL.",
             client: "Metrological",
             producer: "Goodboy Digital",
             date: "2017",
@@ -230,12 +231,12 @@ export default
             ],
             color: false,
             codeColor: [],
-            colorGradient: [212/255, 84/255, 84/255],
+            colorGradient: [0,0,0],
             team: {
                 art: [],
                 dev: []
             },
-            description: "",
+            description: "Musical Experiment (probably broken since the latest Chrome updates) <br><br>TECH: HTML5, WebGL",
             client: "",
             producer: "EXPERIMENT",
             date: "2017",
@@ -253,7 +254,7 @@ export default
                 art: ['Bert'],
                 dev: ['<a href="" target="_blank">Wen</a>']
             },
-            description: "",
+            description: "Opening of the Christmas Experiment (2016 edition) with my friend Wen! Explore the night forest, manipulate the elements and frolic with the light creatures.  Check out our <a href=\"http://blog.bongiovi.tw/case-study-night-eye/\">VR and reflection (Wen)</a> and <a href=\"https://medium.com/@mad_clem/night-eyes-case-study-19eb54068379\">line drawing and animation (me)</a> case studies. <br><br>TECH: 3D, VR, Alfrid.js (Wen's WebGL tool).",
             client: "",
             producer: "CHRISTMAS EXPERIMENT",
             date: "2016",
@@ -303,7 +304,7 @@ export default
                 art: [],
                 dev: []
             },
-            description: "",
+            description: "Icosphere geometry, a nice different way to draw a sphere! (see <a href=\"http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html\"> article</a>). <br><br>TECH: WebGL",
             client: "",
             producer: "EXPERIMENT",
             date: "2017",
@@ -318,10 +319,10 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['Julien suard', 'John Denton'],
+                art: ['<a href="suarjulien.com">Julien suard</a>', 'John Denton'],
                 dev: ['Mat Groves', 'Li Wen']
             },
-            description: "",
+            description: "Transform a plane geometry into a sphere geometry. An idea from Wen to teach me WebGL basics. <br><br>TECH: WebGL",
             client: "",
             producer: "EXPERIMENT",
             date: "2017",
@@ -339,7 +340,7 @@ export default
                 art: ['many people'],
                 dev: ['many people']
             },
-            description: "",
+            description: "Read the complete case study <a href='https://www.goodboydigital.com/case-study/star-wars-arcade' target='_blank'> here (by Goodboy) </a> :)  <br><br>TECH: Pixi.js, WebGL",
             client: "Disney/lucas",
             producer: "Goodboy Digital",
             date: "2017",
@@ -352,12 +353,14 @@ export default
             images: ['cooking.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [20/255, 48/255, 82/255],
+            colorGradient: [91/255, 133/255, 88/255],
             team: {
                 art: ['Tom Jennings'],
                 dev: ['Tom Slezakovski']
             },
-            description: "",
+
+
+            description: "Vanilla Panna Cotta, Flatbread with Hummus and Figs, Diva's Calzone... You name it you got it! (do not try this at home) <br><br>TECH: Pixi.js, WebGL, p2.js, serious cooking skills",
             client: "Disney",
             producer: "Goodboy Digital",
             date: "2016",
@@ -396,10 +399,10 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['Julien suard'],
+                art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "",
+            description: "Christmas experiment, 2015 edition! Tight collaboration with my friend Julien Suard! Chop some wood and get that fire going! ###emoticonetinder <br><br>TECH: 2D slicing, Pixi.js, WebGL, p2.js",
             client: "",
             producer: "CHRISTMAS EXPERIMENT",
             date: "2015",
@@ -419,7 +422,7 @@ export default
                 art: ['John Denton'],
                 dev: ['Mat Groves']
             },
-            description: "",
+            description: "Christmas Experiment, 2017 edition! Starfox meets Mario Kart! TECH: Pixi.js, 3D, WebGL",
             client: "",
             producer: "CHRISTMAS EXPERIMENT",
             date: "2017",
@@ -438,7 +441,7 @@ export default
                 art: ['Many people'],
                 dev: ['Many people']
             },
-            description: "",
+            description: "Read the complete case study <a href='https://www.goodboydigital.com/case-study/danger-mouse-game' target='_blank'> here (by Goodboy) </a> :)  <br><br>TECH: Pixi.js, WebGL",
             client: "CBBC",
             producer: "Goodboy Digital",
             date: "2016-18",
@@ -454,10 +457,10 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['Julien suard', 'John Denton', 'Kim Le'],
+                art: ['<a href="suarjulien.com">Julien suard</a>', 'John Denton', 'Kim Le'],
                 dev: ['Mat Groves']
             },
-            description: "",
+            description: "Leg It through Beano town, slime your enemies, play as your favourite characters from the Dennis & Gnasher, Unleashed TV show and run, jump, slide and grind your way to the finish line. Download the app on <a href=\"https://itunes.apple.com/gb/app/cbbc-dennis-gnasher/id1375959196?mt=8\" target=\"_blank\">iOS</a> or <a href=\"https://play.google.com/store/apps/details?id=uk.co.bbc.cbbc.dennisandgnasher.legit\" target=\"_blank\">Android</a> (Web version coming soon!) <br><br>TECH: HTML5, 3D, App, Pixi.js, WebGL",
             client: "CBBC",
             producer: "Goodboy Digital",
             date: "2018",
@@ -476,7 +479,7 @@ export default
                 art: ['JULIEN SUAVE', 'THOMAS 2 CHICOS'],
                 dev: ['GRALEX', 'CHENEBOLOSS']
             },
-            description: "",
+            description: "Dreamy is a game on tablet aiming to enchant the kid's routine at the hospital. Immersed into a super hero universe, the player can choose and play with his super power to fight the battle against the \"Dark Force\". Dreamy offers an exploration in augmented reality in the hospital for the kid to leave his room for a moment and meet other childrens. See full description <a href=\"\" target=\"_blank\">here</a>. EYA 2014 winner, Wouap Doo App student project recognition. <br><br>TECH: Objective-C, iBeacon, Connected Objects",
             client: "",
             producer: "GOBELINS",
             date: "2014",
@@ -494,11 +497,11 @@ export default
                 art: ['JULIEN SUAVE', 'THOMAS 2 CHICOS'],
                 dev: ['GRALEX', 'CHENEBOLOSS']
             },
-            description: "",
+            description: "Dreamy is a game on tablet aiming to enchant the kid's routine at the hospital. Immersed into a super hero universe, the player can choose and play with his super power to fight the battle against the \"Dark Force\". Dreamy offers an exploration in augmented reality in the hospital for the kid to leave his room for a moment and meet other childrens. See full description <a href=\"https://suardjulien.com/9/\" target=\"_blank\">here</a>. EYA 2014 winner, Wouap Doo App student project recognition. <br><br>TECH: Objective-C, iBeacon, Connected Objects",
             client: "",
             producer: "Gobelins",
             date: "2014",
-            link: "",
+            link: "https://suardjulien.com/9/",
             type: 'photo'
         },
         starwars_fighter1: {
@@ -509,10 +512,10 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['Julien suard'],
+                art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "",
+            description: "\"Shoot'em up\" game developped for the release of the Starwars Awakens in the cinemas. Welcome to the resistance, and the May the force be with you. Read more about the art <a href=\"https://suardjulien.com/3/\" target=\"_blank\">here</a>  <br><br>TECH: Pixi.js, WebGL <br><br> U: goodboy    P: disney",
             client: "Disney/lucas",
             producer: "Goodboy Digital",
             date: "2016",
@@ -527,10 +530,10 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['Julien suard'],
+                art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "",
+            description: "\"Shoot'em up\" game developped for the release of the Starwars Awakens in the cinemas. Welcome to the resistance, and the May the force be with you. Read more about the art <a href=\"https://suardjulien.com/3/\" target=\"_blank\">here</a>  <br><br>TECH: Pixi.js, WebGL <br><br> U: goodboy    P: disney",
             client: "Disney/Lucas",
             producer: "Goodboy Digital",
             date: "2016",
@@ -545,10 +548,10 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['Julien suard'],
+                art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "",
+            description: "\"Shoot'em up\" game developped for the release of the Starwars Awakens in the cinemas. Welcome to the resistance, and the May the force be with you. Read more about the art <a href=\"https://suardjulien.com/3/\" target=\"_blank\">here</a>  <br><br>TECH: Pixi.js, WebGL <br><br> U: goodboy    P: disney",
             client: "Disney/Lucas",
             producer: "Goodboy Digital",
             date: "2016",
@@ -563,10 +566,10 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['Julien suard'],
+                art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "",
+            description: "Silly fish generator for Cartoon Network.",
             client: "CN",
             producer: "Goodboy Digital",
             date: "2016",
@@ -585,7 +588,7 @@ export default
                 art: ['John Denton'],
                 dev: ['Mat Groves']
             },
-            description: "",
+            description: "As simple as Legos can be.",
             client: "LEGO",
             producer: "Goodboy Digital",
             date: "2017",
@@ -599,12 +602,12 @@ export default
             images: ['sherrifcali.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [20/255, 48/255, 82/255],
+            colorGradient: [197/255, 179/255, 80/255],
             team: {
                 art: ['Matt Allan'],
                 dev: ['TOM Slezakovski', 'Alvin Ourrad']
             },
-            description: "Sheriff Callie",
+            description: "Howdie'! <br><br>First game I had the chance to work on at Goodboy. This will always have a special taste <3",
             client: "Disney",
             producer: "Goodboy Digital",
             date: "2015",
@@ -622,7 +625,7 @@ export default
                 art: [],
                 dev: []
             },
-            description: "",
+            description: "Line experiment, using different motions to move them around.  <br><br>TECH: WebGL, 3D",
             client: "",
             producer: "Experiment",
             date: "2017",
@@ -640,7 +643,7 @@ export default
                 art: [],
                 dev: []
             },
-            description: "",
+            description: "Instancing implementation with Poly.js (WebGL tool). <br><br>TECH: Poly.js, WebGL",
             client: "",
             producer: "Experiment",
             date: "2017",
@@ -655,10 +658,10 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['Julien suard'],
+                art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "",
+            description: "Draw what you you feel like and make it appear in D.Trump official documents! A good opportunity to create a drawing tool using low level WebGL (lines) and homographic 2D quad (creates a 3D perspective feel from four 2D points). <br><br>TECH: Pixi.js, WebGL",
             client: "",
             producer: "Experiment",
             date: "2017",
@@ -671,12 +674,12 @@ export default
             images: ['starwars_rebels.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [20/255, 48/255, 82/255],
+            colorGradient: [205/255, 175/255, 57/255],
             team: {
-                art: ['Julien suard', 'John Denton'],
-                dev: ['Mat Groves', 'Li Wen']
+                art: ['John Denton', '<a href="suarjulien.com">Julien suard</a>'],
+                dev: ['Mat Groves (lead)']
             },
-            description: "",
+            description: "Read the complete case study <a href='https://www.goodboydigital.com/case-study/star-wars-arcade' target='_blank'> here (by Goodboy) </a> :)  <br><br>TECH: Pixi.js, WebGL",
             client: "DISNEY/LUCAS",
             producer: "Goodboy Digital",
             date: "2016",
@@ -707,7 +710,7 @@ export default
             id: 'icon_catch',
             icon: true,
             images_hidden: ['wrestler_revealed.jpg'],
-            title: 'EL MACHO',
+            title: 'FOOSBALL CHAMPION',
             images: ['icon_catch.jpg'],
             color: false,
             codeColor: [],
@@ -716,9 +719,9 @@ export default
                 art: [],
                 dev: []
             },
-            description: "",
+            description: "Goodboy player of the year (2017-18) <br> Tower of Soul finisher (2017) <br> Father of \"THE FISH\" technique. (2017-FOREVER)",
             client: "",
-            producer: "SUPER HERO / FOOSBALL CHAMPION",
+            producer: "EL MACHO",
             date: "",
             link: "",
             type: 'photo'
@@ -727,7 +730,7 @@ export default
             id: 'icon_deer',
             icon: true,
             images_hidden: ['king_of_elks_revealed.jpg'],
-            title: 'King of the elks',
+            title: 'King behind the wall',
             images: ['icon_deer.jpg'],
             color: false,
             codeColor: [],
@@ -746,8 +749,8 @@ export default
         icon_dog: {
             id: 'icon_dog',
             icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
-            title: 'MY DOG.',
+            images_hidden: ['giugiu.jpg'],
+            title: 'MY ONE TRUE LOVE',
             images: ['icon_dog.jpg'],
             color: false,
             codeColor: [],
@@ -758,7 +761,7 @@ export default
             },
             description: "",
             client: "",
-            producer: "",
+            producer: "our family dog",
             date: "",
             link: "",
             type: 'photo'
@@ -776,22 +779,22 @@ export default
                 art: ['JOHN DENTON'],
                 dev: ['MAT GROVES']
             },
-            description: "",
+            description: "\"Liberty Global Appathon\" multiplayer game that we had the chance to develop for the Metrological TV boxes. \"Hands down\" the funniest game we ever did at Goodboy! <br><br>TECH: Websocket, Raspberry PI, Node.js, Pixi.js, WebGL.",
             client: "",
             producer: "APPATHON LIBERTY GLOBAL",
             date: "",
-            link: "",
+            link: "### add link to the game here",
             type: 'photo'
         },
         icon_mom: {
             id: 'icon_mom',
             icon: true,
-            images_hidden: ['starwars_rebels.jpg'],
+            images_hidden: ['maman.jpg'],
             title: 'MY FAVOURITE MOM',
             images: ['icon_mom.jpg'],
             color: false,
             codeColor: [],
-            colorGradient: [20/255, 48/255, 82/255],
+            colorGradient: [207/255, 175/255, 63/255],
             team: {
                 art: [],
                 dev: []
@@ -827,7 +830,7 @@ export default
             id: 'icon_pen',
             icon: 'true',
             images_hidden: ['email_revealed.jpg'],
-            title: 'TAKE A TICKET',
+            title: 'clem.chenebault@gmail.com',
             images: ['icon_pen.jpg'],
             color: false,
             codeColor: [],
@@ -836,9 +839,9 @@ export default
                 art: [],
                 dev: []
             },
-            description: "",
+            description: "All these emails while I was only truly waiting for yours.",
             client: "",
-            producer: "clem.chenebault@gmail.com",
+            producer: "organisation freak",
             date: "",
             link: "",
             email: "clem.chenebault@gmail.com",
@@ -924,8 +927,8 @@ export default
             link: "https://twitter.com/mad_clem",
             type: 'photo'
         },
-        icon_boss2: {
-            id: 'icon_boss2',
+        icon_julien: {
+            id: 'icon_julien',
             icon: true,
             images_hidden: ['starwars_rebels.jpg'],
             title: 'BOSS 2',
@@ -961,7 +964,7 @@ export default
             client: "",
             producer: "",
             date: "",
-            link: "",
+            link: "https://github.com/madclem",
             type: 'photo'
         }
     }
