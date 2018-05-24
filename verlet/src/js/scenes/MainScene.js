@@ -73,6 +73,7 @@ export default class MainScene
 		this.restingDistancesVerlet = 1;
 		this.restingDistances = 1;
 		this.stiffnesses = .01;
+        this.menuQuads = []; // to store the 4 quad we have for the menu
 
         this.intersection = {
             x: -10000,
@@ -106,7 +107,7 @@ export default class MainScene
         this.dataManager = new DataManager();
         this.dataManager.fillGrid(dataProjects.layout.main)
         this.uiManager = new UIManager();
-        this.uiManager.onMenu.add(this.showMenu, this);
+        this.uiManager.onMenu.add(this.toggleMenu, this);
 		this.program = new POLY.Program();
 		this.sphereIntersection = new POLY.geometry.Sphere(this.program);
 		this.sphereIntersection.scale.set(.05);
@@ -157,6 +158,8 @@ export default class MainScene
     {
         if(!this.menuActive) return;
 
+        this.menuQuads.length = 0;
+
         Easings.to(this.orbitalControl, 1.2, {
             _targetRadius: 3,
             ease: Easings.easeInOutCirc,
@@ -185,7 +188,7 @@ export default class MainScene
         }
     }
 
-    showMenu()
+    toggleMenu()
     {
         if(this.waitingForMenu) return;
 
@@ -194,13 +197,17 @@ export default class MainScene
             this.waitingForMenu = true;
             this.removeActiveQuad(()=>{
                 this.waitingForMenu = false;
-                this.showMenu();
+                this.toggMenu();
             });
 
             return;
         }
 
-        if(this.menuActive) return;
+        if(this.menuActive) {
+            this.hideMenu();
+
+            return;
+        }
 
         this.menuActive = true;
         // Im sure there is a smart way to do this, but it's late :/
@@ -251,22 +258,30 @@ export default class MainScene
         }
 
         let speed = .8;
-        topLeftQuad.showMenuIcon(1,0,false, .2 * speed, { colorMenu: [1, 0, 0], icon: 'test-icon.png'}, ()=>{
+
+
+        let ext = Device.desktop ? '' : '_mobile';
+        topLeftQuad.showMenuIcon(1,0,false, .2 * speed, { colorMenuTop: [8/255, 151/255, 160/255], colorMenuBottom: [22/255, 191/255, 149/255], icon: 'icon_viewall'+ ext +'.png', icon_hover: 'icon_viewall_text.png'}, ()=>{
             this.dataManager.fillGrid(dataProjects.layout.main);
             this.hideMenu();
         });
-        topRightQuad.showMenuIcon(0,1,false, .95 * speed, { colorMenu: [0, 0, 1], icon: 'test-icon.png'}, ()=>{
+        topRightQuad.showMenuIcon(0,1,false, .95 * speed, { colorMenuTop: [255/255, 63/255, 63/255], colorMenuBottom: [208/255, 79/255, 103/255], icon: 'icon_experiment'+ ext +'.png', icon_hover: 'icon_experiment_text.png'}, ()=>{
             this.dataManager.fillGrid(dataProjects.layout.lab); // lab
             this.hideMenu();
         });
-        bottomLeftQuad.showMenuIcon(0,1,true, .45 * speed, { colorMenu: [0, 1, 0], icon: 'test-icon.png'}, ()=>{
+        bottomLeftQuad.showMenuIcon(0,1,true, .45 * speed, { colorMenuTop: [55/255, 148/255, 254/255], colorMenuBottom: [124/255, 76/255, 201/255], icon: 'icon_work'+ ext +'.png', icon_hover: 'icon_work_text.png'}, ()=>{
             this.dataManager.fillGrid(dataProjects.layout.pro); // pro
             this.hideMenu();
         });
-        bottomRightQuad.showMenuIcon(1,0,false, .7 * speed, { colorMenu: [1, 1, 0], icon: 'test-icon.png'}, ()=>{
+        bottomRightQuad.showMenuIcon(1,0,false, .7 * speed, { colorMenuTop: [212/255, 131/255, 15/255], colorMenuBottom: [228/255, 201/255, 26/255], icon: 'icon_aboutme'+ ext +'.png', icon_hover: 'icon_aboutme_text.png'}, ()=>{
             this.dataManager.fillGrid(dataProjects.layout.about); // about
             this.hideMenu();
         });
+
+        topLeftQuad.onOut();
+        topRightQuad.onOut();
+        bottomLeftQuad.onOut();
+        bottomRightQuad.onOut();
 
         for (var i = 0; i < this.views.length; i++) {
             let q = this.views[i];
@@ -656,9 +671,12 @@ export default class MainScene
             }
         }
 
-		this.onTraceRay();
-
-        if(this.activeQuad)
+		let ptIntersection = this.onTraceRay();
+        if(this.menuActive)
+        {
+            this.onMenuQuad(ptIntersection.x, ptIntersection.y);
+        }
+        else if(this.activeQuad)
         {
             this.onActiveQuad();
         }
@@ -666,6 +684,46 @@ export default class MainScene
 
         // e.preventDefault()
 	}
+
+    onMenuQuad(x, y)
+    {
+        let quad = this.getQuadAtPos(x, y);
+
+
+        if(quad && quad.quad !== this.lastQuadMenuOn)
+        {
+            if(this.lastQuadMenuOn) this.lastQuadMenuOn.onOut();
+            // for (var i = 0; i < this.menuQuads.length; i++) {
+            //     if(this.menuQuads[i] === quad.quad)
+            //     {
+            //     }
+            //     else
+            //     {
+            //         quad.quad.onOut();
+            //     }
+            // }
+            quad.quad.onHover();
+            this.lastQuadMenuOn =  quad.quad;
+        }
+        // if( Math.abs(intersection.x - this.activeQuad.x) <= this.restingDistances/2  && Math.abs(intersection.y - this.activeQuad.y) <= (this.restingDistances/2 + .1) )
+        // {
+        //     if(!this.isOnActiveQuad)
+        //     {
+        //         this.uiManager.onHover();
+        //         this.activeQuad.onHover()
+        //         this.isOnActiveQuad = true;
+        //     }
+        // }
+        // else
+        // {
+        //     if(this.isOnActiveQuad)
+        //     {
+        //         this.activeQuad.onOut()
+        //         this.uiManager.onOut();
+        //         this.isOnActiveQuad = false;
+        //     }
+        // }
+    }
 
     onActiveQuad()
     {

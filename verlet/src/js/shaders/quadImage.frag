@@ -1,7 +1,8 @@
 precision highp float;
 
 uniform vec3 color;
-uniform vec3 colorMenu;
+uniform vec3 colorMenuTop;
+uniform vec3 colorMenuBottom;
 uniform sampler2D uDefaultImage;
 uniform sampler2D uRevealImage;
 uniform sampler2D uTransitionImage;
@@ -11,6 +12,7 @@ uniform float percentageBlack;
 uniform float percentageTransition;
 uniform float TtoBorRtoL;
 uniform float percentageLogoMenu;
+uniform float percentageLogoMenuHover;
 
 // for transition (MENU)
 // isIcon = in order to not have weird black border, we need to add + .002 or -.002 depending if we're showing the menu or not...
@@ -32,8 +34,8 @@ void main(void) {
 
     // IF TRANSITION (ICON -> IMAGE), then blend the colors
     vec4 texelTransition = texture2D(uTransitionImage, vUv.xy);
-    vec3 texelRevealImage = texture2D(uRevealImage, vUv.xy).rgb;
-    outColor = mix(outColor, texelRevealImage, texelTransition.r);
+    vec4 texelRevealImage = texture2D(uRevealImage, vUv.xy);
+    outColor = mix(outColor, texelRevealImage.rgb, texelTransition.r);
 
     // COLOR GRADIENT, WHEN QUAD IS ACTIVE!
     float x = pow(vUv.y, 2.);
@@ -56,11 +58,18 @@ void main(void) {
     vec2 v2 = vec2(topToBottom0or1 - (vUv.x) * topToBottom + isIcon * .004, topToBottom0or1 - vUv.y * topToBottom + isIcon * .004);
 
     vec2 mask = vec2(greaterThan(v1, v2));
+
+    vec3 colorMenu = mix(colorMenuTop, colorMenuBottom, x);
     vec3 colorAfterTransitionMenu = mix(colorAfterBlackPercentage, colorMenu, mask.x + mask.y);
 
-    // LAST STEP: show the main logo (at the point it's up to the dev to have swap the texture
+    // THEN: show the main logo (at the point it's up to the dev to have swap the texture
     // (after PercentageX or percentageY = 1.0) so the image is hidden
-    vec3 lastColor = mix(colorAfterTransitionMenu, texel.rgb, percentageLogoMenu * texel.a);
+    vec4 whichLogo = mix(texel, texelRevealImage, percentageLogoMenuHover);
+
+    vec3 lastColor = mix(colorAfterTransitionMenu, whichLogo.rgb, percentageLogoMenu * whichLogo.a);
+
+
+    // lastColor = vec3(vec3(1.), vec3(0.), perce)
 
     // lastColor = color;
     // gl_FragColor = vec4(vec3(mask.x), 1.0);

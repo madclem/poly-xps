@@ -6,9 +6,9 @@ export default
             grid: [
                 "dreamy2",   "icon_boss",   "night_eyes",  "icon_catch", "cooking", "icon_deer", "dennis_and_gnasher",
                 "icon_dog",  "starwars_fighter2",    "icon_glasses", "lego", "icon_mom",   "icosphere",   "handsup",
-                "particles_stream",    "icon_pen",        "icosphere", "handsup", "ddd", "icon_twitter", "dreamy",
-                "icon_pen",   "gumble",  "icon_twitter",   "sheriff_callie",    "icon_pen",   "trunk_santa",   "icon_github",
-                "handsup",   "icon_julien",   "plane_to_sphere",   "icon_address", "sleigher3000", "night_eyes","starwars_fighter1",
+                "particles_stream",    "icon_julien",        "icosphere", "handsup", "ddd", "icon_twitter", "dreamy",
+                "icon_contact",   "gumble",  "icon_twitter",   "sheriff_callie",    "icon_contact",   "trunk_santa",   "icon_github",
+                "handsup",   "icosphere",   "plane_to_sphere",   "icon_address", "sleigher3000", "night_eyes","starwars_fighter1",
                 "icon_boss", "starwars_fighter3",   "icon_catch",   "starwars_rebels",   "icon_deer",    "dennis_and_gnasher",   "icon_dog",
                 "technosquid",   "icon_mom",    "starwars_arcade",   "icon_movie",   "danger_mouse",    "icon_rugby",    "dreamy2",
             ]
@@ -40,7 +40,7 @@ export default
                 "icon_boss", "icon_catch", "icon_deer",
                 "icon_dog", "icon_glasses", "icon_mom",
                 "icon_movie", "icon_twitter", "icon_julien",
-                "icon_address", "icon_pen", "icon_github"
+                "icon_address", "icon_contact", "icon_github"
             ]
         }
     },
@@ -331,7 +331,7 @@ export default
         },
         starwars_arcade: {
             id: 'starwars_arcade',
-            title: 'ARCADE',
+            title: 'STARWARS ARCADE',
             images: ['arcade.jpg'],
             color: false,
             codeColor: [],
@@ -506,7 +506,7 @@ export default
         },
         starwars_fighter1: {
             id: 'starwars_fighter1',
-            title: 'STARWAS FIGHTER',
+            title: 'STARWARS FIGHTER',
             images: ['fighter1.jpg'],
             color: false,
             codeColor: [],
@@ -524,7 +524,7 @@ export default
         },
         starwars_fighter2: {
             id: 'starwars_fighter2',
-            title: 'STARWAS FIGHTER',
+            title: 'STARWARS FIGHTER',
             images: ['fighter2.jpg'],
             color: false,
             codeColor: [],
@@ -542,7 +542,7 @@ export default
         },
         starwars_fighter3: {
             id: 'starwars_fighter3',
-            title: 'STARWAS FIGHTER',
+            title: 'STARWARS FIGHTER',
             images: ['fighter3.jpg'],
             color: false,
             codeColor: [],
@@ -826,12 +826,12 @@ export default
             link: "",
             type: 'photo'
         },
-        icon_pen: {
-            id: 'icon_pen',
+        icon_contact: {
+            id: 'icon_contact',
             icon: 'true',
             images_hidden: ['email_revealed.jpg'],
             title: 'Pop me an email',
-            images: ['icon_pen.jpg'],
+            images: ['icon_contact.jpg'],
             color: false,
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
@@ -845,6 +845,26 @@ export default
             date: "",
             link: "",
             email: "clem.chenebault@gmail.com",
+            type: 'photo'
+        },
+        icon_julien: {
+            id: 'icon_julien',
+            icon: 'true',
+            images_hidden: ['email_revealed.jpg'],
+            title: 'My first [designer] crush',
+            images: ['icon_pen.jpg'],
+            color: false,
+            codeColor: [],
+            colorGradient: [20/255, 48/255, 82/255],
+            team: {
+                art: [],
+                dev: []
+            },
+            description: "",
+            client: "",
+            producer: "",
+            date: "",
+            link: "http://suardjulien.com/",
             type: 'photo'
         },
         icon_rugby: {
@@ -927,8 +947,8 @@ export default
             link: "https://twitter.com/mad_clem",
             type: 'photo'
         },
-        icon_julien: {
-            id: 'icon_julien',
+        icon_boss2: {
+            id: 'icon_boss2',
             icon: true,
             images_hidden: ['starwars_rebels.jpg'],
             title: 'BOSS 2',

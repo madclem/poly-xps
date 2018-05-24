@@ -1,4 +1,5 @@
 import * as POLY from 'poly/Poly';
+import Device from './utils/Device';
 import TextureManager from './TextureManager';
 import MainScene from './scenes/MainScene';
 import Easings from './utils/Easings';
@@ -113,6 +114,7 @@ window.ASSET_URL + 'image/icon_dog.jpg',
 window.ASSET_URL + 'image/icon_glasses.jpg',
 window.ASSET_URL + 'image/icon_mom.jpg',
 window.ASSET_URL + 'image/icon_movie.jpg',
+window.ASSET_URL + 'image/icon_contact.jpg',
 window.ASSET_URL + 'image/icon_pen.jpg',
 window.ASSET_URL + 'image/icon_rugby.jpg',
 window.ASSET_URL + 'image/icon_saxo.jpg',
@@ -210,6 +212,27 @@ window.ASSET_URL + 'image/shades_revealed.jpg',
 window.ASSET_URL + 'image/maman.jpg',
 
 		]
+
+		if(!Device.desktop)
+		{
+			this._textures.push(
+				window.ASSET_URL + 'image/icon_aboutme_mobile.png',
+				window.ASSET_URL + 'image/icon_experiment_mobile.png',
+				window.ASSET_URL + 'image/icon_viewall_mobile.png',
+				window.ASSET_URL + 'image/icon_work_mobile.png');
+		}
+		else
+		{
+			this._textures.push(
+				window.ASSET_URL + 'image/icon_aboutme_text.png',
+				window.ASSET_URL + 'image/icon_experiment_text.png',
+				window.ASSET_URL + 'image/icon_viewall_text.png',
+				window.ASSET_URL + 'image/icon_work_text.png',
+				window.ASSET_URL + 'image/icon_aboutme.png',
+				window.ASSET_URL + 'image/icon_experiment.png',
+				window.ASSET_URL + 'image/icon_viewall.png',
+				window.ASSET_URL + 'image/icon_work.png');
+		}
 	    this.loader.addAssets(this._textures);
 	    this.loader.onComplete.add(this._loadComplete, this);
 	    this.loader.load();

@@ -55,6 +55,7 @@ export default new class TextureManager
                 this.currentTextureToLoad.bind();
                 this.indexImageLoaded++;
                 this.loadNext();
+                console.log('here');
                 // this.currentTextureToLoad = null;
             }
         }

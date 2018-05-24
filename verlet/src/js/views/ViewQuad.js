@@ -21,15 +21,18 @@ export default class ViewQuad
         this.percentageX = 0;
         this.percentageY = 0;
         this.percentageLogoMenu = 0;
+        this.percentageLogoMenuHover = 0;
         this.TtoBorRtoL = 0; // TopToBottomOrRightToLeft
         this.speed = .2;
         this.count = .3;
 
+        this.isHover = false;
         this.cbMenu = null;
         this.beenHere = 0;
         this.dataId = null;
 
-        this.colorMenu = [1,0,0];
+        this.colorMenuTop = [1,0,0];
+        this.colorMenuBottom = [1,0,0];
         this.isIcon = 1;
         this.points = [];
         this.positions = [];
@@ -43,7 +46,11 @@ export default class ViewQuad
                 type: 'vec3',
                 value: [Math.random(),Math.random(), Math.random()]
             },
-            colorMenu: {
+            colorMenuTop: {
+                type: 'vec3',
+                value: [1, 0, 0]
+            },
+            colorMenuBottom: {
                 type: 'vec3',
                 value: [1, 0, 0]
             },
@@ -91,6 +98,10 @@ export default class ViewQuad
                 type: 'float',
                 value: 0.0
             },
+            percentageLogoMenuHover: {
+                type: 'float',
+                value: 0.0
+            },
             active: {
                 type: 'float',
                 value: 0.0
@@ -118,6 +129,7 @@ export default class ViewQuad
         this.defaultRevealTexture = new POLY.Texture(window.ASSET_URL + 'image/transition/dechire_00000.jpg');
 
         this.iconTexture = null;
+        this.iconTextureRevealed = null;
     }
 
 
@@ -127,7 +139,8 @@ export default class ViewQuad
 
         this.cbMenu = cb;
 
-        this.colorMenu = data.colorMenu;
+        this.colorMenuTop = data.colorMenuTop;
+        this.colorMenuBottom = data.colorMenuBottom;
         this.isMenuIcon = true;
         this.needsUpdate = true;
         // this.isIcon = ;
@@ -142,6 +155,7 @@ export default class ViewQuad
             },
             onComplete:()=>{
                 this.iconTexture = TextureManager.getTexture(window.ASSET_URL + 'image/' + data.icon);
+                this.iconTextureRevealed = TextureManager.getTexture(window.ASSET_URL + 'image/' + data.icon_hover);
 
                 Easings.to(this, .3, {
                     percentageLogoMenu: 1,
@@ -168,6 +182,7 @@ export default class ViewQuad
             onComplete: ()=>{
                 this.isMenuIcon = false;
                 this.iconTexture = null;
+                this.iconTextureRevealed = null;
                 // this.isIcon = .99;
 
                 this.needsUpdate = true;
@@ -235,40 +250,78 @@ export default class ViewQuad
 
     onHover()
     {
+        if(this.isHover) return;
+
+        this.isHover = true;
         if(this.idTween !== null)
         {
             Easings.killTweensWithId(this.idTween);
             this.idTween = null;
         }
 
-        this.idTween = Easings.to(this, 2, {
-            zoom: .8,
-            ease: Easings.easeOutSine,
-            onUpdate: ()=>{
-                this.program.bind();
-                this.program.uniforms.zoom = this.zoom;
-            }
-        });
+        if(this.isMenuIcon)
+        {
+            this.needsUpdate = true;
+            // this.isIcon = ;
+
+            Easings.to(this, .2, {
+                percentageLogoMenuHover: 1,
+                ease: Easings.easeOutCirc,
+                onUpdate: ()=>{
+                    this.needsUpdate = true;
+                }
+            })
+        }
+        else
+        {
+            this.idTween = Easings.to(this, 2, {
+                zoom: .8,
+                ease: Easings.easeOutSine,
+                onUpdate: ()=>{
+                    this.program.bind();
+                    this.program.uniforms.zoom = this.zoom;
+                }
+            });
+        }
 
 
     }
 
     onOut()
     {
+        if(!this.isHover) return;
+
+        this.isHover = false;
         if(this.idTween !== null)
         {
             Easings.killTweensWithId(this.idTween);
             this.idTween = null;
         }
 
-        this.idTween = Easings.to(this, 2, {
-            zoom: 1,
-            ease: Easings.easeOutSine,
-            onUpdate: ()=>{
-                this.program.bind();
-                this.program.uniforms.zoom = this.zoom;
-            }
-        });
+        if(this.isMenuIcon)
+        {
+            this.needsUpdate = true;
+            // this.isIcon = ;
+
+            Easings.to(this, .2, {
+                percentageLogoMenuHover: 0,
+                ease: Easings.easeOutCirc,
+                onUpdate: ()=>{
+                    this.needsUpdate = true;
+                }
+            })
+        }
+        else
+        {
+            this.idTween = Easings.to(this, 2, {
+                zoom: 1,
+                ease: Easings.easeOutSine,
+                onUpdate: ()=>{
+                    this.program.bind();
+                    this.program.uniforms.zoom = this.zoom;
+                }
+            });
+        }
     }
 
     attachPointRef(pts)
@@ -342,12 +395,20 @@ export default class ViewQuad
                 texture = this.iconTexture;
             }
 
+
             texture.bind(0);
 
             // if(this.isIcon)
             // {
+            if(this.iconTextureRevealed !== null)
+            {
+                this.iconTextureRevealed.bind(1);
+            }
+            else {
+
+                this.revealTexture.bind(1);
+            }
             // }
-            this.revealTexture.bind(1);
             this.transitionImage.bind(2);
 
             this.program.bind();
@@ -392,17 +453,23 @@ export default class ViewQuad
             this.x = minX + (maxX - minX)/2;
             this.y = minY + (maxY - minY)/2;
 
+            if(this.isHover)
+            {
+                console.log('here');
+            }
             if(this.needsUpdate)
             {
                 this.program.uniforms.percentage = this.percentage;
                 this.program.uniforms.percentageBlack = this.percentageBlack;
 
-                this.program.uniforms.colorMenu = this.colorMenu;
+                this.program.uniforms.colorMenuTop = this.colorMenuTop;
+                this.program.uniforms.colorMenuBottom = this.colorMenuBottom;
                 this.program.uniforms.percentageX = this.percentageX;
                 this.program.uniforms.percentageY = this.percentageY;
                 this.program.uniforms.TtoBorRtoL = this.TtoBorRtoL;
                 this.program.uniforms.isIcon = this.isIcon;
                 this.program.uniforms.percentageLogoMenu = this.percentageLogoMenu;
+                this.program.uniforms.percentageLogoMenuHover = this.percentageLogoMenuHover;
 
                 if(this.isIcon)
                 {
