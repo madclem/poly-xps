@@ -48,7 +48,7 @@ export default
     data: {
         music_maker: {
             id: 'music_maker',
-            title: 'Music Maker',
+            title: 'Music Maker 🎶',
             images: ['paw_patrol_music_maker.jpg'],
             color: false,
             codeColor: [],
@@ -349,7 +349,7 @@ export default
         },
         cooking: {
             id: 'cooking',
-            title: 'MY DISNEY STAR CAFE',
+            title: 'DISNEY CAFE 🍴',
             images: ['cooking.jpg'],
             color: false,
             codeColor: [],
@@ -360,7 +360,7 @@ export default
             },
 
 
-            description: "Vanilla Panna Cotta, Flatbread with Hummus and Figs, Diva's Calzone... You name it you got it! (do not try this at home) <br><br>TECH: Pixi.js, WebGL, p2.js, serious cooking skills",
+            description: "Vanilla Panna Cotta, Flatbread with Hummus and Figs, Diva's Calzone... You name it you got it! (do not try this at home 🔪) <br><br>TECH: Pixi.js, WebGL, p2.js, serious cooking skills",
             client: "Disney",
             producer: "Goodboy Digital",
             date: "2016",
@@ -402,7 +402,7 @@ export default
                 art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "Christmas experiment, 2015 edition! Tight collaboration with my friend Julien Suard! Chop some wood and get that fire going! ###emoticonetinder <br><br>TECH: 2D slicing, Pixi.js, WebGL, p2.js",
+            description: "Christmas experiment, 2015 edition! Tight collaboration with my friend Julien Suard! Chop some wood and get that fire going! 🔥 <br><br>TECH: 2D slicing, Pixi.js, WebGL, p2.js",
             client: "",
             producer: "CHRISTMAS EXPERIMENT",
             date: "2015",
@@ -422,7 +422,7 @@ export default
                 art: ['John Denton'],
                 dev: ['Mat Groves']
             },
-            description: "Christmas Experiment, 2017 edition! Starfox meets Mario Kart! TECH: Pixi.js, 3D, WebGL",
+            description: "Christmas Experiment, 2017 edition! Starfox meets Mario Kart! 🌟 TECH: Pixi.js, 3D, WebGL",
             client: "",
             producer: "CHRISTMAS EXPERIMENT",
             date: "2017",
@@ -479,7 +479,7 @@ export default
                 art: ['JULIEN SUAVE', 'THOMAS 2 CHICOS'],
                 dev: ['GRALEX', 'CHENEBOLOSS']
             },
-            description: "Dreamy is a game on tablet aiming to enchant the kid's routine at the hospital. Immersed into a super hero universe, the player can choose and play with his super power to fight the battle against the \"Dark Force\". Dreamy offers an exploration in augmented reality in the hospital for the kid to leave his room for a moment and meet other childrens. See full description <a href=\"\" target=\"_blank\">here</a>. EYA 2014 winner, Wouap Doo App student project recognition. <br><br>TECH: Objective-C, iBeacon, Connected Objects",
+            description: "Dreamy is a game on tablet aiming to enchant the kid's routine at the hospital. Immersed into a super hero universe, the player can choose and play with his super power to fight the battle against the \"Dark Force\". See full description <a href=\"https://suardjulien.com/9/\" target=\"_blank\">here</a>. <br><br>TECH: Objective-C, iBeacon, Connected Objects",
             client: "",
             producer: "GOBELINS",
             date: "2014",
@@ -497,7 +497,7 @@ export default
                 art: ['JULIEN SUAVE', 'THOMAS 2 CHICOS'],
                 dev: ['GRALEX', 'CHENEBOLOSS']
             },
-            description: "Dreamy is a game on tablet aiming to enchant the kid's routine at the hospital. Immersed into a super hero universe, the player can choose and play with his super power to fight the battle against the \"Dark Force\". Dreamy offers an exploration in augmented reality in the hospital for the kid to leave his room for a moment and meet other childrens. See full description <a href=\"https://suardjulien.com/9/\" target=\"_blank\">here</a>. EYA 2014 winner, Wouap Doo App student project recognition. <br><br>TECH: Objective-C, iBeacon, Connected Objects",
+            description: "Dreamy is a game on tablet aiming to enchant the kid's routine at the hospital. Immersed into a super hero universe, the player can choose and play with his super power to fight the battle against the \"Dark Force\". See full description <a href=\"https://suardjulien.com/9/\" target=\"_blank\">here</a>. <br><br>TECH: Objective-C, iBeacon, Connected Objects",
             client: "",
             producer: "Gobelins",
             date: "2014",
@@ -661,7 +661,7 @@ export default
                 art: ['<a href="suarjulien.com">Julien suard</a>'],
                 dev: []
             },
-            description: "Draw what you you feel like and make it appear in D.Trump official documents! A good opportunity to create a drawing tool using low level WebGL (lines) and homographic 2D quad (creates a 3D perspective feel from four 2D points). <br><br>TECH: Pixi.js, WebGL",
+            description: "Draw what you you feel like and make it appear in a D.Trump gif! A good opportunity to create a drawing tool using low level WebGL (lines) and homographic 2D quad (creates a 3D perspective feel from four 2D points). <br><br>TECH: Pixi.js, WebGL",
             client: "",
             producer: "Experiment",
             date: "2017",
@@ -719,7 +719,7 @@ export default
                 art: [],
                 dev: []
             },
-            description: "Goodboy player of the year (2017-18) <br> Tower of Soul finisher (2017) <br> Father of \"THE FISH\" technique. (2017-FOREVER)",
+            description: "Goodboy player of the year (2017-18) 🏆 <br> Tower of Soul finisher (2017) <br> Father of \"THE FISH\" technique. (2017-FOREVER)",
             client: "",
             producer: "EL MACHO",
             date: "",
@@ -779,7 +779,7 @@ export default
                 art: ['JOHN DENTON'],
                 dev: ['MAT GROVES']
             },
-            description: "\"Liberty Global Appathon\" multiplayer game that we had the chance to develop for the Metrological TV boxes. \"Hands down\" the funniest game we ever did at Goodboy! <br><br>TECH: Websocket, Raspberry PI, Node.js, Pixi.js, WebGL.",
+            description: "\"Liberty Global Appathon\" multiplayer game that we had the chance to develop for the Metrological TV boxes. \"Hands down\" the funniest game we ever did at Goodboy! 🎉 <br><br>TECH: Websocket, Raspberry PI, Node.js, Pixi.js, WebGL.",
             client: "",
             producer: "APPATHON LIBERTY GLOBAL",
             date: "",
@@ -830,7 +830,7 @@ export default
             id: 'icon_pen',
             icon: 'true',
             images_hidden: ['email_revealed.jpg'],
-            title: 'clem.chenebault@gmail.com',
+            title: 'Pop me an email',
             images: ['icon_pen.jpg'],
             color: false,
             codeColor: [],

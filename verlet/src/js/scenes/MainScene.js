@@ -51,6 +51,7 @@ export default class MainScene
 		this.camera = new POLY.cameras.PerspectiveCamera();
 		this.camera.perspective(45, POLY.GL.aspectRatio, 0.1, 100.0)
 
+        this.overlay = document.getElementById("overlay");
         this.easingValueX = 0;
         this.easingValueY = 0;
 
@@ -357,7 +358,7 @@ export default class MainScene
 
 	addEvents()
 	{
-        let mainContainer = document.getElementById("mainContainer");
+        let mainContainer = document.getElementById("canvas");
 		mainContainer.addEventListener('mousedown', (e) => this._onDown(e));
         mainContainer.addEventListener('mouseup', (e) => this._onUp(e));
         mainContainer.addEventListener('mousemove', (e) => this._onMove(e));
@@ -370,13 +371,14 @@ export default class MainScene
             this._onKeyDown(event.keyCode);
         });
 
-        window.addEventListener('mousewheel', this._onMouseWheel.bind(this));
+        mainContainer.addEventListener('mousewheel', this._onMouseWheel.bind(this));
+
+        // if(this.activeQuad) this.removeActiveQuad();
+
 	}
 
     _onKeyDown(key)
     {
-        console.log('key', key);
-
         // left 37
         // top 38
         // right 39
@@ -423,6 +425,9 @@ export default class MainScene
     }
 
     _onMouseWheel(e) {
+
+        if(this.activeQuad) this.removeActiveQuad();
+
         this.easeSpeedWheel.x = e.wheelDeltaX * .0001;
         this.easeSpeedWheel.y = e.wheelDeltaY * .0001;
 
@@ -594,9 +599,9 @@ export default class MainScene
             cameraX: this.cameraX - quad.x,
             ease: Easings.easeOutSine,
             onUpdate:()=>{
-                let div = document.getElementById("overlay");
-                div.style.width = POLY.gl.viewportHeight * .601 + 'px';
-                div.style.height = POLY.gl.viewportHeight * .602 + 'px';
+
+                this.overlay.style.width = POLY.gl.viewportHeight * .601 + 'px';
+                this.overlay.style.height = POLY.gl.viewportHeight * .602 + 'px';
 
                 let top = -(POLY.gl.viewportHeight * .602/2);
                 let left = -(POLY.gl.viewportHeight * .601/2);
@@ -606,8 +611,8 @@ export default class MainScene
                     left += this.activeQuad.x * POLY.gl.viewportHeight * .601;
                     top -= this.activeQuad.y * POLY.gl.viewportHeight * .602;
                 }
-                div.style.marginLeft = left + 'px';
-                div.style.marginTop = top + 'px';
+                this.overlay.style.marginLeft = left + 'px';
+                this.overlay.style.marginTop = top + 'px';
             },
             onComplete: ()=>{
 

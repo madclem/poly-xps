@@ -23,22 +23,22 @@
     }
 
     div#overlay #about {
-        display:none;
+        /* display:none; */
     }
 
     div#overlay #buttonProject #insideButtonProject
     {
         width: 60px!important;
         height: 60px!important;
-        margin-top: 0px!important;
-        top: 20px!important;
+        /* margin-top: 0px!important;
+        top: 20px!important; */
     }
 
     div#overlay #buttonProject #insideButtonProject:hover
     {
         width: 70px!important;
         height: 70px!important;
-        margin-top: -5px!important;
+        /* margin-top: -5px!important; */
         /* left: -5px; */
     }
 
@@ -87,6 +87,16 @@ body, html
     left:0;
     background-color: #000000;
     z-index: 12;
+    text-transform: uppercase;
+    color: #fff;
+    font-family: "din_condensed";
+}
+
+#loader p
+{
+    text-align:center;
+    position:relative;
+    top: 40%;
 }
 
 canvas
@@ -167,7 +177,7 @@ div#overlay #buttonProject
     text-align:center;
     width: 100%;
     position: absolute;
-    top: 60%
+    top: 50%
 }
 
 
@@ -243,7 +253,7 @@ div#overlay .top #client
 
 div#overlay #aboutScreen
 {
-    width: 100%;
+    width: 100.2%;
     height: 100%;
     position: absolute;
     top: 0;
@@ -263,22 +273,46 @@ div#overlay #aboutScreen #aboutSlideIn #aboutBack
 
 div#overlay #aboutScreen #aboutSlideIn
 {
-    width: 100%;
+    width: 101%;
     height: 100%;
     position: absolute;
     top: 100%;
     left: 0;
     background-color: #000;
+
+
+}
+
+
+div#overlay #aboutScreen #aboutSlideIn .inner
+{
+    position: absolute;
+    width: 100%;
+    max-height: 92%;
+    top: 50%;
+    transform: translateY(-50%); /* or try 50% */
+    overflow: scroll;
+}
+
+div#overlay #aboutScreen #aboutSlideIn .inner .scrollable
+{
+    padding: 5% 0;
 }
 
 div#overlay #aboutScreen h2
 {
     font-family: "din_condensed";
     font-size: 40px;
-    margin: 50px auto 0 auto;
+    margin: 5px auto 0 auto;
     width: 100%;
     text-align: center;
     position:relative;
+}
+
+
+div#overlay #aboutScreen .inner #teamSection
+{
+    padding-bottom: 5%;
 }
 
 div#overlay #aboutScreen .sub
@@ -315,6 +349,8 @@ div#overlay #aboutScreen #dev
     margin-right: 5%;
 }
 
+
+
 div#overlay #aboutScreen h2.team
 {
     margin-top: 10px;
@@ -325,11 +361,19 @@ div#overlay #aboutScreen p#description a
     color: #fff;
 }
 
+div#overlay #aboutScreen p#description span
+{
+    width: 25px;
+    height: 25px;
+    background-color: #ff0000;
+    display: inline-block;
+}
+
 div#overlay #aboutScreen p#description
 {
     text-align: justify;
     text-justify: inter-word;
-    padding: 5% 10%;
+    padding: 0% 10% 5% 10%;
 }
 
 div#overlay #about #link
@@ -358,7 +402,7 @@ div#overlay #about
     padding: 0;
     margin: 0;
     position:absolute;
-    top: 99%;
+    top: 99.4%;
     overflow: hidden;
 }
 
