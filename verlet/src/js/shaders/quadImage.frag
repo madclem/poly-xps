@@ -64,7 +64,13 @@ void main(void) {
 
     // THEN: show the main logo (at the point it's up to the dev to have swap the texture
     // (after PercentageX or percentageY = 1.0) so the image is hidden
-    vec4 whichLogo = mix(texel, texelRevealImage, percentageLogoMenuHover);
+    // vec4 logo1 = mix(texel, texelRevealImage, percentageLogoMenuHover);
+
+    vec4 whichLogo = texelRevealImage;
+    if(vUv.x > percentageLogoMenuHover)
+    {
+        whichLogo = texel;
+    }
 
     vec3 lastColor = mix(colorAfterTransitionMenu, whichLogo.rgb, percentageLogoMenu * whichLogo.a);
 

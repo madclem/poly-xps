@@ -1,4 +1,5 @@
 import Signal from 'signals';
+import Device from './utils/Device';
 
 export default class UIManager
 {
@@ -74,11 +75,15 @@ export default class UIManager
             this.hideAbout();
         });
 
-        this.menu.addEventListener("click", ()=>{
-            this.onMenu.dispatch();
-        });
+        if(Device.desktop)
+        {
+            this.menu.addEventListener("click", ()=>{
+                this.onClickMenu();
+            });
+
+        }
         this.menu.addEventListener("touchend", ()=>{
-            this.onMenu.dispatch();
+            this.onClickMenu();
         });
 
         this.container.addEventListener("mouseenter", ()=>{
@@ -89,7 +94,49 @@ export default class UIManager
             this.onOut();
         });
 
+        this.menuDisplayed = false;
+
         this.hideTitle(true);
+    }
+
+    onClickMenu()
+    {
+        if(this.isWaiting) return;
+
+        this.isWaiting = true;
+
+        setTimeout(()=>{
+            this.isWaiting = false;
+        }, 1000)
+
+        this.onMenu.dispatch();
+    }
+
+    changeMenuIcon(menuDisplayed)
+    {
+        let goTop = 'icon_menu';
+        let goRight = 'icon_close';
+        if(!menuDisplayed)
+        {
+            goTop = 'icon_close';
+            goRight = 'icon_menu';
+        }
+
+        let goRightEl = document.getElementById(goRight);
+        goRightEl.style.left = '-50px';
+        goRightEl.style.top = '50%';
+        // goRightEl.style.opacity = 0;
+
+        TweenLite.to('#' + goTop, .4, {
+            top: -100,
+            // opacity: 0
+        });
+
+        TweenLite.to('#' + goRight, .4, {
+            left: 0,
+            // opacity: 1
+        });
+
     }
 
     hideAbout()

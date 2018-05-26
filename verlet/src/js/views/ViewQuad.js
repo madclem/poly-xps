@@ -2,6 +2,7 @@ import * as POLY from 'poly/Poly';
 import vert from '../shaders/quadColor.vert';
 import frag from '../shaders/quadImage.frag';
 import TextureManager from '../TextureManager';
+import Device from '../utils/Device';
 
 export default class ViewQuad
 {
@@ -155,7 +156,10 @@ export default class ViewQuad
             },
             onComplete:()=>{
                 this.iconTexture = TextureManager.getTexture(window.ASSET_URL + 'image/' + data.icon);
-                this.iconTextureRevealed = TextureManager.getTexture(window.ASSET_URL + 'image/' + data.icon_hover);
+
+                if(Device.desktop) {
+                    this.iconTextureRevealed = TextureManager.getTexture(window.ASSET_URL + 'image/' + data.icon_hover);
+                }
 
                 Easings.to(this, .3, {
                     percentageLogoMenu: 1,
@@ -261,12 +265,13 @@ export default class ViewQuad
 
         if(this.isMenuIcon)
         {
+            if(!Device.desktop) return;
             this.needsUpdate = true;
             // this.isIcon = ;
 
-            Easings.to(this, .2, {
+            Easings.to(this, .3, {
                 percentageLogoMenuHover: 1,
-                ease: Easings.easeOutCirc,
+                ease: Easings.easeInCirc,
                 onUpdate: ()=>{
                     this.needsUpdate = true;
                 }
@@ -300,10 +305,11 @@ export default class ViewQuad
 
         if(this.isMenuIcon)
         {
+            if(!Device.desktop) return;
             this.needsUpdate = true;
             // this.isIcon = ;
 
-            Easings.to(this, .2, {
+            Easings.to(this, .3, {
                 percentageLogoMenuHover: 0,
                 ease: Easings.easeOutCirc,
                 onUpdate: ()=>{
@@ -453,10 +459,6 @@ export default class ViewQuad
             this.x = minX + (maxX - minX)/2;
             this.y = minY + (maxY - minY)/2;
 
-            if(this.isHover)
-            {
-                console.log('here');
-            }
             if(this.needsUpdate)
             {
                 this.program.uniforms.percentage = this.percentage;

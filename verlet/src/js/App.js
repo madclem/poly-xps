@@ -283,24 +283,30 @@ window.ASSET_URL + 'image/maman.jpg',
 		// this.scene = new PointCollisionScene();
 		let loader = document.getElementById('loader');
 		let header = document.getElementById('header');
-		loader.style.opacity = 1;
+		let gif = document.getElementById('imageLoader');
+
+		// loader.style.opacity = 0;
 		header.style.top = '-100px';
+
 
 
 		TextureManager.addTextures(this._textures, ()=>{
 
-			TweenLite.to("#loader", 1, {
+			TweenLite.to("#loader", .4, {
 				delay: 1,
-				opacity: 0,
+				top: '-100%',
+				ease: Circ.easeIn,
 				onComplete:()=>{
 					loader.style.display = "none";
 
-					TweenLite.to("#header", .3, {
+					document.getElementById('loader').removeChild(gif);
+
+					TweenLite.to("#header", .6, {
 						top: 0,
-						ease: Circ.easeOut
+						ease: Back.easeOut
 					})
 				}
-			})
+			});
 
 			this.scene = new MainScene();
 			this.scene.resize();

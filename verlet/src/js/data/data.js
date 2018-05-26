@@ -127,7 +127,7 @@ export default
             codeColor: [],
             colorGradient: [194/255,82/255, 56/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>'],
                 dev: []
             },
             description: "Experiment for Design Digital Days 2018: Monolithic. A great opportunity to explore reflection's methods and water effect! <br><br>TECH: 3D, Poly.js, WebGL",
@@ -319,7 +319,7 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>', 'John Denton'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>', 'John Denton'],
                 dev: ['Mat Groves', 'Li Wen']
             },
             description: "Transform a plane geometry into a sphere geometry. An idea from Wen to teach me WebGL basics. <br><br>TECH: WebGL",
@@ -399,7 +399,7 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>'],
                 dev: []
             },
             description: "Christmas experiment, 2015 edition! Tight collaboration with my friend Julien Suard! Chop some wood and get that fire going! 🔥 <br><br>TECH: 2D slicing, Pixi.js, WebGL, p2.js",
@@ -457,7 +457,7 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>', 'John Denton', 'Kim Le'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>', 'John Denton', 'Kim Le'],
                 dev: ['Mat Groves']
             },
             description: "Leg It through Beano town, slime your enemies, play as your favourite characters from the Dennis & Gnasher, Unleashed TV show and run, jump, slide and grind your way to the finish line. Download the app on <a href=\"https://itunes.apple.com/gb/app/cbbc-dennis-gnasher/id1375959196?mt=8\" target=\"_blank\">iOS</a> or <a href=\"https://play.google.com/store/apps/details?id=uk.co.bbc.cbbc.dennisandgnasher.legit\" target=\"_blank\">Android</a> (Web version coming soon!) <br><br>TECH: HTML5, 3D, App, Pixi.js, WebGL",
@@ -512,7 +512,7 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>'],
                 dev: []
             },
             description: "\"Shoot'em up\" game developped for the release of the Starwars Awakens in the cinemas. Welcome to the resistance, and the May the force be with you. Read more about the art <a href=\"https://suardjulien.com/3/\" target=\"_blank\">here</a>  <br><br>TECH: Pixi.js, WebGL <br><br> U: goodboy    P: disney",
@@ -530,7 +530,7 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>'],
                 dev: []
             },
             description: "\"Shoot'em up\" game developped for the release of the Starwars Awakens in the cinemas. Welcome to the resistance, and the May the force be with you. Read more about the art <a href=\"https://suardjulien.com/3/\" target=\"_blank\">here</a>  <br><br>TECH: Pixi.js, WebGL <br><br> U: goodboy    P: disney",
@@ -548,7 +548,7 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>'],
                 dev: []
             },
             description: "\"Shoot'em up\" game developped for the release of the Starwars Awakens in the cinemas. Welcome to the resistance, and the May the force be with you. Read more about the art <a href=\"https://suardjulien.com/3/\" target=\"_blank\">here</a>  <br><br>TECH: Pixi.js, WebGL <br><br> U: goodboy    P: disney",
@@ -566,7 +566,7 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>'],
                 dev: []
             },
             description: "Silly fish generator for Cartoon Network.",
@@ -658,7 +658,7 @@ export default
             codeColor: [],
             colorGradient: [20/255, 48/255, 82/255],
             team: {
-                art: ['<a href="suarjulien.com">Julien suard</a>'],
+                art: ['<a href="http://suarjulien.com">Julien suard</a>'],
                 dev: []
             },
             description: "Draw what you you feel like and make it appear in a D.Trump gif! A good opportunity to create a drawing tool using low level WebGL (lines) and homographic 2D quad (creates a 3D perspective feel from four 2D points). <br><br>TECH: Pixi.js, WebGL",
@@ -676,7 +676,7 @@ export default
             codeColor: [],
             colorGradient: [205/255, 175/255, 57/255],
             team: {
-                art: ['John Denton', '<a href="suarjulien.com">Julien suard</a>'],
+                art: ['John Denton', '<a href="http://tomjennings.me">tom portfolio</a>'],
                 dev: ['Mat Groves (lead)']
             },
             description: "Read the complete case study <a href='https://www.goodboydigital.com/case-study/star-wars-arcade' target='_blank'> here (by Goodboy) </a> :)  <br><br>TECH: Pixi.js, WebGL",

@@ -16,25 +16,29 @@ import dataProjects from '../data/data';
 let target = vec3.create();
 let pointsOrdered = [];
 
+let scale = window.devicePixelRatio;
+if(scale > 2) scale = 2;
+scale = 1;
 // generic function to get cursor position
 const getCursorPos = function (e) {
+
     if(e.touches && e.touches.length > 0) {
         return {
-            x:e.touches[0].pageX,
-            y:e.touches[0].pageY
+            x:e.touches[0].pageX *scale,
+            y:e.touches[0].pageY *scale
         };
     }
     else if(e.changedTouches && e.changedTouches.length > 0)
     {
         return {
-            x:e.changedTouches[0].pageX,
-            y:e.changedTouches[0].pageY
+            x:e.changedTouches[0].pageX*scale,
+            y:e.changedTouches[0].pageY*scale
         };
     }
     else {
         return {
-            x:e.clientX,
-            y:e.clientY
+            x:e.clientX*scale,
+            y:e.clientY*scale
         };
     }
 };
@@ -94,6 +98,7 @@ export default class MainScene
         this.cameraY = 0;
         this.menuActive = false;
         this.waitingForMenu = false;
+        this.menuImpactVerlet = false;
 
 		this.physics = new Physics();
 		this.createGridPoints();
@@ -158,6 +163,7 @@ export default class MainScene
     {
         if(!this.menuActive) return;
 
+        this.menuImpactVerlet = false;
         this.menuQuads.length = 0;
 
         Easings.to(this.orbitalControl, 1.2, {
@@ -205,10 +211,11 @@ export default class MainScene
 
         if(this.menuActive) {
             this.hideMenu();
-
+            this.uiManager.changeMenuIcon(false);
             return;
         }
 
+        this.uiManager.changeMenuIcon(true);
         this.menuActive = true;
         // Im sure there is a smart way to do this, but it's late :/
         let data = this.getQuadAtPos(0,0);
@@ -263,19 +270,19 @@ export default class MainScene
         let ext = Device.desktop ? '' : '_mobile';
         topLeftQuad.showMenuIcon(1,0,false, .2 * speed, { colorMenuTop: [8/255, 151/255, 160/255], colorMenuBottom: [22/255, 191/255, 149/255], icon: 'icon_viewall'+ ext +'.png', icon_hover: 'icon_viewall_text.png'}, ()=>{
             this.dataManager.fillGrid(dataProjects.layout.main);
-            this.hideMenu();
+            this.toggleMenu();
         });
         topRightQuad.showMenuIcon(0,1,false, .95 * speed, { colorMenuTop: [255/255, 63/255, 63/255], colorMenuBottom: [208/255, 79/255, 103/255], icon: 'icon_experiment'+ ext +'.png', icon_hover: 'icon_experiment_text.png'}, ()=>{
             this.dataManager.fillGrid(dataProjects.layout.lab); // lab
-            this.hideMenu();
+            this.toggleMenu();
         });
         bottomLeftQuad.showMenuIcon(0,1,true, .45 * speed, { colorMenuTop: [55/255, 148/255, 254/255], colorMenuBottom: [124/255, 76/255, 201/255], icon: 'icon_work'+ ext +'.png', icon_hover: 'icon_work_text.png'}, ()=>{
             this.dataManager.fillGrid(dataProjects.layout.pro); // pro
-            this.hideMenu();
+            this.toggleMenu();
         });
         bottomRightQuad.showMenuIcon(1,0,false, .7 * speed, { colorMenuTop: [212/255, 131/255, 15/255], colorMenuBottom: [228/255, 201/255, 26/255], icon: 'icon_aboutme'+ ext +'.png', icon_hover: 'icon_aboutme_text.png'}, ()=>{
             this.dataManager.fillGrid(dataProjects.layout.about); // about
-            this.hideMenu();
+            this.toggleMenu();
         });
 
         topLeftQuad.onOut();
@@ -307,6 +314,9 @@ export default class MainScene
             ease: Easings.easeInOutCirc,
             onUpdate: ()=>{
                 this.orbitalControl.update();
+            },
+            onComplete:()=>{
+                this.menuImpactVerlet = true;
             }
         })
 
@@ -375,7 +385,10 @@ export default class MainScene
 	{
         let mainContainer = document.getElementById("canvas");
 		mainContainer.addEventListener('mousedown', (e) => this._onDown(e));
-        mainContainer.addEventListener('mouseup', (e) => this._onUp(e));
+        if(Device.desktop)
+        {
+            mainContainer.addEventListener('mouseup', (e) => this._onUp(e));
+        }
         mainContainer.addEventListener('mousemove', (e) => this._onMove(e));
 
         mainContainer.addEventListener('touchstart', (e) => this._onDown(e));
@@ -565,7 +578,7 @@ export default class MainScene
 
         if(this.menuActive && !quad.isMenuIcon)
         {
-            this.hideMenu();
+            this.toggleMenu();
 
             return;
         }
@@ -1048,14 +1061,23 @@ export default class MainScene
         this.pos.x = this.sphereIntersection.position.x;
         this.pos.y = this.sphereIntersection.position.y;
 
-        if(this._isDown)
-        {
+        // if(this._isDown)
+        // {
             if(this.intersection)
             {
                 this.findNeighbours(this.intersection, true);
                 this.impactVerlet(this.intersection);
             }
-        }
+        // }
+
+        // if(this.menuActive)
+        // {
+        //     if(this.intersection)
+        //     {
+        //         // this.findNeighbours(this.intersection, true);
+        //         this.impactVerlet(this.intersection);
+        //     }
+        // }
 
         if(!isNaN(SpeedController.speedX) && !isNaN(SpeedController.speedY))
         {
@@ -1147,7 +1169,11 @@ export default class MainScene
 
                     sy = s * 15 * (1 - distY2/4) * (1 - distX2 / 3);
                 }
-                pointquad.setSpeed(sx, sy);
+
+                if(!this.menuActive)
+                {
+                    pointquad.setSpeed(sx, sy);
+                }
 
                 // set the quad's point position
                 pointquad.x = (this.cameraX + pointquad.origin.x + pointquad.gridPos.x + pointquad.speedX)  %  (Math.abs(this.limitMinX) * 2) ;// this.speedX;
@@ -1299,15 +1325,17 @@ export default class MainScene
 		}
 
 
-
-		for (var i = 0; i < this.pointsGrid.length; i++)
-		{
-			if(!this._isDown)
-			{
-				this.pointsGrid[i].accZ = 0;
-			}
-            if(this.debug) this.pointsGrid[i].render();
-		}
+        if(!this.menuImpactVerlet)
+        {
+            for (var i = 0; i < this.pointsGrid.length; i++)
+            {
+                if(!this._isDown)
+                {
+                    this.pointsGrid[i].accZ = 0;
+                }
+                if(this.debug) this.pointsGrid[i].render();
+            }
+        }
 
 		this.program.bind();
 
